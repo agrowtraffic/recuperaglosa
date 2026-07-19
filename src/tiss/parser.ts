@@ -13,7 +13,7 @@
  */
 
 import { XMLParser } from "fast-xml-parser";
-import { motivo } from "./motivos.js";
+import { motivo } from "./motivos";
 
 // ---------- tipos ----------
 export type ItemParsed = {

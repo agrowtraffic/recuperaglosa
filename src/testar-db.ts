@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
-import { supabase } from "./db/client.js";
-import { parseDemonstrativo } from "./tiss/parser.js";
-import { salvarLote, resumoGlosaPorMotivo } from "./db/persistir.js";
+import { supabase } from "./db/client";
+import { parseDemonstrativo } from "./tiss/parser";
+import { salvarLote, resumoGlosaPorMotivo } from "./db/persistir";
 
 async function main() {
   // 1. clínica de teste (idempotente: reaproveita se já existir)

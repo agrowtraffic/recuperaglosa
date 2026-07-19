@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
-import { parseDemonstrativo, glosaPorMotivo, valorRecorrivel } from "./tiss/parser.js";
-import { gerarRecurso } from "./tiss/recurso.js";
+import { parseDemonstrativo, glosaPorMotivo, valorRecorrivel } from "./tiss/parser";
+import { gerarRecurso } from "./tiss/recurso";
 
 const brl = (n: number) =>
   n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });

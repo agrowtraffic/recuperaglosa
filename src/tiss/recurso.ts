@@ -1,5 +1,5 @@
-import type { GuiaParsed, LoteParsed } from "./parser.js";
-import { motivo } from "./motivos.js";
+import type { GuiaParsed, LoteParsed } from "./parser";
+import { motivo } from "./motivos";
 
 const brl = (n: number) =>
   n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });

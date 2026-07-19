@@ -1,7 +1,7 @@
-import { supabase as defaultSupabase } from "./client.js";
-import type { LoteParsed } from "../tiss/parser.js";
+import { supabase as defaultSupabase } from "./client";
+import type { LoteParsed } from "../tiss/parser";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { gerarRecurso } from "../tiss/recurso.js";
+import { gerarRecurso } from "../tiss/recurso";
 
 /**
  * Persiste um demonstrativo já parseado: lote -> guias -> itens,
