@@ -94,7 +94,8 @@ export async function POST(req: Request) {
   try {
     console.log('📄 [UPLOAD] Iniciando parse do XML...');
     lote = parseDemonstrativo(xmlText);
-    console.log('✅ [UPLOAD] Parse bem-sucedido:', { guias: lote.guias.length, itens: lote.itens.length });
+    const totalItens = lote.guias.reduce((acc, g) => acc + g.itens.length, 0);
+    console.log('✅ [UPLOAD] Parse bem-sucedido:', { guias: lote.guias.length, itens: totalItens });
   } catch (e: any) {
     console.error('❌ [UPLOAD] Erro no parse:', e.message);
     return NextResponse.json(

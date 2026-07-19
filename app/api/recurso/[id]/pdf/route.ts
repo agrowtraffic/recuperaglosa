@@ -67,12 +67,6 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
 
     console.log('❌ [PDF] Erro da query (se houver):', error?.message ?? 'nenhum');
     console.log('✅ [PDF] Recurso retornado:', recurso ? 'SIM' : 'NÃO');
-    if (recurso) {
-      console.log('   - Tem guia?', !!recurso.guia);
-      console.log('   - Tem lote?', !!recurso.guia?.lote);
-      console.log('   - Tem clínica?', !!recurso.guia?.lote?.clinica);
-      console.log('   - Tem itens?', (recurso.guia?.item?.length ?? 0) + ' itens');
-    }
 
     if (error || !recurso) {
       console.error('❌ [PDF] Erro ao buscar recurso:', error?.message || 'Recurso nulo');
@@ -90,11 +84,19 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
       );
     }
 
-    // Preparar dados para o PDF
-    const guia = (recurso as any).guia;
-    const lote = guia?.lote;
+    // Preparar dados para o PDF (com type assertion)
+    const r = recurso as any;
+    const guia = r.guia;
+    const lote = Array.isArray(guia?.lote) ? guia.lote[0] : guia?.lote;
     const clinica = lote?.clinica;
     const itens = guia?.item || [];
+
+    if (guia) {
+      console.log('   - Tem guia?', !!guia);
+      console.log('   - Tem lote?', !!lote);
+      console.log('   - Tem clínica?', !!clinica);
+      console.log('   - Tem itens?', (itens?.length ?? 0) + ' itens');
+    }
 
     // Filtrar itens recorríveis
     const recorriveis = itens.filter((i: any) => i.recorrivel);
@@ -144,7 +146,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
       })
     );
 
-    return new NextResponse(buffer, {
+    return new NextResponse(buffer as any, {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="recurso-glosa-${guia?.numero_guia || params.id}.pdf"`,

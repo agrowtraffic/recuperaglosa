@@ -100,7 +100,7 @@ export async function salvarLote(
 
 /** Busca o resumo de glosa por motivo direto da view do banco (v_glosa_por_motivo). */
 export async function resumoGlosaPorMotivo(clinicaId: string, loteId: string) {
-  const { data, error } = await supabase
+  const { data, error } = await defaultSupabase
     .from("v_glosa_por_motivo")
     .select("*")
     .eq("clinica_id", clinicaId)
