@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ans:mensagemTISS xmlns:ans="http://www.ans.gov.br/padroes/tiss/schemas">
+  <ans:demonstrativoAnaliseConta>
+    <ans:nomeOperadora>OPERADORA ALFA SAUDE</ans:nomeOperadora>
+    <ans:registroANS>301234</ans:registroANS>
+    <ans:numeroDemonstrativo>DEM-2026-0451</ans:numeroDemonstrativo>
+    <ans:competencia>2026-06</ans:competencia>
+
+    <ans:guiaDemonstrativo>
+      <ans:numeroGuiaPrestador>G-10231</ans:numeroGuiaPrestador>
+      <ans:numeroGuiaOperadora>OP-99871</ans:numeroGuiaOperadora>
+      <ans:nomeBeneficiario>PACIENTE TESTE UM</ans:nomeBeneficiario>
+      <ans:numeroCarteira>0001234567</ans:numeroCarteira>
+      <ans:dataAtendimento>2026-06-04</ans:dataAtendimento>
+      <ans:procedimento>
+        <ans:codigoProcedimento>10101012</ans:codigoProcedimento>
+        <ans:descricaoProcedimento>Consulta em consultorio</ans:descricaoProcedimento>
+        <ans:quantidadeExecutada>1</ans:quantidadeExecutada>
+        <ans:valorApresentado>120.00</ans:valorApresentado>
+        <ans:valorPago>120.00</ans:valorPago>
+      </ans:procedimento>
+      <ans:procedimento>
+        <ans:codigoProcedimento>40304361</ans:codigoProcedimento>
+        <ans:descricaoProcedimento>Raspagem subgengival</ans:descricaoProcedimento>
+        <ans:quantidadeExecutada>2</ans:quantidadeExecutada>
+        <ans:valorApresentado>380.00</ans:valorApresentado>
+        <ans:valorPago>0.00</ans:valorPago>
+        <ans:valorGlosa>380.00</ans:valorGlosa>
+        <ans:codigoGlosa>1007</ans:codigoGlosa>
+      </ans:procedimento>
+    </ans:guiaDemonstrativo>
+
+    <ans:guiaDemonstrativo>
+      <ans:numeroGuiaPrestador>G-10232</ans:numeroGuiaPrestador>
+      <ans:nomeBeneficiario>PACIENTE TESTE DOIS</ans:nomeBeneficiario>
+      <ans:dataAtendimento>2026-06-11</ans:dataAtendimento>
+      <ans:procedimento>
+        <ans:codigoProcedimento>40201014</ans:codigoProcedimento>
+        <ans:descricaoProcedimento>Restauracao em resina</ans:descricaoProcedimento>
+        <ans:quantidadeExecutada>3</ans:quantidadeExecutada>
+        <ans:valorApresentado>450.00</ans:valorApresentado>
+        <ans:valorPago>300.00</ans:valorPago>
+        <ans:valorGlosa>150.00</ans:valorGlosa>
+        <ans:codigoGlosa>1010</ans:codigoGlosa>
+      </ans:procedimento>
+      <ans:procedimento>
+        <ans:codigoProcedimento>40101010</ans:codigoProcedimento>
+        <ans:descricaoProcedimento>Radiografia periapical</ans:descricaoProcedimento>
+        <ans:quantidadeExecutada>1</ans:quantidadeExecutada>
+        <ans:valorApresentado>60.00</ans:valorApresentado>
+        <ans:valorPago>0.00</ans:valorPago>
+        <ans:codigoGlosa>1701</ans:codigoGlosa>
+      </ans:procedimento>
+    </ans:guiaDemonstrativo>
+  </ans:demonstrativoAnaliseConta>
+</ans:mensagemTISS>

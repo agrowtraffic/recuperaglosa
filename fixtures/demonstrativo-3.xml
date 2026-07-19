@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tiss:mensagemTISS xmlns:tiss="http://www.ans.gov.br/padroes/tiss/schemas">
+  <tiss:demonstrativoAnaliseConta>
+    <tiss:nomeOperadora>GAMA SAUDE</tiss:nomeOperadora>
+    <tiss:competencia>2026-06</tiss:competencia>
+    <tiss:guia>
+      <tiss:numeroGuiaPrestador>C-5501</tiss:numeroGuiaPrestador>
+      <tiss:nomeBeneficiario>PACIENTE TESTE QUATRO</tiss:nomeBeneficiario>
+      <tiss:dataAtendimento>2026-06-22</tiss:dataAtendimento>
+      <tiss:procedimentoExecutado>
+        <tiss:codigoProcedimento>10101039</tiss:codigoProcedimento>
+        <tiss:descricaoProcedimento>Consulta de urgencia</tiss:descricaoProcedimento>
+        <tiss:valorApresentado>150.00</tiss:valorApresentado>
+        <tiss:valorPago>0.00</tiss:valorPago>
+      </tiss:procedimentoExecutado>
+      <tiss:procedimentoExecutado>
+        <tiss:codigoProcedimento>20101025</tiss:codigoProcedimento>
+        <tiss:descricaoProcedimento>Curativo</tiss:descricaoProcedimento>
+        <tiss:valorApresentado>80.00</tiss:valorApresentado>
+        <tiss:valorPago>80.00</tiss:valorPago>
+      </tiss:procedimentoExecutado>
+    </tiss:guia>
+  </tiss:demonstrativoAnaliseConta>
+</tiss:mensagemTISS>

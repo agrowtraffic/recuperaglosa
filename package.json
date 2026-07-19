@@ -1,0 +1,32 @@
+{
+  "name": "recupera-glosa",
+  "version": "0.1.0",
+  "description": "SaaS de auditoria de glosas de convênio para clínicas pequenas",
+  "type": "module",
+  "scripts": {
+    "test": "npx tsx src/testar.ts",
+    "test:fixtures": "npx tsx src/fixtures.ts",
+    "test:db": "npx tsx src/testar-db.ts",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@react-pdf/renderer": "^4.5.1",
+    "@supabase/ssr": "^0.12.3",
+    "@supabase/supabase-js": "^2.48.0",
+    "dotenv": "^16.3.1",
+    "fast-xml-parser": "^4.4.1",
+    "next": "^14.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "recharts": "^3.9.2",
+    "stripe": "^22.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.0.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.0.0"
+  }
+}

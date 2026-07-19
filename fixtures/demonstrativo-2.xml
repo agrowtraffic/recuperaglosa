@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mensagemTISS>
+  <demonstrativoAnaliseConta>
+    <razaoSocial>BETA ODONTO LTDA</razaoSocial>
+    <registroANS>412345</registroANS>
+    <mesCompetencia>2026-06</mesCompetencia>
+    <dadosGuia>
+      <numeroGuia>B-77001</numeroGuia>
+      <beneficiario>PACIENTE TESTE TRES</beneficiario>
+      <dataExecucao>2026-06-18</dataExecucao>
+      <itemGuia>
+        <codigoTUSS>81000103</codigoTUSS>
+        <descricao>Exodontia simples</descricao>
+        <quantidade>1</quantidade>
+        <valorInformado>200,00</valorInformado>
+        <valorLiberado>0,00</valorLiberado>
+        <motivoGlosa>1301</motivoGlosa>
+      </itemGuia>
+      <itemGuia>
+        <codigoTUSS>81000260</codigoTUSS>
+        <descricao>Profilaxia</descricao>
+        <quantidade>1</quantidade>
+        <valorInformado>90,00</valorInformado>
+        <valorLiberado>72,00</valorLiberado>
+        <motivoGlosa>1401</motivoGlosa>
+      </itemGuia>
+    </dadosGuia>
+  </demonstrativoAnaliseConta>
+</mensagemTISS>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 430" role="img" aria-labelledby="title desc">
+<title id="title">RecuperaGlosa</title>
+<desc id="desc">Versão vertical do logo RecuperaGlosa.</desc>
+<g transform="translate(160,20) scale(1.35)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M44 20H82C103 20 116 31 116 49C116 66 104 77 84 77H58" stroke="#16A34A" stroke-width="12"/>
+  <path d="M58 77L112 132" stroke="#16A34A" stroke-width="12"/>
+  <path d="M44 20V132" stroke="#16A34A" stroke-width="12"/>
+  <path d="M42 73L74 41" stroke="#16A34A" stroke-width="12"/>
+  <path d="M57 41H74V58" stroke="#16A34A" stroke-width="12"/>
+  <path d="M24 132V101" stroke="#16A34A" stroke-width="10"/>
+  <path d="M40 132V89" stroke="#16A34A" stroke-width="10"/>
+  <path d="M56 132V73" stroke="#16A34A" stroke-width="10"/>
+</g>
+<g text-anchor="middle" font-family="Manrope, Arial, sans-serif" font-weight="700">
+  <text x="250" y="300" font-size="64" fill="#16A34A">Recupera</text>
+  <text x="250" y="365" font-size="64" fill="#0F172A">Glosa</text>
+</g>
+</svg>
