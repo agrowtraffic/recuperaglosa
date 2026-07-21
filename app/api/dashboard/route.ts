@@ -22,23 +22,20 @@ export async function GET() {
       }
     );
 
-    // Login como usuário de teste
-    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-      email: 'teste@recuperaglosa.com',
-      password: 'TesteSeguro123!',
-    });
+    // Verificar usuário autenticado
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-    if (authError || !authData?.user) {
-      return NextResponse.json({ error: 'Login falhou', details: authError?.message }, { status: 401 });
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Não autenticado', details: authError?.message }, { status: 401 });
     }
 
-    console.log('✅ Login como teste@recuperaglosa.com bem-sucedido');
+    console.log('✅ Usuário autenticado:', user.id);
 
-    // Agora chama o dashboard
+    // Buscar dados do usuário
     const { data: usuario } = await supabase
       .from('usuario')
       .select('clinica_id')
-      .eq('id', authData.user.id)
+      .eq('id', user.id)
       .single();
 
     if (!usuario) {
@@ -93,7 +90,7 @@ export async function GET() {
     }));
 
     return NextResponse.json({
-      authenticated_user: authData.user.email,
+      authenticated_user: user.email,
       clinica_id: clinicaId,
       clinica: clinica ? { nome: clinica.nome, plano: clinica.plano, status_assinatura: clinica.status_assinatura } : null,
       kpis: {

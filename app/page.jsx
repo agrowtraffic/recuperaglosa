@@ -130,15 +130,17 @@ export default function Page(){
   <header className="topbar"><Logo/><div className="top-actions"><button className="icon-button" aria-label="Notificações"><Icon name="bell"/></button><button className="clinic"><span>C</span>Clínica Sorriso<Icon name="chevron" size={16}/></button></div></header>
   <div className="app-body"><aside className="sidebar"><nav>{nav.map(([icon,label])=><button onClick={()=>{setTab(label);setQuery('')}} className={tab===label?'active':''} key={label}><Icon name={icon}/><span>{label}</span></button>)}</nav><div className="plan-card"><strong>Plano Profissional</strong><p>Próxima cobrança<br/><b>12/06/2025</b></p><button>Gerenciar plano</button></div></aside>
   <section className="content"><div className="content-head"><div><h1>{title}</h1><p>{sub}</p></div>{tab!=='Configurações'&&<button className="primary" onClick={()=>setUpload(true)}><Icon name="plus"/>Novo upload</button>}</div>
-   {error&&<div style={{background:'#fee2e2',border:'1px solid #fca5a5',color:'#991b1b',padding:'16px',borderRadius:'8px',margin:'16px',display:'flex',gap:'8px',alignItems:'center'}}><Icon name="alert" style={{flexShrink:0}}/>Erro: {error}</div>}
-   {tab==='Visão geral'&&<Overview setTab={setTab} dashboardData={dashboardData}/>} {tab==='Lotes'&&<Lotes query={query} setQuery={setQuery} dashboardData={dashboardData}/>} {tab==='Guias'&&<Guias/>} {tab==='Glosas'&&<Glosas/>} {tab==='Recursos'&&<Recursos/>} {tab==='Relatórios'&&<Relatorios/>} {tab==='Configurações'&&<Configuracoes/>}
+   {tab==='Visão geral'&&<Overview setTab={setTab} dashboardData={dashboardData} error={error}/>} {tab==='Lotes'&&<Lotes query={query} setQuery={setQuery} dashboardData={dashboardData}/>} {tab==='Guias'&&<Guias/>} {tab==='Glosas'&&<Glosas/>} {tab==='Recursos'&&<Recursos/>} {tab==='Relatórios'&&<Relatorios/>} {tab==='Configurações'&&<Configuracoes/>}
   </section></div>{upload&&<UploadModal close={()=>setUpload(false)}/>}</main>
 }
 
-function Overview({setTab,dashboardData}){
- const kpis=dashboardData?.kpis||{valorRecuperavel:'R$ 18.430,75',lotesProcessados:15,guiasAuditadas:342};
- const lotesData=dashboardData?.lotes||[];
- const motivosReal=dashboardData?.motivos||[];
+function Overview({setTab,dashboardData,error}){
+ // Se há erro, mostrar apenas mensagem — sem fallback silencioso
+ if(error||!dashboardData) return <div style={{padding:'2rem',textAlign:'center'}}><div style={{background:'#fee2e2',border:'1px solid #fca5a5',color:'#991b1b',padding:'16px',borderRadius:'8px',display:'inline-flex',gap:'8px',alignItems:'center',maxWidth:'400px'}}><Icon name="alert" style={{flexShrink:0}}/>Não foi possível carregar os dados. Tente novamente.</div><button className="outline" style={{marginTop:'1rem'}} onClick={()=>window.location.reload()}>Recarregar página</button></div>;
+
+ const kpis=dashboardData.kpis;
+ const lotesData=dashboardData.lotes||[];
+ const motivosReal=dashboardData.motivos||[];
 
  const motivosFormatted=useMemo(()=>{
    if(!motivosReal||motivosReal.length===0) return motivosGlosa;
@@ -151,7 +153,7 @@ function Overview({setTab,dashboardData}){
  },[motivosReal]);
 
  return <div className="dashboard-grid">
- <div className="kpi recoverable"><p>Valor recuperável</p><strong>{kpis.valorRecuperavel}</strong><small>em {motivosReal.length||42} motivos</small><Spark/></div>
+ <div className="kpi recoverable"><p>Valor recuperável</p><strong>{kpis.valorRecuperavel}</strong><small>em {motivosReal.length} motivos</small><Spark/></div>
  <Kpi title="Lotes processados" value={String(kpis.lotesProcessados)} sub="últimos 30 dias" icon="file" tone="green"/>
  <Kpi title="Guias auditadas" value={String(kpis.guiasAuditadas)} sub="últimos 30 dias" icon="file" tone="blue"/>
  <div className="reasons card"><h2>Motivos mais recorrentes</h2><div className="reason-content"><Donut data={motivosFormatted}/><div className="legend">{motivosFormatted.map(item=><Legend key={item.name} color={item.color} t={item.name} v={`${item.value}%`}/>)}</div></div><button className="outline" onClick={()=>setTab('Relatórios')}>Ver relatório completo</button></div>
