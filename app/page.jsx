@@ -100,12 +100,11 @@ export default function Page(){
  const [error,setError]=useState(null);
  const [authChecked,setAuthChecked]=useState(false);
 
- const supabase=useMemo(()=>createClient(),[]);
-
  // Verificar autenticação
  useEffect(()=>{
    const checkAuth=async()=>{
      try{
+       const supabase=createClient();
        const {data:{user}}=await supabase.auth.getUser();
        if(!user) router.push('/login');
        else setAuthChecked(true);
@@ -115,7 +114,7 @@ export default function Page(){
      }
    };
    checkAuth();
- },[supabase,router]);
+ },[router]);
 
  if(!authChecked) return <div style={{display:'flex',alignItems:'center',justifyContent:'center',minHeight:'100vh'}}>Carregando...</div>;
 
