@@ -126,6 +126,12 @@ export default function Page(){
   'Relatórios':'Entenda a evolução financeira e os principais motivos',
   'Configurações':'Gerencie clínica, equipe, cobrança e segurança'
  }[tab];
+
+ if(error&&!loading) return <main className="app-shell full-app">
+  <header className="topbar"><Logo/><div className="top-actions"><button className="icon-button" aria-label="Notificações"><Icon name="bell"/></button><button className="clinic"><span>C</span>Clínica Sorriso<Icon name="chevron" size={16}/></button></div></header>
+  <div className="app-body"><aside className="sidebar"><nav>{nav.map(([icon,label])=><button onClick={()=>{setTab(label);setQuery('')}} className={tab===label?'active':''} key={label}><Icon name={icon}/><span>{label}</span></button>)}</nav><div className="plan-card"><strong>Plano Profissional</strong><p>Próxima cobrança<br/><b>12/06/2025</b></p><button>Gerenciar plano</button></div></aside>
+  <section className="content"><div style={{padding:'2rem',textAlign:'center'}}><div style={{background:'#fee2e2',border:'1px solid #fca5a5',color:'#991b1b',padding:'24px',borderRadius:'8px',display:'inline-flex',flexDirection:'column',gap:'16px',alignItems:'center',maxWidth:'500px'}}><Icon name="alert" size={32} style={{flexShrink:0}}/><div><h2 style={{margin:'0 0 8px 0'}}>Não foi possível carregar os dados</h2><p style={{margin:0,fontSize:'14px'}}>Tente novamente em alguns instantes.</p></div><button className="primary" onClick={()=>window.location.reload()}>Recarregar página</button></div></div></section></div></main>;
+
  return <main className="app-shell full-app">
   <header className="topbar"><Logo/><div className="top-actions"><button className="icon-button" aria-label="Notificações"><Icon name="bell"/></button><button className="clinic"><span>C</span>Clínica Sorriso<Icon name="chevron" size={16}/></button></div></header>
   <div className="app-body"><aside className="sidebar"><nav>{nav.map(([icon,label])=><button onClick={()=>{setTab(label);setQuery('')}} className={tab===label?'active':''} key={label}><Icon name={icon}/><span>{label}</span></button>)}</nav><div className="plan-card"><strong>Plano Profissional</strong><p>Próxima cobrança<br/><b>12/06/2025</b></p><button>Gerenciar plano</button></div></aside>
