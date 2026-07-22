@@ -41,6 +41,7 @@ const Icon = ({ name, size = 20, stroke = 1.8 }) => {
     lock:<><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></>,
     credit:<><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></>,
     clock:<><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></>,
+    menu:<><path d="M3 6h18M3 12h18M3 18h18"/></>,
   };
   return <svg {...common}>{paths[name]}</svg>;
 };
@@ -99,6 +100,7 @@ export default function Page(){
  const [loading,setLoading]=useState(true);
  const [error,setError]=useState(null);
  const [authChecked,setAuthChecked]=useState(false);
+ const [menuOpen,setMenuOpen]=useState(false);
 
  // Verificar autenticação
  useEffect(()=>{
@@ -150,8 +152,9 @@ export default function Page(){
  }[tab];
 
  return <main className="app-shell full-app">
-  <header className="topbar"><Logo/><div className="top-actions"><button className="icon-button" aria-label="Notificações"><Icon name="bell"/></button><button className="clinic"><span>C</span>Clínica Sorriso<Icon name="chevron" size={16}/></button></div></header>
-  <div className="app-body"><aside className="sidebar"><nav>{nav.map(([icon,label])=><button onClick={()=>{setTab(label);setQuery('')}} className={tab===label?'active':''} key={label}><Icon name={icon}/><span>{label}</span></button>)}</nav><div className="plan-card"><strong>Plano Profissional</strong><p>Próxima cobrança<br/><b>12/06/2025</b></p><button>Gerenciar plano</button></div></aside>
+  <header className="topbar"><button className="menu-toggle" onClick={()=>setMenuOpen(!menuOpen)} aria-label="Menu"><Icon name="menu"/></button><Logo/><div className="top-actions"><button className="icon-button" aria-label="Notificações"><Icon name="bell"/></button><button className="clinic"><span>C</span>Clínica Sorriso<Icon name="chevron" size={16}/></button></div></header>
+  <div className="app-body"><aside className={`sidebar ${menuOpen?'mobile-open':''}`}><nav>{nav.map(([icon,label])=><button onClick={()=>{setTab(label);setQuery('');setMenuOpen(false)}} className={tab===label?'active':''} key={label}><Icon name={icon}/><span>{label}</span></button>)}</nav><div className="plan-card"><strong>Plano Profissional</strong><p>Próxima cobrança<br/><b>12/06/2025</b></p><button>Gerenciar plano</button></div><button className="whatsapp-mobile" onClick={()=>window.open('https://wa.me/5511999999999')}><Icon name="whatsapp"/>Falar no WhatsApp</button></aside>
+  {menuOpen&&<div className="drawer-backdrop" onClick={()=>setMenuOpen(false)}/>}
   <section className="content"><div className="content-head"><div><h1>{title}</h1><p>{sub}</p></div>{tab!=='Configurações'&&<button className="primary" onClick={()=>setUpload(true)}><Icon name="plus"/>Novo upload</button>}</div>
    {tab==='Visão geral'&&<Overview setTab={setTab} dashboardData={dashboardData} error={error}/>} {tab==='Lotes'&&<Lotes query={query} setQuery={setQuery} dashboardData={dashboardData}/>} {tab==='Guias'&&<Guias/>} {tab==='Glosas'&&<Glosas/>} {tab==='Recursos'&&<Recursos/>} {tab==='Relatórios'&&<Relatorios/>} {tab==='Configurações'&&<Configuracoes/>}
   </section></div>{upload&&<UploadModal close={()=>setUpload(false)}/>}</main>
