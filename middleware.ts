@@ -1,19 +1,29 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  // Permitir auth callback sem restrições
-  if (request.nextUrl.pathname.startsWith('/auth/callback')) {
+  const pathname = request.nextUrl.pathname;
+
+  // Permitir auth callback e páginas públicas
+  if (pathname.startsWith('/auth/callback') ||
+      pathname.startsWith('/login') ||
+      pathname.startsWith('/auth/') ||
+      pathname.startsWith('/privacidade') ||
+      pathname.startsWith('/termos')) {
     return NextResponse.next();
   }
 
-  // Proteger rotas /dashboard
-  if (request.nextUrl.pathname.startsWith('/dashboard')) {
+  // Proteger TODAS as rotas privadas (raiz, dashboard, lotes, etc)
+  if (pathname === '/' || pathname.startsWith('/dashboard') ||
+      pathname.startsWith('/lotes') || pathname.startsWith('/guias') ||
+      pathname.startsWith('/glosas') || pathname.startsWith('/recursos') ||
+      pathname.startsWith('/relatorios') || pathname.startsWith('/upload')) {
+
     const authCookie = request.cookies.get('sb-access-token') ||
                        request.cookies.get('sb-auth-token') ||
                        request.cookies.get('supabase-auth-token');
 
     if (!authCookie) {
-      return NextResponse.redirect(new URL('/', request.url));
+      return NextResponse.redirect(new URL('/login', request.url));
     }
   }
 
@@ -21,5 +31,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/auth/callback'],
+  matcher: ['/', '/dashboard/:path*', '/login', '/auth/callback', '/lotes/:path*', '/guias/:path*', '/glosas/:path*', '/recursos/:path*', '/relatorios/:path*', '/upload/:path*'],
 };

@@ -1,6 +1,8 @@
 'use client';
 
 import { useMemo, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
 import {
   Area,
   AreaChart,
@@ -89,12 +91,33 @@ const motivosGlosa=[
 ];
 
 export default function Page(){
+ const router=useRouter();
  const [tab,setTab]=useState('Visão geral');
  const [upload,setUpload]=useState(false);
  const [query,setQuery]=useState('');
  const [dashboardData,setDashboardData]=useState(null);
  const [loading,setLoading]=useState(true);
  const [error,setError]=useState(null);
+ const [authChecked,setAuthChecked]=useState(false);
+
+ const supabase=useMemo(()=>createClient(),[]);
+
+ // Verificar autenticação
+ useEffect(()=>{
+   const checkAuth=async()=>{
+     try{
+       const {data:{user}}=await supabase.auth.getUser();
+       if(!user) router.push('/login');
+       else setAuthChecked(true);
+     }catch(e){
+       console.error('Auth check error:',e);
+       router.push('/login');
+     }
+   };
+   checkAuth();
+ },[supabase,router]);
+
+ if(!authChecked) return <div style={{display:'flex',alignItems:'center',justifyContent:'center',minHeight:'100vh'}}>Carregando...</div>;
 
  useEffect(()=>{
    let cancelled=false;
