@@ -136,15 +136,12 @@ export default function Page(){
 }
 
 function Overview({setTab,dashboardData,error}){
- // Se há erro, mostrar apenas mensagem — sem fallback silencioso
- if(error||!dashboardData) return <div style={{padding:'2rem',textAlign:'center'}}><div style={{background:'#fee2e2',border:'1px solid #fca5a5',color:'#991b1b',padding:'16px',borderRadius:'8px',display:'inline-flex',gap:'8px',alignItems:'center',maxWidth:'400px'}}><Icon name="alert" style={{flexShrink:0}}/>Não foi possível carregar os dados. Tente novamente.</div><button className="outline" style={{marginTop:'1rem'}} onClick={()=>window.location.reload()}>Recarregar página</button></div>;
-
- const kpis=dashboardData.kpis;
- const lotesData=dashboardData.lotes||[];
- const motivosReal=dashboardData.motivos||[];
+ const kpis=dashboardData?.kpis||{valorRecuperavel:'R$ 0,00',lotesProcessados:0,guiasAuditadas:0};
+ const lotesData=dashboardData?.lotes||[];
+ const motivosReal=dashboardData?.motivos||[];
 
  const motivosFormatted=useMemo(()=>{
-   if(!motivosReal||motivosReal.length===0) return motivosGlosa;
+   if(!motivosReal||motivosReal.length===0) return [{name:'Sem dados',value:100,color:'#e5e7eb'}];
    const total=motivosReal.reduce((s,m)=>s+Number(m.total_glosado||0),0);
    return motivosReal.map(m=>({
      name:m.motivo_glosa||'Outro',
@@ -158,7 +155,7 @@ function Overview({setTab,dashboardData,error}){
  <Kpi title="Lotes processados" value={String(kpis.lotesProcessados)} sub="últimos 30 dias" icon="file" tone="green"/>
  <Kpi title="Guias auditadas" value={String(kpis.guiasAuditadas)} sub="últimos 30 dias" icon="file" tone="blue"/>
  <div className="reasons card"><h2>Motivos mais recorrentes</h2><div className="reason-content"><Donut data={motivosFormatted}/><div className="legend">{motivosFormatted.map(item=><Legend key={item.name} color={item.color} t={item.name} v={`${item.value}%`}/>)}</div></div><button className="outline" onClick={()=>setTab('Relatórios')}>Ver relatório completo</button></div>
- <div className="lots card"><h2>Últimos lotes</h2><SimpleTable heads={['Arquivo','Enviado em','Guias','Glosas','Valor recuperável','Status']} rows={lotesData.slice(0,3).map(x=>[x.arquivo,x.data,x.guias,x.glosas,x.valor,<Status key={x.arquivo} text={x.status}/>])}/><button className="outline small" onClick={()=>setTab('Lotes')}>Ver todos os lotes</button></div>
+ <div className="lots card"><h2>Últimos lotes</h2>{lotesData.length===0?<p style={{color:'#999',padding:'1rem'}}>Nenhum lote enviado. Comece a auditoria clicando em "Novo upload"</p>:<SimpleTable heads={['Arquivo','Enviado em','Guias','Glosas','Valor recuperável','Status']} rows={lotesData.slice(0,3).map(x=>[x.arquivo,x.data,x.guias,x.glosas,x.valor,<Status key={x.arquivo} text={x.status}/>])}/> }<button className="outline small" onClick={()=>setTab('Lotes')}>Ver todos os lotes</button></div>
  <div className="help card"><h2>Precisa de ajuda?</h2><p>Fale com nosso time e tire suas dúvidas.</p><button className="outline whatsapp"><Icon name="whatsapp"/>Falar no WhatsApp</button></div>
  </div>}
 
@@ -185,8 +182,7 @@ function Glosas(){
  const [query,setQuery]=useState('');
  const [prioridade,setPrioridade]=useState('Todas');
  const filtered=[];
- return <div><p>Nenhuma glosa disponivel</p></div>;
-}
+ return <><Toolbar query={query} setQuery={setQuery} placeholder="Buscar guia, codigo ou motivo..."><SelectFilter value={prioridade} onChange={setPrioridade} options={['Todas','Alta','Media','Baixa']} label="Prioridade"/></Toolbar><div className="metric-row"><Metric label="Total glosado" value="R$ 0,00" warn/><Metric label="Recorrivel" value="R$ 0,00" positive/><Metric label="Em analise" value="R$ 0,00"/><Metric label="Nao recorrivel" value="R$ 0,00"/></div><div className="split-layout"><div className="page-card"><div className="card-title"><div><h2>Glosas identificadas</h2><p>Ordenadas por potencial de recuperacao</p></div></div><DataTable heads={['Guia','Codigo','Motivo','Valor','Prioridade','Situacao']} rows={filtered}/></div><aside className="insight-card"><span className="insight-icon"><Icon name="dollar"/></span><h3>Maior oportunidade</h3><strong>R$ 0,00</strong><p>Nenhuma glosa encontrada. Envie um demonstrativo para comecar.</p><button className="primary full">Novo upload</button></aside></div></>}
 
 function Recursos(){
  const [query,setQuery]=useState('');
