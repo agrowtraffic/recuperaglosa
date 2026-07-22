@@ -43,7 +43,7 @@ const Icon = ({ name, size = 20, stroke = 1.8 }) => {
   return <svg {...common}>{paths[name]}</svg>;
 };
 
-function Logo(){return <div className="logo"><svg className="logo-mark" viewBox="0 0 72 72"><path d="M15 61V37h10v24H15Zm14 0V28h10v33H29Zm14 0V18h10v43H43Z"/><path d="M13 12h31c11 0 18 6 18 16 0 8-5 13-12 15l12 17H48L37 44h-8V32h14c5 0 8-2 8-6s-3-6-8-6H25v9L10 16 25 3v9H13Z"/></svg><div className="logo-word"><span>Recupera</span><b>Glosa</b></div></div>}
+function Logo(){return <div className="logo"><img src="/logo-icon.png" alt="Recupera Glosa" className="logo-mark" style={{width:38,height:38}}/><div className="logo-word"><span>Recupera</span><b>Glosa</b></div></div>}
 
 const nav=[['home','Visão geral'],['folder','Lotes'],['file','Guias'],['alert','Glosas'],['scale','Recursos'],['chart','Relatórios'],['settings','Configurações']];
 
