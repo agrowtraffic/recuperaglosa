@@ -33,7 +33,7 @@ export default async function LoginPage({ searchParams }) {
       <section className={styles.brandPanel} aria-label="Benefícios do RecuperaGlosa">
         <div className={styles.brandTop}>
           <Image
-            src="/logos/recupera-glosa-monocromatico-branco.svg"
+            src="/logos/recupera-glosa-monocromatico-branco.png"
             width={248}
             height={56}
             alt="RecuperaGlosa"
@@ -80,7 +80,7 @@ export default async function LoginPage({ searchParams }) {
       <section className={styles.accessPanel}>
         <div className={styles.mobileLogo}>
           <Image
-            src="/logos/recupera-glosa-horizontal.svg"
+            src="/logos/recupera-glosa-horizontal.png"
             width={205}
             height={48}
             alt="RecuperaGlosa"
