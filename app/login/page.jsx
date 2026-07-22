@@ -13,8 +13,16 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function LoginPage({ searchParams }) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  let user = null;
+
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase.auth.getUser();
+    user = data?.user;
+  } catch (error) {
+    console.error('Auth check error in login:', error);
+  }
+
   const params = await searchParams;
   const initialMode = params?.modo === 'cadastro' ? 'signup' : 'login';
 
