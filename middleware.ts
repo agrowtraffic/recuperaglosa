@@ -1,8 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
 
-export async function middleware(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   // Permitir rotas públicas
@@ -13,54 +11,23 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Proteger rotas privadas verificando sessão via Supabase
+  // Proteger rotas privadas
   if (pathname === '/' || pathname.startsWith('/dashboard') ||
       pathname.startsWith('/lotes') || pathname.startsWith('/guias') ||
       pathname.startsWith('/glosas') || pathname.startsWith('/recursos') ||
       pathname.startsWith('/relatorios') || pathname.startsWith('/upload')) {
 
-    try {
-      const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    // Procura qualquer cookie que comece com 'sb-' (padrão Supabase)
+    const authCookie = request.cookies.getAll().some(c => c.name.startsWith('sb-'));
 
-      if (!url || !key) {
-        console.log('[MIDDLEWARE] Env vars faltando, redirecionando para /login');
-        return NextResponse.redirect(new URL('/login', request.url));
-      }
+    console.log('[MIDDLEWARE]', {
+      path: pathname,
+      hasAuthCookie: authCookie,
+      allCookies: request.cookies.getAll().map(c => c.name),
+    });
 
-      const cookieStore = await cookies();
-      const supabase = createServerClient(url, key, {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll();
-          },
-          setAll(cookiesToSet) {
-            try {
-              cookiesToSet.forEach(({ name, value, options }) => {
-                cookieStore.set(name, value, options);
-              });
-            } catch {}
-          },
-        },
-      });
-
-      const { data: { user }, error } = await supabase.auth.getUser();
-
-      console.log('[MIDDLEWARE]', {
-        path: pathname,
-        hasUser: !!user,
-        userId: user?.id ?? null,
-        error: error?.message ?? null,
-      });
-
-      if (!user) {
-        console.log('[MIDDLEWARE] → Sem sessão, redirecionando para /login');
-        return NextResponse.redirect(new URL('/login', request.url));
-      }
-
-      return NextResponse.next();
-    } catch (err) {
-      console.error('[MIDDLEWARE] Erro ao verificar sessão:', err);
+    if (!authCookie) {
+      console.log('[MIDDLEWARE] → Sem sessão, redirecionando para /login');
       return NextResponse.redirect(new URL('/login', request.url));
     }
   }
