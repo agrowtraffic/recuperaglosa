@@ -50,7 +50,10 @@ export async function middleware(request: NextRequest) {
   console.log('[MIDDLEWARE]', { path: pathname, hasUser: !!user, userId: user?.id ?? null });
 
   if (!user) {
-    return NextResponse.redirect(new URL('/login', request.url));
+    const redirectResponse = NextResponse.redirect(new URL('/login', request.url));
+    // Preserva cookies renovados por getUser() mesmo no caminho de redirect
+    response.cookies.getAll().forEach((c) => redirectResponse.cookies.set(c.name, c.value, c));
+    return redirectResponse;
   }
 
   return response;
