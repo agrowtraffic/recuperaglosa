@@ -12,7 +12,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const isProtected = pathname === '/' ||
+  const isOnboarding = pathname.startsWith('/completar-cadastro');
+  const isProtected = isOnboarding || pathname === '/' ||
     pathname.startsWith('/lotes') || pathname.startsWith('/guias') ||
     pathname.startsWith('/glosas') || pathname.startsWith('/recursos') ||
     pathname.startsWith('/relatorios') || pathname.startsWith('/configuracoes') ||
@@ -48,11 +49,26 @@ export async function middleware(request: NextRequest) {
   // getUser() valida o token com o servidor Supabase (getSession() só lê o cookie local)
   const { data: { user } } = await supabase.auth.getUser();
 
-  console.log('[MIDDLEWARE]', { path: pathname, hasUser: !!user, userId: user?.id ?? null });
-
   if (!user) {
     const redirectResponse = NextResponse.redirect(new URL('/login', request.url));
     // Preserva cookies renovados por getUser() mesmo no caminho de redirect
+    response.cookies.getAll().forEach((c) => redirectResponse.cookies.set(c.name, c.value, c));
+    return redirectResponse;
+  }
+
+  // Usuário autenticado, mas ainda sem linha em `usuario` (nunca completou o
+  // onboarding) — manda para o formulário em vez de deixar o app quebrar em
+  // "Usuário não encontrado na tabela usuario".
+  const { data: usuarioRow } = await supabase.from('usuario').select('id').eq('id', user.id).maybeSingle();
+
+  if (!usuarioRow && !isOnboarding) {
+    const redirectResponse = NextResponse.redirect(new URL('/completar-cadastro', request.url));
+    response.cookies.getAll().forEach((c) => redirectResponse.cookies.set(c.name, c.value, c));
+    return redirectResponse;
+  }
+
+  if (usuarioRow && isOnboarding) {
+    const redirectResponse = NextResponse.redirect(new URL('/', request.url));
     response.cookies.getAll().forEach((c) => redirectResponse.cookies.set(c.name, c.value, c));
     return redirectResponse;
   }
@@ -61,5 +77,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/', '/login', '/auth/callback', '/lotes/:path*', '/guias/:path*', '/glosas/:path*', '/recursos/:path*', '/relatorios/:path*', '/configuracoes/:path*', '/upload/:path*'],
+  matcher: ['/', '/login', '/auth/callback', '/completar-cadastro', '/lotes/:path*', '/guias/:path*', '/glosas/:path*', '/recursos/:path*', '/relatorios/:path*', '/configuracoes/:path*', '/upload/:path*'],
 };
