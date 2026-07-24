@@ -118,9 +118,8 @@ export default function Page(){
    checkAuth();
  },[router]);
 
- if(!authChecked) return <div style={{display:'flex',alignItems:'center',justifyContent:'center',minHeight:'100vh'}}>Carregando...</div>;
-
  useEffect(()=>{
+   if(!authChecked) return;
    let cancelled=false;
    async function loadDashboard(){
      try{
@@ -138,7 +137,9 @@ export default function Page(){
    }
    loadDashboard();
    return ()=>{cancelled=true;};
- },[]);
+ },[authChecked]);
+
+ if(!authChecked) return <div style={{display:'flex',alignItems:'center',justifyContent:'center',minHeight:'100vh'}}>Carregando...</div>;
 
  const title=tab;
  const sub={
