@@ -254,7 +254,7 @@ export default function LoginForm({ initialMode = 'login' }) {
             </div>
             <label className={styles.termsCheck}>
               <input type="checkbox" checked={acceptedTerms} onChange={(event) => setAcceptedTerms(event.target.checked)} />
-              <span>Li e aceito os <Link href="/termos">Termos de Uso</Link> e a <Link href="/privacidade">Política de Privacidade</Link>.</span>
+              <span>Li e aceito os <Link href="/termos" target="_blank" rel="noopener noreferrer">Termos de Uso</Link> e a <Link href="/privacidade" target="_blank" rel="noopener noreferrer">Política de Privacidade</Link>.</span>
             </label>
           </>
         )}

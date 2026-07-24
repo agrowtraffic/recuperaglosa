@@ -1,8 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+
+const TERMOS_VERSAO = '2026-07-24';
 
 export default function CompletarCadastroPage(){
  const router = useRouter();
@@ -10,6 +13,7 @@ export default function CompletarCadastroPage(){
  const [cnpj,setCnpj] = useState('');
  const [nomeCompleto,setNomeCompleto] = useState('');
  const [telefone,setTelefone] = useState('');
+ const [aceitouTermos,setAceitouTermos] = useState(false);
  const [loading,setLoading] = useState(false);
  const [error,setError] = useState('');
 
@@ -19,6 +23,7 @@ export default function CompletarCadastroPage(){
 
   if(nomeClinica.trim().length < 2){ setError('Informe o nome da clínica.'); return; }
   if(nomeCompleto.trim().length < 3){ setError('Informe seu nome completo.'); return; }
+  if(!aceitouTermos){ setError('É necessário aceitar os Termos de Uso e a Política de Privacidade.'); return; }
 
   setLoading(true);
   try{
@@ -28,6 +33,8 @@ export default function CompletarCadastroPage(){
      p_cnpj: cnpj.trim(),
      p_nome_completo: nomeCompleto.trim(),
      p_telefone: telefone.trim(),
+     p_termos_aceitos: aceitouTermos,
+     p_termos_versao: TERMOS_VERSAO,
    });
    if(rpcError) throw rpcError;
    router.replace('/');
@@ -69,6 +76,11 @@ export default function CompletarCadastroPage(){
       <span style={{ fontWeight:500, color:'#334155', fontSize:14 }}>Telefone <small style={{color:'#94a3b8'}}>(opcional)</small></span>
       <input value={telefone} onChange={e=>setTelefone(e.target.value)} placeholder="(11) 99999-0000"
        style={{ padding:'10px 12px', border:'1px solid #cbd5e1', borderRadius:8, fontSize:14, fontFamily:'inherit' }}/>
+     </label>
+
+     <label style={{ display:'flex', alignItems:'flex-start', gap:8, fontSize:13, color:'#334155' }}>
+      <input type="checkbox" checked={aceitouTermos} onChange={e=>setAceitouTermos(e.target.checked)} style={{ marginTop:3 }}/>
+      <span>Li e aceito os <Link href="/termos" target="_blank" rel="noopener noreferrer" style={{ color:'#16a34a' }}>Termos de Uso</Link> e a <Link href="/privacidade" target="_blank" rel="noopener noreferrer" style={{ color:'#16a34a' }}>Política de Privacidade</Link>.</span>
      </label>
 
      {error && (
