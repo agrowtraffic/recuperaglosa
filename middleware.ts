@@ -12,10 +12,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const isProtected = pathname === '/' || pathname.startsWith('/dashboard') ||
+  const isProtected = pathname === '/' ||
     pathname.startsWith('/lotes') || pathname.startsWith('/guias') ||
     pathname.startsWith('/glosas') || pathname.startsWith('/recursos') ||
-    pathname.startsWith('/relatorios') || pathname.startsWith('/upload');
+    pathname.startsWith('/relatorios') || pathname.startsWith('/configuracoes') ||
+    pathname.startsWith('/upload');
 
   if (!isProtected) {
     return NextResponse.next();
@@ -60,5 +61,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/', '/dashboard/:path*', '/login', '/auth/callback', '/lotes/:path*', '/guias/:path*', '/glosas/:path*', '/recursos/:path*', '/relatorios/:path*', '/upload/:path*'],
+  matcher: ['/', '/login', '/auth/callback', '/lotes/:path*', '/guias/:path*', '/glosas/:path*', '/recursos/:path*', '/relatorios/:path*', '/configuracoes/:path*', '/upload/:path*'],
 };

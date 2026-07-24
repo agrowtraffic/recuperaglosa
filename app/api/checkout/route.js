@@ -77,8 +77,8 @@ export async function POST(request) {
         },
       ],
       mode: 'subscription',
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/resources`,
+      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/recursos`,
       metadata: { clinica_id: clinicaId },
     });
     console.log('✅ [CHECKOUT] Sessão criada com ID:', session.id, 'metadata:', session.metadata);
