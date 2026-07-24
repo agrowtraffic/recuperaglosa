@@ -57,7 +57,7 @@ export async function GET() {
     // Buscar dados da clínica
     const { data: clinica } = await supabase
       .from('clinica')
-      .select('nome, plano, status_assinatura')
+      .select('nome, cnpj, plano, status_assinatura')
       .eq('id', clinicaId)
       .single();
 
@@ -101,7 +101,7 @@ export async function GET() {
     return NextResponse.json({
       authenticated_user: user.email,
       clinica_id: clinicaId,
-      clinica: clinica ? { nome: clinica.nome, plano: clinica.plano, status_assinatura: clinica.status_assinatura } : null,
+      clinica: clinica ? { nome: clinica.nome, cnpj: clinica.cnpj, plano: clinica.plano, status_assinatura: clinica.status_assinatura } : null,
       kpis: {
         valorRecuperavel: valorRecuperavel.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
         lotesProcessados,

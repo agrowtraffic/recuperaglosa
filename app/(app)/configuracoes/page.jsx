@@ -26,7 +26,7 @@ export default function ConfiguracoesPage(){
    <div className="page-card settings-card">
     <h2>{section}</h2>
     <p className="settings-sub">Atualize as informações e preferências desta seção.</p>
-    {section==='Clínica'&&<FormClinic/>}
+    {section==='Clínica'&&<FormClinic clinica={clinica} loading={loading}/>}
     {section==='Equipe'&&<Team/>}
     {section==='Assinatura'&&<Billing clinica={clinica} loading={loading}/>}
     {section==='Notificações'&&<Notifications/>}
@@ -36,8 +36,22 @@ export default function ConfiguracoesPage(){
  </>;
 }
 
-// TODO backend: este formulário ainda não lê/grava a tabela clinica — dados de exemplo até existir o endpoint de edição de perfil.
-function FormClinic(){return <form className="form-grid"><Field label="Nome da clínica" value="Clínica Sorriso"/><Field label="CNPJ" value="12.345.678/0001-90"/><Field label="E-mail financeiro" value="financeiro@clinicasorriso.com.br"/><Field label="Telefone" value="(11) 99999-0000"/><Field label="CNES" value="1234567"/><Field label="Cidade" value="São Paulo — SP"/><div className="form-actions"><button type="button" className="primary">Salvar alterações</button></div></form>}
+// TODO backend: e-mail financeiro, telefone, CNES e cidade não têm coluna
+// na tabela clinica ainda — ficam vazios até essas colunas existirem.
+// Nome e CNPJ já vêm reais de /api/dashboard. "Salvar alterações" ainda não
+// grava (não há endpoint de edição de perfil).
+function FormClinic({clinica,loading}){
+ if(loading) return <p style={{color:'#94a3b8'}}>Carregando dados da clínica...</p>;
+ return <form className="form-grid">
+  <Field label="Nome da clínica" value={clinica?.nome||''}/>
+  <Field label="CNPJ" value={clinica?.cnpj||''} placeholder="Não informado"/>
+  <Field label="E-mail financeiro" placeholder="Ainda não configurável"/>
+  <Field label="Telefone" placeholder="Ainda não configurável"/>
+  <Field label="CNES" placeholder="Ainda não configurável"/>
+  <Field label="Cidade" placeholder="Ainda não configurável"/>
+  <div className="form-actions"><button type="button" className="primary">Salvar alterações</button></div>
+ </form>;
+}
 
 // TODO backend: convites/membros de equipe ainda não existem no schema — dados de exemplo até existir a tabela.
 function Team(){return <div><div className="team-row"><div className="avatar">HC</div><div><b>Henrique Costa</b><p>henrique@clinicasorriso.com.br</p></div><Status text="Administrador"/></div><div className="team-row"><div className="avatar">MS</div><div><b>Mariana Souza</b><p>mariana@clinicasorriso.com.br</p></div><Status text="Membro"/></div><button className="primary"><Icon name="plus"/>Convidar membro</button></div>}
