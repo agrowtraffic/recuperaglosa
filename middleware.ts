@@ -1,9 +1,10 @@
+import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  // Permitir rotas públicas
+  // Permitir rotas públicas sem tocar em cookies/sessão
   if (pathname.startsWith('/auth/') ||
       pathname.startsWith('/login') ||
       pathname.startsWith('/privacidade') ||
@@ -11,28 +12,48 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Proteger rotas privadas
-  if (pathname === '/' || pathname.startsWith('/dashboard') ||
-      pathname.startsWith('/lotes') || pathname.startsWith('/guias') ||
-      pathname.startsWith('/glosas') || pathname.startsWith('/recursos') ||
-      pathname.startsWith('/relatorios') || pathname.startsWith('/upload')) {
+  const isProtected = pathname === '/' || pathname.startsWith('/dashboard') ||
+    pathname.startsWith('/lotes') || pathname.startsWith('/guias') ||
+    pathname.startsWith('/glosas') || pathname.startsWith('/recursos') ||
+    pathname.startsWith('/relatorios') || pathname.startsWith('/upload');
 
-    // Procura qualquer cookie que comece com 'sb-' (padrão Supabase)
-    const authCookie = request.cookies.getAll().some(c => c.name.startsWith('sb-'));
-
-    console.log('[MIDDLEWARE]', {
-      path: pathname,
-      hasAuthCookie: authCookie,
-      allCookies: request.cookies.getAll().map(c => c.name),
-    });
-
-    if (!authCookie) {
-      console.log('[MIDDLEWARE] → Sem sessão, redirecionando para /login');
-      return NextResponse.redirect(new URL('/login', request.url));
-    }
+  if (!isProtected) {
+    return NextResponse.next();
   }
 
-  return NextResponse.next();
+  let response = NextResponse.next({
+    request: { headers: request.headers },
+  });
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+          response = NextResponse.next({ request: { headers: request.headers } });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options)
+          );
+        },
+      },
+    }
+  );
+
+  // getUser() valida o token com o servidor Supabase (getSession() só lê o cookie local)
+  const { data: { user } } = await supabase.auth.getUser();
+
+  console.log('[MIDDLEWARE]', { path: pathname, hasUser: !!user, userId: user?.id ?? null });
+
+  if (!user) {
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+
+  return response;
 }
 
 export const config = {
