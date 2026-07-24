@@ -12,7 +12,7 @@ import {
 } from 'recharts';
 import { Icon } from './Icon';
 
-export function Toolbar({query='',setQuery=()=>{},placeholder,children}){return <div className="toolbar"><label><Icon name="search"/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder={placeholder}/>{query&&<button type="button" className="clear-search" onClick={()=>setQuery('')} aria-label="Limpar busca"><Icon name="x" size={14}/></button>}</label><div className="toolbar-actions">{children}<button className="outline compact"><Icon name="filter"/>Filtros</button></div></div>}
+export function Toolbar({query='',setQuery=()=>{},placeholder,children}){return <div className="toolbar"><label><Icon name="search"/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder={placeholder}/>{query&&<button type="button" className="clear-search" onClick={()=>setQuery('')} aria-label="Limpar busca"><Icon name="x" size={14}/></button>}</label><div className="toolbar-actions">{children}</div></div>}
 
 export function SelectFilter({value,onChange,options,label}){return <label className="select-filter"><span>{label}</span><select value={value} onChange={e=>onChange(e.target.value)}>{options.map(option=><option key={option}>{option}</option>)}</select><Icon name="chevron" size={14}/></label>}
 
@@ -39,4 +39,4 @@ export function DataTable({heads,rows,pageSize=5}){const [page,setPage]=useState
 
 export function Field({label,value,placeholder}){return <label className="field"><span>{label}</span><input defaultValue={value} placeholder={placeholder}/></label>}
 
-export function Toggle({title,sub}){const [on,setOn]=useState(true);return <div className="toggle-row"><div><b>{title}</b><p>{sub}</p></div><button type="button" aria-pressed={on} aria-label={`${on?'Desativar':'Ativar'} ${title}`} onClick={()=>setOn(!on)} className={`toggle ${on?'on':''}`}><span/></button></div>}
+export function Toggle({title,sub}){return <div className="toggle-row"><div><b>{title}</b><p>{sub}</p></div><button type="button" disabled title="Em breve — preferências ainda não são salvas" aria-label={`${title} (em breve)`} className="toggle"><span/></button></div>}

@@ -49,16 +49,53 @@ function FormClinic({clinica,loading}){
   <Field label="Telefone" placeholder="Ainda não configurável"/>
   <Field label="CNES" placeholder="Ainda não configurável"/>
   <Field label="Cidade" placeholder="Ainda não configurável"/>
-  <div className="form-actions"><button type="button" className="primary">Salvar alterações</button></div>
+  <div className="form-actions"><button type="button" className="primary" disabled title="Em breve — ainda não há endpoint para editar esses dados">Salvar alterações</button></div>
  </form>;
 }
 
 // TODO backend: convites/membros de equipe ainda não existem no schema — dados de exemplo até existir a tabela.
-function Team(){return <div><div className="team-row"><div className="avatar">HC</div><div><b>Henrique Costa</b><p>henrique@clinicasorriso.com.br</p></div><Status text="Administrador"/></div><div className="team-row"><div className="avatar">MS</div><div><b>Mariana Souza</b><p>mariana@clinicasorriso.com.br</p></div><Status text="Membro"/></div><button className="primary"><Icon name="plus"/>Convidar membro</button></div>}
+function Team(){return <div><div className="team-row"><div className="avatar">HC</div><div><b>Henrique Costa</b><p>henrique@clinicasorriso.com.br</p></div><Status text="Administrador"/></div><div className="team-row"><div className="avatar">MS</div><div><b>Mariana Souza</b><p>mariana@clinicasorriso.com.br</p></div><Status text="Membro"/></div><button className="primary" disabled title="Em breve"><Icon name="plus"/>Convidar membro</button></div>}
 
 function Billing({clinica,loading}){
+ const [checkoutLoading,setCheckoutLoading]=useState(false);
+ const [portalLoading,setPortalLoading]=useState(false);
+ const [actionError,setActionError]=useState('');
+
  if(loading) return <div className="billing"><p style={{color:'#94a3b8'}}>Carregando informações do plano...</p></div>;
  const ativo=clinica?.plano==='ativo';
+
+ async function handleCheckout(){
+  setActionError('');
+  setCheckoutLoading(true);
+  try{
+   const res=await fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})});
+   const data=await res.json();
+   if(data.checkoutUrl) window.location.href=data.checkoutUrl;
+   else setActionError('Não foi possível abrir o checkout.');
+  }catch(e){
+   console.error('Erro no checkout:',e);
+   setActionError('Não foi possível abrir o checkout.');
+  }finally{
+   setCheckoutLoading(false);
+  }
+ }
+
+ async function handlePortal(){
+  setActionError('');
+  setPortalLoading(true);
+  try{
+   const res=await fetch('/api/billing-portal',{method:'POST'});
+   const data=await res.json();
+   if(data.portalUrl) window.location.href=data.portalUrl;
+   else setActionError('Não foi possível abrir o portal de cobrança.');
+  }catch(e){
+   console.error('Erro no portal:',e);
+   setActionError('Não foi possível abrir o portal de cobrança.');
+  }finally{
+   setPortalLoading(false);
+  }
+ }
+
  return <div className="billing">
   <div className="billing-plan">
    <div>
@@ -67,10 +104,11 @@ function Billing({clinica,loading}){
     <p>{ativo?'Auditorias ilimitadas e geração automática de recursos.':'Até 3 lotes por mês, recursos com prévia bloqueada.'}</p>
    </div>
   </div>
+  {actionError && <p style={{color:'#dc2626',fontSize:13}}>{actionError}</p>}
   {ativo ? (
-   <div className="billing-note"><Icon name="credit"/><div><b>Assinatura ativa</b><p>Gerencie forma de pagamento e histórico de cobrança pelo portal do Stripe.</p></div><button className="outline compact">Gerenciar plano</button></div>
+   <div className="billing-note"><Icon name="credit"/><div><b>Assinatura ativa</b><p>Gerencie forma de pagamento e histórico de cobrança pelo portal do Stripe.</p></div><button className="outline compact" onClick={handlePortal} disabled={portalLoading}>{portalLoading?'Abrindo...':'Gerenciar plano'}</button></div>
   ) : (
-   <div className="billing-note"><Icon name="credit"/><div><b>Sem assinatura ativa</b><p>Assine para liberar auditorias ilimitadas e recursos completos.</p></div><button className="primary compact">Assinar agora</button></div>
+   <div className="billing-note"><Icon name="credit"/><div><b>Sem assinatura ativa</b><p>Assine para liberar auditorias ilimitadas e recursos completos.</p></div><button className="primary compact" onClick={handleCheckout} disabled={checkoutLoading}>{checkoutLoading?'Abrindo...':'Assinar agora'}</button></div>
   )}
  </div>;
 }
@@ -78,4 +116,4 @@ function Billing({clinica,loading}){
 // TODO backend: preferências de notificação ainda não persistem — dados de exemplo até existir a tabela.
 function Notifications(){return <div className="toggle-list"><Toggle title="Auditoria concluída" sub="Receba um aviso quando um lote terminar de processar."/><Toggle title="Novo valor recuperável" sub="Aviso quando forem encontradas novas glosas recorríveis."/><Toggle title="Resumo semanal" sub="Receba toda segunda-feira um resumo financeiro."/></div>}
 
-function Security(){return <div className="security"><div className="security-item"><Icon name="lock"/><div><b>Link mágico por e-mail</b><p>Seu acesso está protegido sem necessidade de senha.</p></div><Status text="Ativo"/></div><button className="outline compact">Encerrar outras sessões</button></div>}
+function Security(){return <div className="security"><div className="security-item"><Icon name="lock"/><div><b>Link mágico por e-mail</b><p>Seu acesso está protegido sem necessidade de senha.</p></div><Status text="Ativo"/></div><button className="outline compact" disabled title="Em breve">Encerrar outras sessões</button></div>}
