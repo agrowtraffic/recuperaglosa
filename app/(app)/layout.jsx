@@ -38,8 +38,19 @@ export default function AppLayout({ children }){
  useEffect(()=>{
    if(!menuOpen) return;
    document.body.style.overflow='hidden';
-   return ()=>{document.body.style.overflow='';};
+   function onKeyDown(event){
+     if(event.key==='Escape') setMenuOpen(false);
+   }
+   window.addEventListener('keydown',onKeyDown);
+   return ()=>{
+     document.body.style.overflow='';
+     window.removeEventListener('keydown',onKeyDown);
+   };
  },[menuOpen]);
+
+ useEffect(()=>{
+   setMenuOpen(false);
+ },[pathname]);
 
  const planoAtivo = clinica?.plano==='ativo';
 
