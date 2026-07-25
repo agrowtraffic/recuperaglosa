@@ -46,6 +46,11 @@ export default function LoginForm({ initialMode = 'login' }) {
   const score = passwordScore(password);
 
   function changeMode(nextMode) {
+    if (nextMode === 'signup') {
+      router.push('/login?modo=cadastro');
+    } else if (nextMode === 'login') {
+      router.push('/login');
+    }
     setMode(nextMode);
     setError('');
     setSuccess(null);
