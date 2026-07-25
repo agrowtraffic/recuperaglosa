@@ -210,7 +210,7 @@ export default function LoginForm({ initialMode = 'login' }) {
         </>
       )}
 
-      <form className={styles.form} onSubmit={handleSubmit} noValidate>
+      <form className={styles.form} onSubmit={handleSubmit} noValidate method="POST">
         {isRecovery && <div className={styles.modeHeading}><h3>Recuperar senha</h3><p>Enviaremos um link seguro para você criar uma nova senha.</p></div>}
         {isMagic && <div className={styles.modeHeading}><h3>Entrar sem senha</h3><p>Receba um link de uso único no seu e-mail.</p></div>}
 
