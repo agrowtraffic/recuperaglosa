@@ -210,21 +210,21 @@ export default function LoginForm({ initialMode = 'login' }) {
         </>
       )}
 
-      <form className={styles.form} onSubmit={handleSubmit} noValidate>
+      <form className={styles.form} onSubmit={handleSubmit} noValidate action="#">
         {isRecovery && <div className={styles.modeHeading}><h3>Recuperar senha</h3><p>Enviaremos um link seguro para você criar uma nova senha.</p></div>}
         {isMagic && <div className={styles.modeHeading}><h3>Entrar sem senha</h3><p>Receba um link de uso único no seu e-mail.</p></div>}
 
         {isSignup && (
           <div className={styles.twoFields}>
-            <Field label="Seu nome" value={name} onChange={setName} name="name" placeholder="Nome completo" autoComplete="name" />
-            <Field label="Nome da clínica" value={clinic} onChange={setClinic} name="clinic" placeholder="Clínica Sorriso" autoComplete="organization" />
+            <Field label="Seu nome" value={name} onChange={setName} placeholder="Nome completo" autoComplete="name" />
+            <Field label="Nome da clínica" value={clinic} onChange={setClinic} placeholder="Clínica Sorriso" autoComplete="organization" />
           </div>
         )}
 
         <label htmlFor="email">E-mail profissional</label>
         <div className={`${styles.inputWrap} ${error ? styles.inputError : ''}`}>
           <span aria-hidden="true">@</span>
-          <input id="email" name="email" type="email" inputMode="email" autoComplete="email" placeholder="voce@sua-clinica.com.br" value={email} onChange={(event) => setEmail(event.target.value)} aria-invalid={Boolean(error)} required autoFocus />
+          <input id="email" type="email" inputMode="email" autoComplete="email" placeholder="voce@sua-clinica.com.br" value={email} onChange={(event) => setEmail(event.target.value)} aria-invalid={Boolean(error)} required autoFocus />
         </div>
 
         {(mode === 'login' || isSignup) && (
@@ -235,7 +235,7 @@ export default function LoginForm({ initialMode = 'login' }) {
             </div>
             <div className={`${styles.inputWrap} ${error ? styles.inputError : ''}`}>
               <span aria-hidden="true">●</span>
-              <input id="password" name="password" type={showPassword ? 'text' : 'password'} autoComplete={isSignup ? 'new-password' : 'current-password'} placeholder={isSignup ? 'Mínimo de 8 caracteres' : 'Digite sua senha'} value={password} onChange={(event) => setPassword(event.target.value)} required />
+              <input id="password" type={showPassword ? 'text' : 'password'} autoComplete={isSignup ? 'new-password' : 'current-password'} placeholder={isSignup ? 'Mínimo de 8 caracteres' : 'Digite sua senha'} value={password} onChange={(event) => setPassword(event.target.value)} required />
               <button type="button" className={styles.showPassword} onClick={() => setShowPassword((current) => !current)}>{showPassword ? 'Ocultar' : 'Mostrar'}</button>
             </div>
           </>
@@ -250,7 +250,7 @@ export default function LoginForm({ initialMode = 'login' }) {
             <label htmlFor="confirmPassword">Confirmar senha</label>
             <div className={`${styles.inputWrap} ${error ? styles.inputError : ''}`}>
               <span aria-hidden="true">●</span>
-              <input id="confirmPassword" name="confirmPassword" type={showPassword ? 'text' : 'password'} autoComplete="new-password" placeholder="Repita sua senha" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} required />
+              <input id="confirmPassword" type={showPassword ? 'text' : 'password'} autoComplete="new-password" placeholder="Repita sua senha" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} required />
             </div>
             <label className={styles.termsCheck}>
               <input type="checkbox" checked={acceptedTerms} onChange={(event) => setAcceptedTerms(event.target.checked)} />
@@ -272,12 +272,13 @@ export default function LoginForm({ initialMode = 'login' }) {
   );
 }
 
-function Field({ label, name, value, onChange, placeholder, autoComplete }) {
+function Field({ label, value, onChange, placeholder, autoComplete }) {
+  const fieldId = autoComplete || `field-${Math.random()}`;
   return (
     <div className={styles.fieldGroup}>
-      <label htmlFor={name}>{label}</label>
+      <label htmlFor={fieldId}>{label}</label>
       <div className={styles.inputWrap}>
-        <input id={name} name={name} type="text" autoComplete={autoComplete} placeholder={placeholder} value={value} onChange={(event) => onChange(event.target.value)} required />
+        <input id={fieldId} type="text" autoComplete={autoComplete} placeholder={placeholder} value={value} onChange={(event) => onChange(event.target.value)} required />
       </div>
     </div>
   );
