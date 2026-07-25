@@ -52,8 +52,7 @@ export default function LoginForm({ initialMode = 'login' }) {
   const score = passwordScore(password);
 
   function changeMode(nextMode) {
-    const url = nextMode === 'signup' ? '/login?modo=cadastro' : '/login';
-    router.push(url);
+    setMode(nextMode);
     setError('');
     setSuccess(null);
     setPassword('');
@@ -202,8 +201,8 @@ export default function LoginForm({ initialMode = 'login' }) {
     <div>
       {(mode === 'login' || isSignup) && (
         <div className={styles.authTabs} role="tablist" aria-label="Tipo de acesso">
-          <button type="button" role="tab" aria-selected={mode === 'login'} className={mode === 'login' ? styles.active : ''} onClick={() => changeMode('login')}>Entrar</button>
-          <button type="button" role="tab" aria-selected={isSignup} className={isSignup ? styles.active : ''} onClick={() => changeMode('signup')}>Criar conta</button>
+          <Link href="/login" className={`${styles.tabButton} ${mode === 'login' ? styles.active : ''}`} role="tab" aria-selected={mode === 'login'}>Entrar</Link>
+          <Link href="/login?modo=cadastro" className={`${styles.tabButton} ${isSignup ? styles.active : ''}`} role="tab" aria-selected={isSignup}>Criar conta</Link>
         </div>
       )}
 
