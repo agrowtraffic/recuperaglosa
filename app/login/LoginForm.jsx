@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import styles from './login.module.css';
 
@@ -31,7 +31,13 @@ function passwordScore(password) {
 
 export default function LoginForm({ initialMode = 'login' }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [mode, setMode] = useState(initialMode);
+
+  useEffect(() => {
+    const urlMode = searchParams.get('modo') === 'cadastro' ? 'signup' : 'login';
+    setMode(urlMode);
+  }, [searchParams]);
   const [name, setName] = useState('');
   const [clinic, setClinic] = useState('');
   const [email, setEmail] = useState('');
@@ -46,7 +52,8 @@ export default function LoginForm({ initialMode = 'login' }) {
   const score = passwordScore(password);
 
   function changeMode(nextMode) {
-    setMode(nextMode);
+    const url = nextMode === 'signup' ? '/login?modo=cadastro' : '/login';
+    router.push(url);
     setError('');
     setSuccess(null);
     setPassword('');
