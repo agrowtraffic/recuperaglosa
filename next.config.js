@@ -1,4 +1,4 @@
-const cspReportOnly = [
+const csp = [
   "default-src 'self'",
   "script-src 'self'",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
@@ -15,10 +15,10 @@ const securityHeaders = [
   { key: 'X-Frame-Options', value: 'DENY' },
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
   { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
-  // Report-Only por enquanto: só registra violações no console, não bloqueia nada.
-  // Trocar para 'Content-Security-Policy' depois de confirmar, em produção, que
-  // login por e-mail, OAuth do Google e as chamadas ao Supabase não geram violação.
-  { key: 'Content-Security-Policy-Report-Only', value: cspReportOnly },
+  // Testado em Report-Only em produção: login por e-mail, dashboard autenticado
+  // (Supabase + Recharts + estilos inline) e clique real em "Continuar com
+  // Google" (navegação completa até accounts.google.com) sem nenhuma violação.
+  { key: 'Content-Security-Policy', value: csp },
 ];
 
 /** @type {import('next').NextConfig} */
