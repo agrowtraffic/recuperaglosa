@@ -1,17 +1,105 @@
-'use client';
-
-import { useState } from 'react';
 import Link from 'next/link';
+import { createServerClient } from '@/lib/supabase/server';
+import { redirect } from 'next/navigation';
 import { Icon } from '../_components/Icon';
-import { Metric } from '../_components/ui';
+import RelatóriosClient from './RelatóriosClient';
 
-export default function RelatoriosPage(){
- const [periodo,setPeriodo]=useState('30 dias');
+export const dynamic = 'force-dynamic';
 
- return <>
-  <div className="content-head"><div><h1>Relatórios</h1><p>Entenda a evolução financeira e os principais motivos</p></div><Link href="/upload" className="primary"><Icon name="plus"/>Novo upload</Link></div>
-  <div className="report-head"><div className="segmented">{['30 dias','3 meses','12 meses'].map(p=><button key={p} className={periodo===p?'active':''} onClick={()=>setPeriodo(p)}>Últimos {p}</button>)}</div><button className="outline compact" disabled title="Em breve"><Icon name="download"/>Exportar PDF</button></div>
-  <div className="metric-row"><Metric label="Valor apresentado" value="R$ 0,00"/><Metric label="Valor pago" value="R$ 0,00"/><Metric label="Valor glosado" value="R$ 0,00" warn/><Metric label="Recuperado" value="R$ 0,00" positive/></div>
-  <div className="report-grid"><div className="page-card chart-card"><div className="card-title"><div><h2>Evolução do valor recuperável</h2><p>Comparativo mensal — {periodo}</p></div></div><div style={{height:'200px',display:'flex',alignItems:'center',justifyContent:'center',color:'#999'}}>Nenhum dado disponível</div></div><div className="page-card"><div className="card-title"><div><h2>Motivos de glosa</h2><p>Participação no valor total</p></div></div><div style={{height:'200px',display:'flex',alignItems:'center',justifyContent:'center',color:'#999'}}>Nenhum dado disponível</div></div></div>
- </>;
+export default async function RelatóriosPage({ searchParams }) {
+  const supabase = await createServerClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+  if (authError || !user) redirect('/login');
+
+  // Buscar clínica do usuário
+  const { data: usuario } = await supabase
+    .from('usuario')
+    .select('clinica_id')
+    .eq('id', user.id)
+    .single();
+
+  if (!usuario) redirect('/login');
+
+  // Período do filtro (30/90/365, default 90)
+  const periodoParam = await searchParams;
+  const periodo = periodoParam?.periodo || '90';
+  const diasMap = { '30': 30, '90': 90, '365': 365 };
+  const dias = diasMap[periodo] || 90;
+  const dataLimite = new Date();
+  dataLimite.setDate(dataLimite.getDate() - dias);
+
+  // Query 1: KPIs
+  const { data: kpisData } = await supabase
+    .from('guia')
+    .select('valor_apresentado, valor_pago, valor_glosado, lote:lote_id(clinica_id)')
+    .gte('data_atendimento', dataLimite.toISOString());
+
+  const kpis = (kpisData ?? [])
+    .filter(g => g.lote?.clinica_id === usuario.clinica_id)
+    .reduce(
+      (acc, g) => ({
+        totalApresentado: acc.totalApresentado + (g.valor_apresentado || 0),
+        totalPago: acc.totalPago + (g.valor_pago || 0),
+        totalGlosado: acc.totalGlosado + (g.valor_glosado || 0),
+      }),
+      { totalApresentado: 0, totalPago: 0, totalGlosado: 0 }
+    );
+
+  // Query 2: Evolução mensal
+  const { data: guiasRaw } = await supabase
+    .from('guia')
+    .select('data_atendimento, valor_apresentado, valor_pago, valor_glosado, lote:lote_id(clinica_id)')
+    .gte('data_atendimento', dataLimite.toISOString());
+
+  const evolucaoMap = {};
+  (guiasRaw ?? [])
+    .filter(g => g.lote?.clinica_id === usuario.clinica_id)
+    .forEach(g => {
+      const mes = new Date(g.data_atendimento).toISOString().slice(0, 7);
+      if (!evolucaoMap[mes]) {
+        evolucaoMap[mes] = { mes, apresentado: 0, pago: 0, glosado: 0 };
+      }
+      evolucaoMap[mes].apresentado += g.valor_apresentado || 0;
+      evolucaoMap[mes].pago += g.valor_pago || 0;
+      evolucaoMap[mes].glosado += g.valor_glosado || 0;
+    });
+
+  const evolucao = Object.values(evolucaoMap)
+    .sort((a, b) => b.mes.localeCompare(a.mes));
+
+  // Query 3: Motivos
+  const { data: motivos } = await supabase
+    .from('v_glosa_por_motivo')
+    .select('*')
+    .eq('clinica_id', usuario.clinica_id)
+    .order('total_glosado', { ascending: false });
+
+  const temDados = kpis.totalGlosado > 0 || (motivos ?? []).length > 0 || evolucao.length > 0;
+
+  return (
+    <>
+      <div className="content-head">
+        <div>
+          <h1>Relatórios</h1>
+          <p>Análise detalhada de glosas e tendências de recuperação</p>
+        </div>
+        <Link href="/upload" className="primary"><Icon name="plus" />Novo upload</Link>
+      </div>
+
+      {!temDados ? (
+        <div className="page-card" style={{ padding: '2rem', textAlign: 'center' }}>
+          <p style={{ color: '#666', marginBottom: '1rem' }}>Nenhum dado disponível para o período selecionado.</p>
+          <Link href="/upload" className="primary">Enviar demonstrativo</Link>
+        </div>
+      ) : (
+        <RelatóriosClient
+          periodo={periodo}
+          kpis={kpis}
+          evolucao={evolucao}
+          motivos={motivos ?? []}
+        />
+      )}
+    </>
+  );
 }
