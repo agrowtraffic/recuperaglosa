@@ -1,19 +1,88 @@
-'use client';
-
-import { useState } from 'react';
 import Link from 'next/link';
+import { createServerClient } from '@/lib/supabase/server';
+import { redirect } from 'next/navigation';
 import { Icon } from '../_components/Icon';
-import { Toolbar, SelectFilter, Metric, DataTable } from '../_components/ui';
+import GlosasClient from './GlosasClient';
 
-export default function GlosasPage(){
- const [query,setQuery]=useState('');
- const [prioridade,setPrioridade]=useState('Todas');
- const filtered=[];
+export const dynamic = 'force-dynamic';
 
- return <>
-  <div className="content-head"><div><h1>Glosas</h1><p>Priorize valores glosados e oportunidades de recuperação</p></div><Link href="/upload" className="primary"><Icon name="plus"/>Novo upload</Link></div>
-  <Toolbar query={query} setQuery={setQuery} placeholder="Buscar guia, codigo ou motivo..."><SelectFilter value={prioridade} onChange={setPrioridade} options={['Todas','Alta','Media','Baixa']} label="Prioridade"/></Toolbar>
-  <div className="metric-row"><Metric label="Total glosado" value="R$ 0,00" warn/><Metric label="Recorrivel" value="R$ 0,00" positive/><Metric label="Em analise" value="R$ 0,00"/><Metric label="Nao recorrivel" value="R$ 0,00"/></div>
-  <div className="split-layout"><div className="page-card"><div className="card-title"><div><h2>Glosas identificadas</h2><p>Ordenadas por potencial de recuperacao</p></div></div><DataTable heads={['Guia','Codigo','Motivo','Valor','Prioridade','Situacao']} rows={filtered}/></div><aside className="insight-card"><span className="insight-icon"><Icon name="dollar"/></span><h3>Maior oportunidade</h3><strong>R$ 0,00</strong><p>Nenhuma glosa encontrada. Envie um demonstrativo para comecar.</p><Link href="/upload" className="primary full">Novo upload</Link></aside></div>
- </>;
+export default async function GlosasPage() {
+  const supabase = await createServerClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+  if (authError || !user) redirect('/login');
+
+  // Buscar clínica do usuário
+  const { data: usuario } = await supabase
+    .from('usuario')
+    .select('clinica_id')
+    .eq('id', user.id)
+    .single();
+
+  if (!usuario) redirect('/login');
+
+  // Subquery 1: lote_ids
+  const { data: lotes } = await supabase
+    .from('lote')
+    .select('id')
+    .eq('clinica_id', usuario.clinica_id);
+
+  const loteIds = (lotes ?? []).map(l => l.id);
+
+  if (loteIds.length === 0) {
+    return <GlosasClient glosas={[]} totalGlosado={0} recorrivel={0} maiorOportunidade={null}/>;
+  }
+
+  // Subquery 2: guia_ids
+  const { data: guiasData } = await supabase
+    .from('guia')
+    .select('id')
+    .in('lote_id', loteIds);
+
+  const guiaIds = (guiasData ?? []).map(g => g.id);
+
+  if (guiaIds.length === 0) {
+    return <GlosasClient glosas={[]} totalGlosado={0} recorrivel={0} maiorOportunidade={null}/>;
+  }
+
+  // Busca FINAL: itens com glosa
+  const { data: glosas } = await supabase
+    .from('item')
+    .select(`
+      id,
+      codigo_glosa,
+      motivo_glosa,
+      valor_glosado,
+      recorrivel,
+      quantidade,
+      guia:guia_id(numero_guia, beneficiario, lote:lote_id(operadora))
+    `)
+    .in('guia_id', guiaIds)
+    .gt('valor_glosado', 0)
+    .order('valor_glosado', { ascending: false });
+
+  // Formatar dados
+  const glosasData = (glosas ?? []).map(g => ({
+    id: g.id,
+    numeroGuia: g.guia?.numero_guia || '—',
+    beneficiario: g.guia?.beneficiario || '—',
+    operadora: g.guia?.lote?.operadora || '—',
+    codigoGlosa: g.codigo_glosa || '—',
+    motivoGlosa: g.motivo_glosa || '—',
+    valorGlosado: g.valor_glosado,
+    qtd: g.quantidade,
+    recorrivel: g.recorrivel,
+  }));
+
+  // Agregados
+  const totalGlosado = glosasData.reduce((s, g) => s + g.valorGlosado, 0);
+  const recurrivelTotal = glosasData.filter(g => g.recorrivel).reduce((s, g) => s + g.valorGlosado, 0);
+  const maiorOportunidade = glosasData.length > 0 ? glosasData[0] : null;
+
+  return (
+    <>
+      <div className="content-head"><div><h1>Glosas</h1><p>Priorize valores glosados e oportunidades de recuperação</p></div><Link href="/upload" className="primary"><Icon name="plus"/>Novo upload</Link></div>
+      <GlosasClient glosas={glosasData} totalGlosado={totalGlosado} recorrivel={recurrivelTotal} maiorOportunidade={maiorOportunidade}/>
+    </>
+  );
 }
