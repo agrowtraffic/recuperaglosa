@@ -1,19 +1,61 @@
-'use client';
-
-import { useState } from 'react';
 import Link from 'next/link';
+import { createServerClient } from '@/lib/supabase/server';
+import { redirect } from 'next/navigation';
 import { Icon } from '../_components/Icon';
-import { Toolbar, SelectFilter, Metric, DataTable } from '../_components/ui';
+import GuiasClient from './GuiasClient';
 
-export default function GuiasPage(){
- const [query,setQuery]=useState('');
- const [operadora,setOperadora]=useState('Todas');
- const filtered=[];
+export const dynamic = 'force-dynamic';
 
- return <>
-  <div className="content-head"><div><h1>Guias</h1><p>Consulte todas as guias identificadas nos demonstrativos</p></div><Link href="/upload" className="primary"><Icon name="plus"/>Novo upload</Link></div>
-  <Toolbar query={query} setQuery={setQuery} placeholder="Buscar guia, paciente ou operadora..."><SelectFilter value={operadora} onChange={setOperadora} options={['Todas','Unimed','Amil','SulAmérica','Bradesco']} label="Operadora"/></Toolbar>
-  <div className="metric-row"><Metric label="Guias auditadas" value="0"/><Metric label="Com glosa" value="0" warn/><Metric label="Sem glosa" value="0" positive/><Metric label="Taxa de aprovação" value="0%" positive/></div>
-  <div className="page-card"><div className="card-title"><div><h2>Guias auditadas</h2><p>Valores apresentados, pagos e glosados</p></div><button className="outline compact" disabled title="Em breve"><Icon name="download"/>Exportar</button></div><DataTable heads={['Nº da guia','Paciente','Operadora','Tipo','Apresentado','Pago','Glosado','']} rows={filtered}/></div>
- </>;
+export default async function GuiasPage() {
+  const supabase = await createServerClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+  if (authError || !user) redirect('/login');
+
+  // Buscar clínica do usuário
+  const { data: usuario } = await supabase
+    .from('usuario')
+    .select('clinica_id')
+    .eq('id', user.id)
+    .single();
+
+  if (!usuario) redirect('/login');
+
+  // Buscar lotes da clínica
+  const { data: lotes } = await supabase
+    .from('lote')
+    .select('id')
+    .eq('clinica_id', usuario.clinica_id);
+
+  const loteIds = (lotes ?? []).map(l => l.id);
+
+  // Buscar guias
+  const { data: guias } = await supabase
+    .from('guia')
+    .select('id, numero_guia, beneficiario, carteira, data_atendimento, valor_apresentado, valor_pago, valor_glosado, lote:lote_id(operadora)')
+    .in('lote_id', loteIds.length > 0 ? loteIds : ['00000000-0000-0000-0000-000000000000'])
+    .order('data_atendimento', { ascending: false });
+
+  const guiasData = (guias ?? []).map(g => ({
+    id: g.id,
+    numeroGuia: g.numero_guia,
+    beneficiario: g.beneficiario || '—',
+    operadora: g.lote?.operadora || '—',
+    dataAtendimento: g.data_atendimento ? new Date(g.data_atendimento).toLocaleDateString('pt-BR') : '—',
+    valorApresentado: g.valor_apresentado,
+    valorPago: g.valor_pago,
+    valorGlosado: g.valor_glosado,
+  }));
+
+  const totalGuias = guiasData.length;
+  const comGlosa = guiasData.filter(g => g.valorGlosado > 0).length;
+  const semGlosa = totalGuias - comGlosa;
+  const taxaAprovacao = totalGuias > 0 ? Math.round(((totalGuias - comGlosa) / totalGuias) * 100) : 0;
+
+  return (
+    <>
+      <div className="content-head"><div><h1>Guias</h1><p>Consulte todas as guias identificadas nos demonstrativos</p></div><Link href="/upload" className="primary"><Icon name="plus"/>Novo upload</Link></div>
+      <GuiasClient guias={guiasData} totalGuias={totalGuias} comGlosa={comGlosa} semGlosa={semGlosa} taxaAprovacao={taxaAprovacao}/>
+    </>
+  );
 }
