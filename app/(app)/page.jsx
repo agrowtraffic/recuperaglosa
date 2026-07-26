@@ -47,7 +47,7 @@ export default function OverviewPage(){
   <div className="content-head"><div><h1>Visão geral</h1><p>Acompanhe suas auditorias e valores recuperáveis</p></div><Link href="/upload" className="primary"><Icon name="plus"/>Novo upload</Link></div>
   {error&&<p style={{color:'#dc2626',marginBottom:16}}>{error}</p>}
   <div className="dashboard-grid">
-  <div className="kpi recoverable"><p>Valor recuperável</p><strong>{kpis.valorRecuperavel}</strong><small>em {motivosReal.length} motivos</small><Spark data={null}/></div>
+  <div className="kpi recoverable"><p>Valor recuperável</p><strong>{kpis.valorRecuperavel}</strong><small>em {motivosReal.length} motivos</small>{motivosReal.length > 0 && <Spark data={motivosReal}/>}</div>
   <Kpi title="Lotes processados" value={String(kpis.lotesProcessados)} sub="últimos 30 dias" icon="file" tone="green"/>
   <Kpi title="Guias auditadas" value={String(kpis.guiasAuditadas)} sub="últimos 30 dias" icon="file" tone="blue"/>
   <div className="reasons card"><h2>Motivos mais recorrentes</h2><div className="reason-content"><Donut data={motivosFormatted}/><div className="legend">{motivosFormatted.map(item=><Legend key={item.name} color={item.color} t={item.name} v={`${item.value}%`}/>)}</div></div><Link href="/relatorios" className="outline">Ver relatório completo</Link></div>
