@@ -7,34 +7,39 @@ import GuiasClient from './GuiasClient';
 export const dynamic = 'force-dynamic';
 
 export default async function GuiasPage() {
-  const supabase = await createServerClient();
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  try {
+    const supabase = await createServerClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-  if (authError || !user) redirect('/login');
+    if (authError || !user) redirect('/login');
 
-  // Buscar clínica do usuário
-  const { data: usuario } = await supabase
-    .from('usuario')
-    .select('clinica_id')
-    .eq('id', user.id)
-    .single();
+    // Buscar clínica do usuário
+    const { data: usuario } = await supabase
+      .from('usuario')
+      .select('clinica_id')
+      .eq('id', user.id)
+      .single();
 
-  if (!usuario) redirect('/completar-cadastro');
+    if (!usuario) redirect('/completar-cadastro');
 
-  // Buscar lotes da clínica
-  const { data: lotes } = await supabase
-    .from('lote')
-    .select('id')
-    .eq('clinica_id', usuario.clinica_id);
+    // Buscar lotes da clínica
+    const { data: lotes, error: lotesError } = await supabase
+      .from('lote')
+      .select('id')
+      .eq('clinica_id', usuario.clinica_id);
 
-  const loteIds = (lotes ?? []).map(l => l.id);
+    if (lotesError) throw new Error(`Erro ao buscar lotes: ${lotesError.message}`);
 
-  // Buscar guias
-  const { data: guias } = await supabase
-    .from('guia')
-    .select('id, numero_guia, beneficiario, carteira, data_atendimento, valor_apresentado, valor_pago, valor_glosado, lote:lote_id(operadora)')
-    .in('lote_id', loteIds.length > 0 ? loteIds : ['00000000-0000-0000-0000-000000000000'])
-    .order('data_atendimento', { ascending: false });
+    const loteIds = (lotes ?? []).map(l => l.id);
+
+    // Buscar guias
+    const { data: guias, error: guiasError } = await supabase
+      .from('guia')
+      .select('id, numero_guia, beneficiario, carteira, data_atendimento, valor_apresentado, valor_pago, valor_glosado, lote:lote_id(operadora)')
+      .in('lote_id', loteIds.length > 0 ? loteIds : ['00000000-0000-0000-0000-000000000000'])
+      .order('data_atendimento', { ascending: false });
+
+    if (guiasError) throw new Error(`Erro ao buscar guias: ${guiasError.message}`);
 
   const guiasData = (guias ?? []).map(g => ({
     id: g.id,
@@ -47,15 +52,20 @@ export default async function GuiasPage() {
     valorGlosado: g.valor_glosado,
   }));
 
-  const totalGuias = guiasData.length;
-  const comGlosa = guiasData.filter(g => g.valorGlosado > 0).length;
-  const semGlosa = totalGuias - comGlosa;
-  const taxaAprovacao = totalGuias > 0 ? Math.round(((totalGuias - comGlosa) / totalGuias) * 100) : 0;
+    const totalGuias = guiasData.length;
+    const comGlosa = guiasData.filter(g => g.valorGlosado > 0).length;
+    const semGlosa = totalGuias - comGlosa;
+    const taxaAprovacao = totalGuias > 0 ? Math.round(((totalGuias - comGlosa) / totalGuias) * 100) : 0;
 
-  return (
-    <>
-      <div className="content-head"><div><h1>Guias</h1><p>Consulte todas as guias identificadas nos demonstrativos</p></div><Link href="/upload" className="primary"><Icon name="plus"/>Novo upload</Link></div>
-      <GuiasClient guias={guiasData} totalGuias={totalGuias} comGlosa={comGlosa} semGlosa={semGlosa} taxaAprovacao={taxaAprovacao}/>
-    </>
-  );
+    return (
+      <>
+        <div className="content-head"><div><h1>Guias</h1><p>Consulte todas as guias identificadas nos demonstrativos</p></div><Link href="/upload" className="primary"><Icon name="plus"/>Novo upload</Link></div>
+        <GuiasClient guias={guiasData} totalGuias={totalGuias} comGlosa={comGlosa} semGlosa={semGlosa} taxaAprovacao={taxaAprovacao}/>
+      </>
+    );
+  } catch (error) {
+    console.error('❌ ERRO em /guias:', error);
+    console.error('Stack:', error.stack);
+    throw error;
+  }
 }
