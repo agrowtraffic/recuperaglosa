@@ -116,6 +116,10 @@ export default function LoginForm({ initialMode = 'login' }) {
           router.refresh();
           return;
         }
+        if (data.user?.identities?.length === 0) {
+          setError('Esse e-mail já tem uma conta. Tente fazer login ou recuperar sua senha.');
+          return;
+        }
         setSuccess({
           title: 'Confirme seu cadastro',
           message: `Enviamos a confirmação para ${normalizedEmail}.`,
