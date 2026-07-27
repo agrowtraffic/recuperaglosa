@@ -71,10 +71,15 @@ export async function GET() {
     console.log('✅ Lotes retornados:', lotes?.length ?? 0);
 
     // Contar guias
-    const { count: guiasCount } = await supabase
-      .from('guia')
-      .select('id', { count: 'exact', head: true })
-      .in('lote_id', (lotes ?? []).map(l => l.id));
+    const loteIds = (lotes ?? []).map(l => l.id);
+    let guiasCount = 0;
+    if (loteIds.length > 0) {
+      const { count } = await supabase
+        .from('guia')
+        .select('id', { count: 'exact', head: true })
+        .in('lote_id', loteIds);
+      guiasCount = count ?? 0;
+    }
 
     const valorRecuperavel = (lotes ?? []).reduce((s, l) => s + Number(l.total_glosado ?? 0), 0);
     const lotesProcessados = (lotes ?? []).filter(l => l.status === 'ok').length;
