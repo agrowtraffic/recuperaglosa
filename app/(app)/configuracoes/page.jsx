@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { Icon } from '../_components/Icon';
 import { Status, Field, Toggle } from '../_components/ui';
+import { atualizarClinica } from './actions';
+import { validarCNPJ } from '@/lib/validacao-cnpj';
 
 export default function ConfiguracoesPage(){
  const [section,setSection]=useState('Clínica');
@@ -38,18 +40,86 @@ export default function ConfiguracoesPage(){
 
 // TODO backend: e-mail financeiro, telefone, CNES e cidade não têm coluna
 // na tabela clinica ainda — ficam vazios até essas colunas existirem.
-// Nome e CNPJ já vêm reais de /api/dashboard. "Salvar alterações" ainda não
-// grava (não há endpoint de edição de perfil).
 function FormClinic({clinica,loading}){
+ const [nome,setNome]=useState('');
+ const [cnpj,setCnpj]=useState('');
+ const [saving,setSaving]=useState(false);
+ const [message,setMessage]=useState({type:'',text:''});
+ const [cnpjError,setCnpjError]=useState('');
+
+ useEffect(()=>{
+   if(clinica){
+     setNome(clinica.nome||'');
+     setCnpj(clinica.cnpj||'');
+   }
+ },[clinica]);
+
+ async function handleSubmit(e){
+   e.preventDefault();
+   setMessage({type:'',text:''});
+   setCnpjError('');
+
+   if(!nome.trim() || nome.trim().length < 2){
+     setMessage({type:'error',text:'Nome deve ter pelo menos 2 caracteres'});
+     return;
+   }
+
+   if(!validarCNPJ(cnpj)){
+     setCnpjError('CNPJ inválido (deve ter 14 dígitos ou estar em branco)');
+     return;
+   }
+
+   setSaving(true);
+   try{
+     const formData=new FormData();
+     formData.append('nome',nome.trim());
+     formData.append('cnpj',cnpj.trim());
+     const result=await atualizarClinica(formData);
+     if(result.error){
+       setMessage({type:'error',text:result.error});
+     }else{
+       setMessage({type:'success',text:'Alterações salvas com sucesso!'});
+       setNome(result.nome);
+       setCnpj(result.cnpj||'');
+     }
+   }catch(e){
+     console.error('Erro:',e);
+     setMessage({type:'error',text:'Erro ao salvar alterações'});
+   }finally{
+     setSaving(false);
+   }
+ }
+
  if(loading) return <p style={{color:'#94a3b8'}}>Carregando dados da clínica...</p>;
- return <form className="form-grid">
-  <Field label="Nome da clínica" value={clinica?.nome||''}/>
-  <Field label="CNPJ" value={clinica?.cnpj||''} placeholder="Não informado"/>
+
+ return <form onSubmit={handleSubmit} className="form-grid">
+  <div>
+   <label style={{display:'flex',flexDirection:'column',gap:6}}>
+    <span style={{fontWeight:500,color:'#334155',fontSize:14}}>Nome da clínica</span>
+    <input value={nome} onChange={e=>setNome(e.target.value)} placeholder="Nome da clínica" required
+     style={{padding:'10px 12px',border:'1px solid #cbd5e1',borderRadius:8,fontSize:14,fontFamily:'inherit'}}/>
+   </label>
+  </div>
+  <div>
+   <label style={{display:'flex',flexDirection:'column',gap:6}}>
+    <span style={{fontWeight:500,color:'#334155',fontSize:14}}>CNPJ</span>
+    <input value={cnpj} onChange={e=>{setCnpj(e.target.value);setCnpjError('');}} placeholder="00.000.000/0000-00"
+     style={{padding:'10px 12px',border:cnpjError?'1px solid #dc2626':'1px solid #cbd5e1',borderRadius:8,fontSize:14,fontFamily:'inherit'}}/>
+    {cnpjError && <p style={{color:'#dc2626',fontSize:12,margin:'4px 0 0'}}>{cnpjError}</p>}
+   </label>
+  </div>
   <Field label="E-mail financeiro" placeholder="Ainda não configurável"/>
   <Field label="Telefone" placeholder="Ainda não configurável"/>
   <Field label="CNES" placeholder="Ainda não configurável"/>
   <Field label="Cidade" placeholder="Ainda não configurável"/>
-  <div className="form-actions"><button type="button" className="primary" disabled title="Em breve — ainda não há endpoint para editar esses dados">Salvar alterações</button></div>
+  {message.text && (
+   <p style={{color:message.type==='error'?'#dc2626':'#16a34a',fontSize:14,padding:'12px',background:message.type==='error'?'#fee2e2':'#f0fdf4',borderRadius:8}}>
+    {message.text}
+   </p>
+  )}
+  <div className="form-actions"><button type="submit" disabled={saving || loading} style={{opacity:saving||loading?0.6:1,cursor:saving||loading?'not-allowed':'pointer'}}>
+   {saving?'Salvando...':'Salvar alterações'}
+  </button></div>
  </form>;
 }
 
