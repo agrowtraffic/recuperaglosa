@@ -42,7 +42,12 @@ begin
 
   insert into public.clinica (nome, cnpj, plano, status_assinatura)
   values (trim(p_nome_clinica), nullif(trim(p_cnpj), ''), 'trial', 'trial')
+  on conflict do nothing
   returning id into v_clinica_id;
+
+  if v_clinica_id is null then
+    raise exception 'Erro ao criar clínica: pode já existir uma criada anteriormente';
+  end if;
 
   insert into public.usuario (id, clinica_id, email, role, nome_completo, telefone, termos_versao, termos_aceito_em)
   values (v_uid, v_clinica_id, v_email, 'owner', nullif(trim(p_nome_completo), ''), nullif(trim(p_telefone), ''), p_termos_versao, now());

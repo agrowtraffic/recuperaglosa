@@ -28,7 +28,7 @@ export default function CompletarCadastroPage(){
   setLoading(true);
   try{
    const supabase = createClient();
-   const { error: rpcError } = await supabase.rpc('completar_cadastro', {
+   const { data: clinicaId, error: rpcError } = await supabase.rpc('completar_cadastro', {
      p_nome_clinica: nomeClinica.trim(),
      p_cnpj: cnpj.trim(),
      p_nome_completo: nomeCompleto.trim(),
@@ -37,6 +37,7 @@ export default function CompletarCadastroPage(){
      p_termos_versao: TERMOS_VERSAO,
    });
    if(rpcError) throw rpcError;
+   if(!clinicaId) throw new Error('RPC não retornou clinica_id');
    router.replace('/');
    router.refresh();
   }catch(e){
