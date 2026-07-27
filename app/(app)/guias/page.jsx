@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { createServerClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { Icon } from '../_components/Icon';
 import GuiasClient from './GuiasClient';
@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function GuiasPage() {
   try {
-    const supabase = await createServerClient();
+    const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) redirect('/login');
