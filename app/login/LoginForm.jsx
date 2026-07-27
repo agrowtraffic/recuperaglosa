@@ -103,7 +103,7 @@ export default function LoginForm({ initialMode = 'login' }) {
           email: normalizedEmail,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/auth/confirm?next=/`,
+            emailRedirectTo: `${window.location.origin}/auth/confirm?next=/completar-cadastro`,
             data: {
               nome: name.trim(),
               clinica_nome: clinic.trim(),

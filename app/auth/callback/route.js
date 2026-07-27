@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/server';
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
-  const next = '/';
+  const next = '/completar-cadastro';
 
   if (code) {
     const supabase = await createClient();
