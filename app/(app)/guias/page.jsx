@@ -19,7 +19,7 @@ export default async function GuiasPage() {
     .eq('id', user.id)
     .single();
 
-  if (!usuario) redirect('/login');
+  if (!usuario) redirect('/completar-cadastro');
 
   // Buscar lotes da clínica
   const { data: lotes } = await supabase

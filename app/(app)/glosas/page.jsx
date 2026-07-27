@@ -19,7 +19,7 @@ export default async function GlosasPage() {
     .eq('id', user.id)
     .single();
 
-  if (!usuario) redirect('/login');
+  if (!usuario) redirect('/completar-cadastro');
 
   // Subquery 1: lote_ids
   const { data: lotes } = await supabase

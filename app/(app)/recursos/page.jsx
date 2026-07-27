@@ -1,11 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Icon } from '../_components/Icon';
 import { Toolbar, SelectFilter, Metric, DataTable } from '../_components/ui';
 
 export default function RecursosPage(){
+ const router = useRouter();
  const [query,setQuery]=useState('');
  const [status,setStatus]=useState('Todos');
  const [clinica,setClinica]=useState(null);
@@ -17,12 +19,18 @@ export default function RecursosPage(){
  useEffect(()=>{
    let cancelled=false;
    fetch('/api/dashboard')
-     .then(res=>res.ok?res.json():null)
-     .then(json=>{ if(!cancelled) setClinica(json?.clinica||null); })
+     .then(res=>{
+       if(res.status === 404) {
+         router.replace('/completar-cadastro');
+         return null;
+       }
+       return res.ok?res.json():null;
+     })
+     .then(json=>{ if(!cancelled && json) setClinica(json?.clinica||null); })
      .catch(()=>{})
      .finally(()=>{ if(!cancelled) setLoading(false); });
    return ()=>{cancelled=true;};
- },[]);
+ },[router]);
 
  const isAssinante = clinica?.plano==='ativo';
 

@@ -19,7 +19,7 @@ export default async function RelatóriosPage({ searchParams }) {
     .eq('id', user.id)
     .single();
 
-  if (!usuario) redirect('/login');
+  if (!usuario) redirect('/completar-cadastro');
 
   // Período do filtro (30/90/365, default 90)
   const periodoParam = await searchParams;

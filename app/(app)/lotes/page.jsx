@@ -1,11 +1,13 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Icon } from '../_components/Icon';
 import { Toolbar, SelectFilter, Metric, DataTable, Status } from '../_components/ui';
 
 export default function LotesPage(){
+ const router = useRouter();
  const [dashboardData,setDashboardData]=useState(null);
  const [error,setError]=useState(null);
  const [query,setQuery]=useState('');
@@ -17,6 +19,10 @@ export default function LotesPage(){
      try{
        setError(null);
        const res=await fetch('/api/dashboard');
+       if(res.status === 404) {
+         router.replace('/completar-cadastro');
+         return;
+       }
        if(!res.ok) throw new Error(`Erro ${res.status}`);
        const json=await res.json();
        if(!cancelled) setDashboardData(json);
@@ -27,7 +33,7 @@ export default function LotesPage(){
    }
    load();
    return ()=>{cancelled=true;};
- },[]);
+ },[router]);
 
  const lotesData=dashboardData?.lotes||[];
  const filtered=useMemo(()=>lotesData.filter(x=>(x.arquivo.toLowerCase().includes(query.toLowerCase())||x.operadora.toLowerCase().includes(query.toLowerCase()))&&(operadora==='Todas'||x.operadora===operadora)),[query,operadora,lotesData]);
