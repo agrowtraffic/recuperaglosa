@@ -54,14 +54,21 @@ export default function LoginForm({ initialMode = 'login' }) {
       const supabase = createClient();
 
       if (isSignup) {
+        if (!firstName.trim()) { setError('Informe seu nome.'); setLoading(false); return; }
+        if (!lastName.trim()) { setError('Informe seu sobrenome.'); setLoading(false); return; }
+        if (!clinicName.trim()) { setError('Informe o nome da clínica.'); setLoading(false); return; }
+        if (!email.trim()) { setError('Informe seu e-mail.'); setLoading(false); return; }
+        if (password.length < 8) { setError('A senha deve ter pelo menos 8 caracteres.'); setLoading(false); return; }
+        if (!/[A-Z]/.test(password)) { setError('A senha deve conter letras maiúsculas.'); setLoading(false); return; }
+        if (!/[0-9]/.test(password)) { setError('A senha deve conter números.'); setLoading(false); return; }
         if (password !== confirmPassword) { setError('As senhas não coincidem.'); setLoading(false); return; }
         if (!acceptedTerms) { setError('Aceite os termos para continuar.'); setLoading(false); return; }
         const { error: signupError } = await supabase.auth.signUp({
-          email,
+          email: email.trim().toLowerCase(),
           password,
           options: {
             emailRedirectTo: `${window.location.origin}/auth/confirm`,
-            data: { firstName, lastName, clinicName }
+            data: { firstName: firstName.trim(), lastName: lastName.trim(), clinicName: clinicName.trim() }
           }
         });
         if (signupError) throw signupError;
