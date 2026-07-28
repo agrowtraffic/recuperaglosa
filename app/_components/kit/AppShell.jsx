@@ -91,10 +91,21 @@ export default function AppShell({
                 : "Libere os recursos de contestação."}
             </p>
             {plano !== "Ativo" && (
-              /* ⬛ PREENCHER: rota do checkout Stripe */
-              <Link href="/configuracoes/plano" className="rg-btn rg-btn-primary rg-btn-sm rg-btn-block">
+              <button
+                type="button"
+                className="rg-btn rg-btn-primary rg-btn-sm rg-btn-block"
+                onClick={async () => {
+                  try {
+                    const response = await fetch('/api/checkout', { method: 'POST' });
+                    const { checkoutUrl } = await response.json();
+                    if (checkoutUrl) window.location.href = checkoutUrl;
+                  } catch (error) {
+                    console.error('Erro ao criar checkout:', error);
+                  }
+                }}
+              >
                 Assinar
-              </Link>
+              </button>
             )}
           </div>
         </div>

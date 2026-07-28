@@ -8,6 +8,7 @@ export default function ConfiguracoesView({
   clinica = {
     nome: '',
     cnpj: '',
+    plano: 'trial',
     email_financeiro: '',
     telefone: '',
     cnes: '',
@@ -18,8 +19,22 @@ export default function ConfiguracoesView({
   const router = useRouter();
   const [secao, setSecao] = useState('clinica');
   const [salvando, setSalvando] = useState(false);
+  const [loadingCheckout, setLoadingCheckout] = useState(false);
 
-  const plano = 'Gratuito'; // ⬛ PREENCHER: vir de clinica.plano
+  const plano = clinica?.plano === 'ativo' || clinica?.plano === 'profissional' ? 'Profissional' : 'Gratuito';
+
+  async function handleCheckout() {
+    setLoadingCheckout(true);
+    try {
+      const response = await fetch('/api/checkout', { method: 'POST' });
+      const { checkoutUrl } = await response.json();
+      if (checkoutUrl) window.location.href = checkoutUrl;
+    } catch (error) {
+      console.error('Erro ao criar checkout:', error);
+    } finally {
+      setLoadingCheckout(false);
+    }
+  }
 
   return (
     <main className="rg-shell-content rg-stack">
@@ -163,10 +178,11 @@ export default function ConfiguracoesView({
               <button
                 type="button"
                 className="rg-btn rg-btn-primary"
-                onClick={() => router.push('/configuracoes?tab=assinatura')}
+                onClick={handleCheckout}
+                disabled={loadingCheckout}
                 style={{ width: '100%' }}
               >
-                Assinar agora — R$ 197/mês
+                {loadingCheckout ? 'Processando...' : 'Assinar agora — R$ 197/mês'}
               </button>
               <p style={{ margin: '8px 0 0', fontSize: 12, textAlign: 'center', color: '#8aa89e' }}>
                 Isso se paga com apenas R$ 197 do que você já identificou.
@@ -179,10 +195,11 @@ export default function ConfiguracoesView({
               <button
                 type="button"
                 className="rg-btn rg-btn-primary"
-                onClick={() => router.push('/configuracoes?tab=assinatura')}
+                onClick={handleCheckout}
+                disabled={loadingCheckout}
                 style={{ width: '100%' }}
               >
-                Assinar agora — R$ 197/mês
+                {loadingCheckout ? 'Processando...' : 'Assinar agora — R$ 197/mês'}
               </button>
               <p style={{ margin: '8px 0 0', fontSize: 12, textAlign: 'center', color: '#8aa89e' }}>
                 Cancelamento a qualquer momento, sem multa.
