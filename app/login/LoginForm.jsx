@@ -5,7 +5,9 @@
    Lógica de auth: ⬛ = onde plugar os handlers Supabase existentes.
    ============================================================ */
 import { useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { createClient } from '@/lib/supabase/client';
 import styles from './login.module.css';
 
 /* Força da senha — 0..4 */
@@ -22,6 +24,7 @@ function passwordScore(pwd) {
 const MODES = ['login', 'signup', 'magic', 'recovery'];
 
 export default function LoginForm({ initialMode = 'login' }) {
+  const router = useRouter();
   const [mode,            setMode           ] = useState(initialMode);
   const [email,           setEmail          ] = useState('');
   const [password,        setPassword       ] = useState('');
@@ -48,18 +51,43 @@ export default function LoginForm({ initialMode = 'login' }) {
     e.preventDefault();
     setError(''); setLoading(true);
     try {
+      const supabase = createClient();
+
       if (isSignup) {
-        if (password !== confirmPassword) { setError('As senhas não coincidem.'); return; }
-        if (!acceptedTerms) { setError('Aceite os termos para continuar.'); return; }
-        /* ⬛ await signUp({ email, password, firstName, lastName, clinicName }) */
+        if (password !== confirmPassword) { setError('As senhas não coincidem.'); setLoading(false); return; }
+        if (!acceptedTerms) { setError('Aceite os termos para continuar.'); setLoading(false); return; }
+        const { error: signupError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth/confirm`,
+            data: { firstName, lastName, clinicName }
+          }
+        });
+        if (signupError) throw signupError;
+        setSuccess(true);
       } else if (isRecovery) {
-        /* ⬛ await resetPasswordForEmail(email) */
-        setSuccess(true); return;
+        const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/auth/reset-password`
+        });
+        if (resetError) throw resetError;
+        setSuccess(true);
       } else if (isMagic) {
-        /* ⬛ await signInWithOtp({ email }) */
-        setSuccess(true); return;
+        const { error: otpError } = await supabase.auth.signInWithOtp({
+          email,
+          options: { emailRedirectTo: `${window.location.origin}/auth/confirm` }
+        });
+        if (otpError) throw otpError;
+        setSuccess(true);
       } else {
-        /* ⬛ await signInWithPassword({ email, password }) */
+        // Login com e-mail e senha
+        const { error: loginError } = await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
+        if (loginError) throw loginError;
+        router.replace('/');
+        router.refresh();
       }
     } catch (err) {
       setError(err?.message ?? 'Erro inesperado. Tente novamente.');
@@ -71,7 +99,14 @@ export default function LoginForm({ initialMode = 'login' }) {
   async function handleGoogle() {
     setLoading(true);
     try {
-      /* ⬛ await signInWithOAuth({ provider: 'google' }) */
+      const supabase = createClient();
+      const { error: oauthError } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`
+        }
+      });
+      if (oauthError) throw oauthError;
     } catch (err) {
       setError(err?.message ?? 'Erro ao entrar com Google.');
       setLoading(false);
@@ -166,15 +201,42 @@ export default function LoginForm({ initialMode = 'login' }) {
         {/* Campos de cadastro extras */}
         {isSignup && (
           <div className={styles.twoFields}>
-            <Field label="Nome" name="firstName" value={firstName}
-              onChange={setFirstName} placeholder="Seu nome" autoComplete="given-name" />
-            <Field label="Sobrenome" name="lastName" value={lastName}
-              onChange={setLastName} placeholder="Seu sobrenome" autoComplete="family-name" />
+            <div className={styles.fieldGroup}>
+              <label htmlFor="firstName">Nome</label>
+              <div className={styles.inputWrap}>
+                <input
+                  id="firstName" name="firstName" type="text"
+                  autoComplete="given-name" placeholder="Seu nome"
+                  value={firstName} onChange={(e) => setFirstName(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+            <div className={styles.fieldGroup}>
+              <label htmlFor="lastName">Sobrenome</label>
+              <div className={styles.inputWrap}>
+                <input
+                  id="lastName" name="lastName" type="text"
+                  autoComplete="family-name" placeholder="Seu sobrenome"
+                  value={lastName} onChange={(e) => setLastName(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
           </div>
         )}
         {isSignup && (
-          <Field label="Nome da clínica" name="clinicName" value={clinicName}
-            onChange={setClinicName} placeholder="Nome da sua clínica" autoComplete="organization" />
+          <div className={styles.fieldGroup}>
+            <label htmlFor="clinicName">Nome da clínica</label>
+            <div className={styles.inputWrap}>
+              <input
+                id="clinicName" name="clinicName" type="text"
+                autoComplete="organization" placeholder="Nome da sua clínica"
+                value={clinicName} onChange={(e) => setClinicName(e.target.value)}
+                required
+              />
+            </div>
+          </div>
         )}
 
         {/* E-mail */}
@@ -306,25 +368,6 @@ export default function LoginForm({ initialMode = 'login' }) {
           </button>
         )}
       </form>
-    </div>
-  );
-}
-
-/* Campo de texto genérico — nome, sobrenome, clínica */
-function Field({ label, name, value, onChange, placeholder, autoComplete }) {
-  return (
-    <div className={styles.fieldGroup}>
-      <label htmlFor={name}>{label}</label>
-      <div className={styles.inputWrap}>
-        <input
-          id={name} name={name} type="text"
-          autoComplete={autoComplete}
-          placeholder={placeholder}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          required
-        />
-      </div>
     </div>
   );
 }
