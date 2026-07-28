@@ -30,7 +30,7 @@ export default async function Configuracoes() {
   // Busca dados da clínica usando o clinica_id do usuario
   const { data: clinica, error: clinicaError } = await supabase
     .from('clinica')
-    .select('id, nome, cnpj, plano, email_financeiro, telefone, cnes, cidade')
+    .select('id, nome, cnpj, plano, status_assinatura')
     .eq('id', usuarioData.clinica_id)
     .single();
 
