@@ -1,88 +1,79 @@
-import Link from 'next/link';
-import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
-import { Icon } from '../_components/Icon';
-import GlosasClient from './GlosasClient';
+/* ============================================================
+   GLOSAS  →  app/(app)/glosas/page.jsx
+   O coração comercial: é onde o cliente decide "vou brigar por essa".
+   Ordenação padrão: valor × prazo (não por data).
+   ============================================================ */
+import { PageHeader, EmptyState, Money, Chip, StatusBadge } from "@/app/_components/kit/Primitives";
+import { MoneyRail, Prazo, BulkBar } from "@/app/_components/kit/Signature";
+import { DataList } from "@/app/_components/kit/Data";
+import { AlertTriangle } from "lucide-react";
 
-export const dynamic = 'force-dynamic';
-
-export default async function GlosasPage() {
-  const supabase = await createClient();
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-  if (authError || !user) redirect('/login');
-
-  // Buscar clínica do usuário
-  const { data: usuario } = await supabase
-    .from('usuario')
-    .select('clinica_id')
-    .eq('id', user.id)
-    .single();
-
-  if (!usuario) redirect('/completar-cadastro');
-
-  // Subquery 1: lote_ids
-  const { data: lotes } = await supabase
-    .from('lote')
-    .select('id')
-    .eq('clinica_id', usuario.clinica_id);
-
-  const loteIds = (lotes ?? []).map(l => l.id);
-
-  if (loteIds.length === 0) {
-    return <GlosasClient glosas={[]} totalGlosado={0} recorrivel={0} maiorOportunidade={null}/>;
-  }
-
-  // Subquery 2: guia_ids
-  const { data: guiasData } = await supabase
-    .from('guia')
-    .select('id')
-    .in('lote_id', loteIds);
-
-  const guiaIds = (guiasData ?? []).map(g => g.id);
-
-  if (guiaIds.length === 0) {
-    return <GlosasClient glosas={[]} totalGlosado={0} recorrivel={0} maiorOportunidade={null}/>;
-  }
-
-  // Busca FINAL: itens com glosa
-  const { data: glosas } = await supabase
-    .from('item')
-    .select(`
-      id,
-      codigo_glosa,
-      motivo_glosa,
-      valor_glosado,
-      recorrivel,
-      quantidade,
-      guia:guia_id(numero_guia, beneficiario, lote:lote_id(operadora))
-    `)
-    .in('guia_id', guiaIds)
-    .gt('valor_glosado', 0)
-    .order('valor_glosado', { ascending: false });
-
-  // Formatar dados
-  const glosasData = (glosas ?? []).map(g => ({
-    id: g.id,
-    numeroGuia: g.guia?.numero_guia || '—',
-    beneficiario: g.guia?.beneficiario || '—',
-    operadora: g.guia?.lote?.operadora || '—',
-    codigoGlosa: g.codigo_glosa || '—',
-    motivoGlosa: g.motivo_glosa || '—',
-    valorGlosado: g.valor_glosado,
-    qtd: g.quantidade,
-    recorrivel: g.recorrivel,
-  }));
-
-  // Agregados
-  const totalGlosado = glosasData.reduce((s, g) => s + g.valorGlosado, 0);
-  const recurrivelTotal = glosasData.filter(g => g.recorrivel).reduce((s, g) => s + g.valorGlosado, 0);
-  const maiorOportunidade = glosasData.length > 0 ? glosasData[0] : null;
-
+export default function Glosas() {
   return (
-    <>
-      <div className="content-head"><div><h1>Glosas</h1><p>Priorize valores glosados e oportunidades de recuperação</p></div><Link href="/upload" className="primary"><Icon name="plus"/>Novo upload</Link></div>
-      <GlosasClient glosas={glosasData} totalGlosado={totalGlosado} recorrivel={recurrivelTotal} maiorOportunidade={maiorOportunidade}/>
-    </>
+    <main className="rg-shell-content rg-stack">
+      <PageHeader eyebrow="Glosas" titulo="Dinheiro parado, ação clara"
+        descricao="Priorize o que contestar pelo valor, pelo motivo e pelo prazo que ainda resta."
+        acoes={<button className="rg-btn rg-btn-primary">Gerar recursos em lote</button>} />
+
+
+      {/* O fio do dinheiro — mesma peça em todas as telas de dado.
+          ⬛ PREENCHER: somas por estágio. */}
+      <MoneyRail atual="glosado" estagios={{
+        apresentado: { valor: 0, qtd: 0 },
+        recebido:    { valor: 0 },
+        glosado:     { valor: 0, qtd: 0 },
+        recurso:     { valor: 0, qtd: 0 },
+        recuperado:  { valor: 0 },
+      }} />
+
+      {/* Faixa de resumo: 3 números que orientam a decisão */}
+      <div className="rg-grid-kpi" style={{ gridTemplateColumns: "repeat(3, 1fr)" }}>
+        {/* ⬛ PREENCHER */}
+      </div>
+
+      <section className="rg-card">
+        <div className="rg-toolbar">
+          <Chip ativo>Recorríveis</Chip>
+          <Chip>Vence em 7 dias</Chip>
+          <Chip>Recurso enviado</Chip>
+          <Chip>Prazo vencido</Chip>
+          <Chip>Operadora</Chip>
+          <Chip>Motivo</Chip>
+        </div>
+
+        <DataList
+          colunas={[
+            { chave: "guia", titulo: "Guia", largura: 100 },
+            { chave: "procedimento", titulo: "Procedimento" },
+            { chave: "motivo", titulo: "Motivo da glosa" },
+            { chave: "operadora", titulo: "Operadora" },
+            { chave: "sel", titulo: "", largura: 36,
+              render: (l) => <input type="checkbox" className="rg-check" aria-label={`Selecionar guia ${l.guia}`} /* ⬛ */ /> },
+            { chave: "prazo", titulo: "Prazo", largura: 96, render: (l) => <Prazo dias={l.prazo} /> },
+            { chave: "valor", titulo: "Recuperável", alinhar: "right", render: (l) => <Money valor={l.valor} tam="sm" cor="var(--rg-glosado)" /> },
+            { chave: "status", titulo: "Status", render: (l) => <StatusBadge status={l.status} /> },
+            { chave: "acao", titulo: "", alinhar: "right",
+              render: () => <button className="rg-btn rg-btn-primary rg-btn-sm rg-acao-linha">Gerar recurso</button> },
+          ]}
+          mobile={{
+            titulo: (l) => l.procedimento,
+            sub: (l) => `Guia ${l.guia} · ${l.operadora}`,
+            status: (l) => l.status,
+            meta: [
+              { rotulo: "Recuperável", valor: (l) => <Money valor={l.valor} tam="sm" /> },
+              { rotulo: "Prazo", valor: (l) => <Prazo dias={l.prazo} /> },
+              { rotulo: "Motivo", valor: (l) => l.motivo },
+            ],
+          }}
+          linhas={[] /* ⬛ PREENCHER: itens com valor glosado > 0 */}
+          vazio={<EmptyState icone={AlertTriangle} titulo="Nenhuma glosa no período"
+            texto="Quando a operadora glosar algum item, ele aparece aqui com o motivo e o prazo." />}
+        />
+      </section>
+
+      {/* Seleção em massa: 12 recursos em um clique, não 12 cliques.
+          ⬛ PREENCHER: estado da seleção + ação de gerar em lote. */}
+      <BulkBar n={0} valor={0} rotulo="Gerar recursos" />
+    </main>
   );
 }
