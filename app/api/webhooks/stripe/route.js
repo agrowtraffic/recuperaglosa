@@ -1,9 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import { Resend } from 'resend';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 export async function POST(request) {
   try {
@@ -57,6 +59,72 @@ export async function POST(request) {
           console.error(`❌ [WEBHOOK] Erro ao atualizar clínica ${clinicaId}:`, updateError);
         } else if (updatedRows > 0) {
           console.log(`✅ [WEBHOOK] Clínica ${clinicaId} ativada com sucesso (${updatedRows} linhas atualizadas)`);
+
+          // Buscar email do usuario associado à clínica
+          const { data: usuarioData } = await supabaseAdmin
+            .from('usuario')
+            .select('id, email')
+            .eq('clinica_id', clinicaId)
+            .single();
+
+          if (usuarioData?.email && resend) {
+            try {
+              // Enviar e-mail de boas-vindas via Resend
+              await resend.emails.send({
+                from: 'Recupera Glosa <naoresponda@recuperaglosa.com.br>',
+                to: usuarioData.email,
+                subject: 'Seu plano Profissional está ativo 🎉',
+                html: `
+                  <!DOCTYPE html>
+                  <html>
+                    <head>
+                      <style>
+                        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; line-height: 1.6; color: #333; }
+                        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                        .header { text-align: center; padding-bottom: 30px; border-bottom: 2px solid #eee; }
+                        .logo { font-size: 24px; font-weight: bold; color: #16a34a; }
+                        .content { padding: 30px 0; }
+                        .benefits { list-style: none; padding: 0; }
+                        .benefits li { padding: 10px 0; padding-left: 30px; position: relative; }
+                        .benefits li:before { content: "✓"; position: absolute; left: 0; color: #16a34a; font-weight: bold; }
+                        .cta { text-align: center; margin: 30px 0; }
+                        .cta a { background-color: #16a34a; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; display: inline-block; }
+                        .footer { border-top: 1px solid #eee; padding-top: 20px; font-size: 12px; color: #666; text-align: center; }
+                      </style>
+                    </head>
+                    <body>
+                      <div class="container">
+                        <div class="header">
+                          <div class="logo">🎉 Bem-vindo ao RecuperaGlosa!</div>
+                        </div>
+                        <div class="content">
+                          <p>Olá,</p>
+                          <p>Seu pagamento foi confirmado com sucesso! Seu plano <strong>Profissional</strong> já está ativo.</p>
+                          <p style="margin-top: 20px; font-weight: bold;">Agora você tem acesso a:</p>
+                          <ul class="benefits">
+                            <li>Recursos de contestação completos e prontos para enviar</li>
+                            <li>Auditorias ilimitadas por mês (contra 3/mês no plano gratuito)</li>
+                            <li>Suporte prioritário da nossa equipe</li>
+                          </ul>
+                          <div class="cta">
+                            <a href="https://recuperaglosa.vercel.app">Acessar o RecuperaGlosa →</a>
+                          </div>
+                          <p>Qualquer dúvida ou sugestão, fale conosco: <strong>suporte@recuperaglosa.com.br</strong></p>
+                          <p>Abraço,<br/>Time RecuperaGlosa</p>
+                        </div>
+                        <div class="footer">
+                          <p>© 2026 RecuperaGlosa. Todos os direitos reservados.</p>
+                        </div>
+                      </div>
+                    </body>
+                  </html>
+                `
+              });
+              console.log(`✅ [WEBHOOK] E-mail enviado para ${usuarioData.email}`);
+            } catch (emailError) {
+              console.error(`⚠️ [WEBHOOK] Erro ao enviar e-mail para ${usuarioData.email}:`, emailError);
+            }
+          }
         } else {
           console.warn(`⚠️ [WEBHOOK] Nenhuma clínica encontrada com ID: ${clinicaId} (rows: ${updatedRows})`);
         }
