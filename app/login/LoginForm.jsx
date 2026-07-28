@@ -31,7 +31,6 @@ export default function LoginForm({ initialMode = 'login' }) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [firstName,       setFirstName      ] = useState('');
   const [lastName,        setLastName        ] = useState('');
-  const [clinicName,      setClinicName     ] = useState('');
   const [showPassword,    setShowPassword   ] = useState(false);
   const [acceptedTerms,   setAcceptedTerms  ] = useState(false);
   const [loading,         setLoading        ] = useState(false);
@@ -56,7 +55,6 @@ export default function LoginForm({ initialMode = 'login' }) {
       if (isSignup) {
         if (!firstName.trim()) { setError('Informe seu nome.'); setLoading(false); return; }
         if (!lastName.trim()) { setError('Informe seu sobrenome.'); setLoading(false); return; }
-        if (!clinicName.trim()) { setError('Informe o nome da clínica.'); setLoading(false); return; }
         if (!email.trim()) { setError('Informe seu e-mail.'); setLoading(false); return; }
         if (password.length < 8) { setError('A senha deve ter pelo menos 8 caracteres.'); setLoading(false); return; }
         if (!/[A-Z]/.test(password)) { setError('A senha deve conter letras maiúsculas.'); setLoading(false); return; }
@@ -68,7 +66,7 @@ export default function LoginForm({ initialMode = 'login' }) {
           password,
           options: {
             emailRedirectTo: `${window.location.origin}/auth/confirm`,
-            data: { firstName: firstName.trim(), lastName: lastName.trim(), clinicName: clinicName.trim() }
+            data: { firstName: firstName.trim(), lastName: lastName.trim() }
           }
         });
         if (signupError) throw signupError;
@@ -229,19 +227,6 @@ export default function LoginForm({ initialMode = 'login' }) {
                   required
                 />
               </div>
-            </div>
-          </div>
-        )}
-        {isSignup && (
-          <div className={styles.fieldGroup}>
-            <label htmlFor="clinicName">Nome da clínica</label>
-            <div className={styles.inputWrap}>
-              <input
-                id="clinicName" name="clinicName" type="text"
-                autoComplete="organization" placeholder="Nome da sua clínica"
-                value={clinicName} onChange={(e) => setClinicName(e.target.value)}
-                required
-              />
             </div>
           </div>
         )}
