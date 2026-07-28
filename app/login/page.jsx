@@ -1,11 +1,10 @@
-'use client';
-
 import Link from 'next/link';
 import { Brand } from '@/app/_components/kit/Brand';
 import LoginForm from './LoginForm';
 
-export default function LoginPage({ searchParams }) {
-  const initialMode = (searchParams?.modo === 'cadastro') ? 'signup' : 'login';
+export default async function LoginPage({ searchParams }) {
+  const params = await searchParams;
+  const initialMode = (params?.modo === 'cadastro') ? 'signup' : 'login';
 
   return (
     <div className="rg-auth">
