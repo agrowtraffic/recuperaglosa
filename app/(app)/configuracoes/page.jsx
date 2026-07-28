@@ -22,8 +22,14 @@ export default async function Configuracoes() {
     .eq('usuario_id', user.id)
     .single();
 
-  if (clinicaError || !clinica) {
-    return <div>Clínica não encontrada</div>;
+  if (clinicaError) {
+    console.error('Erro ao buscar clínica:', clinicaError);
+    return <div>Erro ao buscar clínica: {clinicaError.message}</div>;
+  }
+
+  if (!clinica) {
+    console.warn('Nenhuma clínica encontrada para usuario_id:', user.id);
+    return <div>Clínica não encontrada para o usuário {user.email}</div>;
   }
 
   // Busca valor glosado total (recuperável) da clínica
