@@ -5,6 +5,8 @@
 import { createClient } from '@/lib/supabase/server';
 import ConfiguracoesView from './View';
 
+export const revalidate = 0; // Sempre buscar dados frescos do banco
+
 export default async function Configuracoes() {
   const supabase = await createClient();
 

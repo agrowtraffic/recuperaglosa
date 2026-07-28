@@ -78,7 +78,7 @@ export async function POST(request) {
         },
       ],
       mode: 'subscription',
-      success_url: `${siteUrl}/?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${siteUrl}/pagamento-confirmado?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${siteUrl}/recursos`,
       metadata: { clinica_id: clinicaId },
     });
