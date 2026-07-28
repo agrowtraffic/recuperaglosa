@@ -15,11 +15,23 @@ export default async function Configuracoes() {
     return <div>Não autorizado</div>;
   }
 
-  // Busca dados da clínica
+  // Busca usuario do usuário autenticado para pegar clinica_id
+  const { data: usuarioData, error: usuarioError } = await supabase
+    .from('usuario')
+    .select('clinica_id')
+    .eq('id', user.id)
+    .single();
+
+  if (usuarioError || !usuarioData) {
+    console.error('Erro ao buscar usuário:', usuarioError);
+    return <div>Erro ao buscar dados do usuário: {usuarioError?.message}</div>;
+  }
+
+  // Busca dados da clínica usando o clinica_id do usuario
   const { data: clinica, error: clinicaError } = await supabase
     .from('clinica')
     .select('id, nome, cnpj, plano, email_financeiro, telefone, cnes, cidade')
-    .eq('usuario_id', user.id)
+    .eq('id', usuarioData.clinica_id)
     .single();
 
   if (clinicaError) {
