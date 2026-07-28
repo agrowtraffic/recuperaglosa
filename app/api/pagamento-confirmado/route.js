@@ -14,15 +14,27 @@ export async function GET(request) {
       return NextResponse.json({ error: 'session_id required' }, { status: 400 });
     }
 
-    // Buscar sessão no Stripe
-    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    console.log(`[PAGAMENTO] Verificando sessão: ${sessionId}`);
+
+    // Buscar sessão no Stripe com timeout de 10s
+    const sessionPromise = stripe.checkout.sessions.retrieve(sessionId);
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Stripe API timeout')), 10000)
+    );
+
+    const session = await Promise.race([sessionPromise, timeoutPromise]);
+
+    console.log(`[PAGAMENTO] Sessão encontrada - status: ${session.payment_status}`);
 
     return NextResponse.json({
       paymentStatus: session.payment_status, // 'paid' ou 'unpaid'
       stripePlano: session.metadata?.plano || 'profissional'
     });
   } catch (error) {
-    console.error('Erro ao buscar sessão Stripe:', error);
-    return NextResponse.json({ error: 'Invalid session' }, { status: 400 });
+    console.error('[PAGAMENTO] Erro ao buscar sessão Stripe:', error.message);
+    return NextResponse.json(
+      { error: error.message || 'Invalid session' },
+      { status: error.message?.includes('timeout') ? 504 : 400 }
+    );
   }
 }
