@@ -3,6 +3,12 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { parseDemonstrativo } from '@/src/tiss/parser';
 import { salvarLote } from '@/src/db/persistir';
+import { enviarNotificacaoGlosa } from '@/lib/emails';
+
+/* Janela de silêncio entre notificações de glosa da mesma clínica.
+   Quem sobe cinco demonstrativos seguidos não deve receber cinco
+   e-mails. */
+const JANELA_ANTI_SPAM_MS = 5 * 60 * 1000;
 
 export async function POST(req: Request) {
   const cookieStore = await cookies();
@@ -134,6 +140,59 @@ export async function POST(req: Request) {
       { error: 'banco_falhou', message: `Erro ao salvar no banco: ${e.message}` },
       { status: 500 }
     );
+  }
+
+  /* ── Notificação de glosa ───────────────────────────────────
+     Some o glosado das guias deste lote e avisa por e-mail. Nada
+     aqui pode derrubar o upload: o lote já está salvo, e falhar o
+     envio depois disso faria o usuário achar que perdeu o arquivo. */
+  try {
+    const { data: guiasDoLote } = await supabase
+      .from('guia')
+      .select('valor_glosado')
+      .eq('lote_id', resultado.loteId);
+
+    const totalGlosado = (guiasDoLote ?? []).reduce(
+      (soma, g) => soma + Number(g.valor_glosado ?? 0),
+      0
+    );
+    const guiasComGlosa = (guiasDoLote ?? []).filter((g) => Number(g.valor_glosado ?? 0) > 0).length;
+
+    if (totalGlosado <= 0) {
+      // Lote 100% pago: não existe "nada a reportar" que valha um e-mail.
+      console.log('📭 [UPLOAD] Lote sem glosa — nenhum e-mail enviado.');
+    } else {
+      /* Debounce de borda inicial: se já existe outro lote desta clínica
+         nos últimos 5 minutos, o e-mail daquele envio acabou de sair e
+         este seria spam. */
+      const desde = new Date(Date.now() - JANELA_ANTI_SPAM_MS).toISOString();
+      const { count: lotesRecentes } = await supabase
+        .from('lote')
+        .select('id', { count: 'exact', head: true })
+        .eq('clinica_id', usuario.clinica_id)
+        .neq('id', resultado.loteId)
+        .gte('criado_em', desde);
+
+      if ((lotesRecentes ?? 0) > 0) {
+        console.log(`🔕 [UPLOAD] ${lotesRecentes} lote(s) nos últimos 5 min — notificação suprimida.`);
+      } else {
+        const envio = await enviarNotificacaoGlosa({
+          para: user.email,
+          nomeClinica: clinica?.nome ?? 'sua clínica',
+          totalGlosado,
+          qtdGuias: guiasComGlosa,
+          planoPago: clinica?.plano === 'ativo',
+        });
+
+        if (envio.enviado) {
+          console.log(`✅ [UPLOAD] Notificação de glosa enviada para ${user.email}`);
+        } else {
+          console.warn(`⚠️ [UPLOAD] Notificação não enviada: ${envio.motivo}`);
+        }
+      }
+    }
+  } catch (e: any) {
+    console.error('⚠️ [UPLOAD] Falha ao notificar glosa (upload seguiu normal):', e.message);
   }
 
   return NextResponse.json({

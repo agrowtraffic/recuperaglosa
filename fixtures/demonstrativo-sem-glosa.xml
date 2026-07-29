@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Demonstrativo em que a operadora pagou tudo que foi apresentado.
+     Serve para checar que o app NÃO dispara notificação quando não há
+     glosa: "nada a reportar" não vale um e-mail. -->
+<ans:mensagemTISS xmlns:ans="http://www.ans.gov.br/padroes/tiss/schemas">
+  <ans:demonstrativoAnaliseConta>
+    <ans:nomeOperadora>OPERADORA BETA SAUDE</ans:nomeOperadora>
+    <ans:registroANS>309876</ans:registroANS>
+    <ans:numeroDemonstrativo>DEM-2026-0500</ans:numeroDemonstrativo>
+    <ans:competencia>2026-07</ans:competencia>
+
+    <ans:guiaDemonstrativo>
+      <ans:numeroGuiaPrestador>G-20001</ans:numeroGuiaPrestador>
+      <ans:numeroGuiaOperadora>OP-50001</ans:numeroGuiaOperadora>
+      <ans:nomeBeneficiario>PACIENTE PAGO INTEGRAL</ans:nomeBeneficiario>
+      <ans:numeroCarteira>0009876543</ans:numeroCarteira>
+      <ans:dataAtendimento>2026-07-08</ans:dataAtendimento>
+      <ans:procedimento>
+        <ans:codigoProcedimento>10101012</ans:codigoProcedimento>
+        <ans:descricaoProcedimento>Consulta em consultorio</ans:descricaoProcedimento>
+        <ans:quantidadeExecutada>1</ans:quantidadeExecutada>
+        <ans:valorApresentado>120.00</ans:valorApresentado>
+        <ans:valorPago>120.00</ans:valorPago>
+      </ans:procedimento>
+      <ans:procedimento>
+        <ans:codigoProcedimento>40201014</ans:codigoProcedimento>
+        <ans:descricaoProcedimento>Restauracao em resina</ans:descricaoProcedimento>
+        <ans:quantidadeExecutada>2</ans:quantidadeExecutada>
+        <ans:valorApresentado>300.00</ans:valorApresentado>
+        <ans:valorPago>300.00</ans:valorPago>
+      </ans:procedimento>
+    </ans:guiaDemonstrativo>
+
+    <ans:guiaDemonstrativo>
+      <ans:numeroGuiaPrestador>G-20002</ans:numeroGuiaPrestador>
+      <ans:nomeBeneficiario>PACIENTE PAGO INTEGRAL DOIS</ans:nomeBeneficiario>
+      <ans:dataAtendimento>2026-07-15</ans:dataAtendimento>
+      <ans:procedimento>
+        <ans:codigoProcedimento>40101010</ans:codigoProcedimento>
+        <ans:descricaoProcedimento>Radiografia periapical</ans:descricaoProcedimento>
+        <ans:quantidadeExecutada>2</ans:quantidadeExecutada>
+        <ans:valorApresentado>120.00</ans:valorApresentado>
+        <ans:valorPago>120.00</ans:valorPago>
+      </ans:procedimento>
+    </ans:guiaDemonstrativo>
+  </ans:demonstrativoAnaliseConta>
+</ans:mensagemTISS>
