@@ -8,6 +8,8 @@ import { MoneyRail } from "@/app/_components/kit/Signature";
 import { getContexto, getLotes, getGlosas, getRecursos, calcularResumo } from "@/lib/dados-clinica";
 import GlosasTabela from "./GlosasTabela";
 
+export const metadata = { title: 'Glosas' };
+
 export const dynamic = "force-dynamic";
 
 export default async function Glosas() {

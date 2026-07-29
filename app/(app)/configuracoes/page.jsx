@@ -5,6 +5,8 @@
 import { getContexto, getLotes, getGlosas, getRecursos, calcularResumo } from '@/lib/dados-clinica';
 import ConfiguracoesView from './View';
 
+export const metadata = { title: 'Configurações' };
+
 export const revalidate = 0; // Sempre buscar dados frescos do banco
 
 export default async function Configuracoes() {

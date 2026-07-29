@@ -12,6 +12,8 @@ import {
   agruparPorOperadora, agruparPorCompetencia,
 } from "@/lib/dados-clinica";
 
+export const metadata = { title: 'Relatórios' };
+
 export const dynamic = "force-dynamic";
 
 export default async function Relatorios() {

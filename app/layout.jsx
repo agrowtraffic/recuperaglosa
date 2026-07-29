@@ -1,13 +1,18 @@
 import './globals.css';
 import { Manrope } from 'next/font/google';
 
-const manrope = Manrope({ subsets: ['latin'], weights: [500, 700, 800] });
+/* Manrope é fonte variável — não se declara peso, o range vem inteiro.
+   (A chave `weights` que estava aqui nem existe na API do next/font.) */
+const manrope = Manrope({ subsets: ['latin'], display: 'swap' });
 
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: 'RecuperaGlosa — Visão geral',
-  description: 'Dashboard visual do SaaS RecuperaGlosa'
+  title: {
+    default: 'RecuperaGlosa',
+    template: '%s · RecuperaGlosa',
+  },
+  description: 'Auditoria de glosas de convênio para clínicas e consultórios.',
 };
 
 export default function RootLayout({ children }) {

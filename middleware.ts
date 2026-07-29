@@ -17,7 +17,7 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/lotes') || pathname.startsWith('/guias') ||
     pathname.startsWith('/glosas') || pathname.startsWith('/recursos') ||
     pathname.startsWith('/relatorios') || pathname.startsWith('/configuracoes') ||
-    pathname.startsWith('/upload');
+    pathname.startsWith('/upload') || pathname.startsWith('/pagamento-confirmado');
 
   if (!isProtected) {
     return NextResponse.next();
@@ -77,5 +77,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/', '/login', '/auth/callback', '/completar-cadastro', '/lotes/:path*', '/guias/:path*', '/glosas/:path*', '/recursos/:path*', '/relatorios/:path*', '/configuracoes/:path*', '/upload/:path*'],
+  matcher: ['/', '/completar-cadastro', '/lotes/:path*', '/guias/:path*', '/glosas/:path*', '/recursos/:path*', '/relatorios/:path*', '/configuracoes/:path*', '/upload/:path*', '/pagamento-confirmado/:path*'],
 };

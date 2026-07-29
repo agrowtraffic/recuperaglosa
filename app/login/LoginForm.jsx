@@ -118,17 +118,31 @@ export default function LoginForm({ initialMode = 'login' }) {
     }
   }
 
-  /* ── Estado de sucesso (magic link / recovery) ── */
+  /* ── Estado de sucesso (signup / magic link / recovery) ──
+     São três caminhos diferentes e cada um manda um e-mail diferente.
+     Antes o signup caía no texto de recuperação de senha: quem acabava
+     de criar conta lia "enviamos as instruções de recuperação". */
   if (success) {
+    const conteudo = isSignup
+      ? {
+          titulo: 'Confirme seu e-mail',
+          corpo: <>Enviamos um link de confirmação para <strong>{email}</strong>.<br />Clique nele para ativar sua conta.</>,
+        }
+      : isMagic
+        ? {
+            titulo: 'Link enviado!',
+            corpo: <>Enviamos um link de acesso para <strong>{email}</strong>.<br />Clique nele para entrar — sem senha.</>,
+          }
+        : {
+            titulo: 'E-mail enviado!',
+            corpo: <>Enviamos as instruções de recuperação para <strong>{email}</strong>.</>,
+          };
+
     return (
       <div className={styles.successCard}>
         <div className={styles.successIcon}>✓</div>
-        <h3>{isMagic ? 'Link enviado!' : 'E-mail enviado!'}</h3>
-        <p>
-          {isMagic
-            ? <>Enviamos um link de acesso para <strong>{email}</strong>.<br />Clique nele para entrar — sem senha.</>
-            : <>Enviamos as instruções de recuperação para <strong>{email}</strong>.</>}
-        </p>
+        <h3>{conteudo.titulo}</h3>
+        <p>{conteudo.corpo}</p>
         <small>Verifique também a pasta de spam.</small>
         <button type="button" onClick={() => { setSuccess(false); changeMode('login'); }}>
           ← Voltar para o login

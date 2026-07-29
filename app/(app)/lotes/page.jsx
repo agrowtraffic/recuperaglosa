@@ -8,6 +8,8 @@ import { UploadCloud } from "lucide-react";
 import { getContexto, getLotes } from "@/lib/dados-clinica";
 import UploadZone from "./UploadZone";
 
+export const metadata = { title: 'Lotes' };
+
 export const dynamic = "force-dynamic";
 
 export default async function Lotes() {

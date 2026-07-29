@@ -10,8 +10,17 @@ import styles from './login.module.css';
 /* Alturas das barras do gráfico decorativo (0–100) */
 const BARS = [22, 35, 28, 48, 38, 55, 45, 66, 58, 72, 68, 84];
 
+/* /auth/confirm e /auth/callback redirecionam para cá com ?erro=... quando
+   o link falha. Sem traduzir esses códigos, a pessoa via a tela de login
+   normal e não fazia ideia do que deu errado. */
+const ERROS = {
+  'link-invalido': 'Esse link expirou ou já foi usado. Peça um novo abaixo.',
+  oauth: 'Não foi possível entrar com o Google. Tente novamente ou use e-mail e senha.',
+};
+
 export default function LoginPage({ searchParams }) {
   const initialMode = searchParams?.modo === 'cadastro' ? 'signup' : 'login';
+  const erro = searchParams?.erro ? (ERROS[searchParams.erro] ?? 'Não foi possível concluir o acesso.') : null;
 
   return (
     <main className={styles.page}>
@@ -117,6 +126,12 @@ export default function LoginPage({ searchParams }) {
             <h2>Bem-vindo de volta</h2>
             <p>Informe seu e-mail para receber um link de acesso seguro.</p>
           </div>
+
+          {erro && (
+            <p role="alert" className={styles.errorMessage} style={{ marginBottom: 16 }}>
+              {erro}
+            </p>
+          )}
 
           {/* Formulário (Client Component) */}
           <LoginForm initialMode={initialMode} />

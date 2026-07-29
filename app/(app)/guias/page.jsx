@@ -8,6 +8,8 @@ import { MoneyRail } from "@/app/_components/kit/Signature";
 import { getContexto, getLotes, getGlosas, getRecursos, getGuias, calcularResumo } from "@/lib/dados-clinica";
 import GuiasTabela from "./GuiasTabela";
 
+export const metadata = { title: 'Guias' };
+
 export const dynamic = "force-dynamic";
 
 export default async function Guias() {

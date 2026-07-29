@@ -9,6 +9,8 @@ import { DataList } from "@/app/_components/kit/Data";
 import { FileCheck2, Lock } from "lucide-react";
 import { getContexto, getLotes, getGlosas, getRecursos, calcularResumo } from "@/lib/dados-clinica";
 
+export const metadata = { title: 'Recursos' };
+
 export const dynamic = "force-dynamic";
 
 const ROTULO_STATUS = {

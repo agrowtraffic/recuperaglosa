@@ -12,6 +12,8 @@ import {
   getContexto, getLotes, getGlosas, getRecursos, getMotivos, calcularResumo,
 } from "@/lib/dados-clinica";
 
+export const metadata = { title: 'Visão geral' };
+
 export const dynamic = "force-dynamic";
 
 export default async function VisaoGeral() {
