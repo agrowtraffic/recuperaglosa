@@ -14,6 +14,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CommandPalette, CommandTrigger } from "./Signature";
+import BotaoAssinar from "./BotaoAssinar";
+import { PLANO_PAGO } from "@/lib/plano";
 import { Brand } from "./Brand";
 import {
   LayoutDashboard, Boxes, FileText, AlertTriangle, FileCheck2,
@@ -86,26 +88,12 @@ export default function AppShell({
           <div className="rg-plan-card">
             <p className="rg-eyebrow">Plano {plano}</p>
             <p>
-              {plano === "Ativo"
+              {plano === PLANO_PAGO
                 ? "Recursos de contestação liberados."
                 : "Libere os recursos de contestação."}
             </p>
-            {plano !== "Ativo" && (
-              <button
-                type="button"
-                className="rg-btn rg-btn-primary rg-btn-sm rg-btn-block"
-                onClick={async () => {
-                  try {
-                    const response = await fetch('/api/checkout', { method: 'POST' });
-                    const { checkoutUrl } = await response.json();
-                    if (checkoutUrl) window.location.href = checkoutUrl;
-                  } catch (error) {
-                    console.error('Erro ao criar checkout:', error);
-                  }
-                }}
-              >
-                Assinar
-              </button>
+            {plano !== PLANO_PAGO && (
+              <BotaoAssinar variante="primary" tamanho="sm" bloco />
             )}
           </div>
         </div>

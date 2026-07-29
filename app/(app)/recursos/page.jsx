@@ -8,6 +8,8 @@ import { MoneyRail } from "@/app/_components/kit/Signature";
 import { DataList } from "@/app/_components/kit/Data";
 import { FileCheck2, Lock } from "lucide-react";
 import { getContexto, getLotes, getGlosas, getRecursos, calcularResumo } from "@/lib/dados-clinica";
+import { ehPago, PRECO_MENSAL } from "@/lib/plano";
+import BotaoAssinar from "@/app/_components/kit/BotaoAssinar";
 
 export const metadata = { title: 'Recursos' };
 
@@ -30,7 +32,7 @@ export default async function Recursos() {
   ]);
 
   const resumo = calcularResumo({ lotes, glosas, recursos });
-  const assinante = clinica?.plano === "ativo";
+  const assinante = ehPago(clinica);
 
   return (
     <main className="rg-shell-content rg-stack">
@@ -49,9 +51,9 @@ export default async function Recursos() {
               Você tem <Money valor={resumo.recuperavel} tam="md" cor="var(--rg-recuperado-h)" /> pronto para contestar
             </h2>
           </div>
-          <p className="rg-sub">A auditoria é livre. A geração dos recursos entra no plano de R$ 197/mês, sem fidelidade.</p>
+          <p className="rg-sub">A auditoria é livre. A geração dos recursos entra no plano de R$ {PRECO_MENSAL}/mês, sem fidelidade.</p>
           <div className="rg-row rg-row-wrap" style={{ marginTop: 8 }}>
-            <a href="/configuracoes" className="rg-btn rg-btn-primary">Liberar recursos</a>
+            <BotaoAssinar />
           </div>
         </section>
       )}

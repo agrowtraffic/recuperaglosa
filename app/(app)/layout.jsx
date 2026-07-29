@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import AppShell from '@/app/_components/kit/AppShell';
+import { nomeDoPlano } from '@/lib/plano';
 import { Settings, Lock } from 'lucide-react';
 
 export default function AppLayout({ children }){
@@ -60,12 +61,10 @@ export default function AppLayout({ children }){
    router.push('/lotes');
  }
 
- const planoAtivo = clinica?.plano === 'ativo';
-
  return (
    <AppShell
      nomeClinica={clinica?.nome || 'Sua clínica'}
-     plano={planoAtivo ? 'Ativo' : 'Gratuito'}
+     plano={nomeDoPlano(clinica)}
      contadores={contadores}
      onNovoLote={handleNovoLote}
    >

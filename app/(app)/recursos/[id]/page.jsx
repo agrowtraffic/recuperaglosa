@@ -9,6 +9,8 @@ import { notFound } from "next/navigation";
 import { PageHeader, Money, StatusBadge } from "@/app/_components/kit/Primitives";
 import { Lock, ArrowLeft } from "lucide-react";
 import { getContexto, getRecurso } from "@/lib/dados-clinica";
+import { ehPago, PLANO_PAGO } from "@/lib/plano";
+import BotaoAssinar from "@/app/_components/kit/BotaoAssinar";
 import AcoesRecurso from "./AcoesRecurso";
 
 export const metadata = { title: 'Recurso' };
@@ -24,7 +26,7 @@ const ROTULO_STATUS = {
 
 export default async function RecursoDetalhe({ params }) {
   const { supabase, clinicaId, clinica } = await getContexto();
-  const planoPago = clinica?.plano === "ativo";
+  const planoPago = ehPago(clinica);
 
   const recurso = await getRecurso(supabase, clinicaId, params.id, { planoPago });
 
@@ -100,7 +102,7 @@ export default async function RecursoDetalhe({ params }) {
               <div className="rg-row" style={{ gap: 10, marginBottom: 8 }}>
                 <Lock size={18} color="var(--rg-recuperado-h)" />
                 <h3 className="rg-h2" style={{ margin: 0 }}>
-                  A fundamentação está no plano Profissional
+                  A fundamentação está no plano {PLANO_PAGO}
                 </h3>
               </div>
               <p className="rg-sub" style={{ margin: "0 0 4px" }}>
@@ -115,9 +117,7 @@ export default async function RecursoDetalhe({ params }) {
                 </strong>
                 .
               </p>
-              <a href="/configuracoes" className="rg-btn rg-btn-primary">
-                Liberar por R$ 197/mês
-              </a>
+              <BotaoAssinar />
             </div>
           )}
         </div>

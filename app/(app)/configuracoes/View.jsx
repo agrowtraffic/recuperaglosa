@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PageHeader, Field, Money } from '@/app/_components/kit/Primitives';
 import { CheckCircle2, Upload } from 'lucide-react';
+import { ehPago, nomeDoPlano, PLANO_PAGO, PRECO_MENSAL, LOTES_GRATIS_POR_MES } from '@/lib/plano';
+import BotaoAssinar from '@/app/_components/kit/BotaoAssinar';
 import { atualizarClinica } from './actions';
 
 export default function ConfiguracoesView({
@@ -20,13 +22,13 @@ export default function ConfiguracoesView({
   const router = useRouter();
   const [secao, setSecao] = useState('clinica');
   const [salvando, setSalvando] = useState(false);
-  const [loadingCheckout, setLoadingCheckout] = useState(false);
   const [loadingPortal, setLoadingPortal] = useState(false);
   const [nome, setNome] = useState(clinica?.nome ?? '');
   const [cnpj, setCnpj] = useState(clinica?.cnpj ?? '');
   const [feedback, setFeedback] = useState(null); // { tipo: 'ok'|'erro', texto }
 
-  const plano = clinica?.plano === 'ativo' || clinica?.plano === 'profissional' ? 'Profissional' : 'Gratuito';
+  const assinante = ehPago(clinica);
+  const plano = nomeDoPlano(clinica);
 
   async function handleSalvar() {
     setSalvando(true);
@@ -79,19 +81,6 @@ export default function ConfiguracoesView({
       setFeedback({ tipo: 'erro', texto: 'Não foi possível abrir o portal de cobrança.' });
     } finally {
       setLoadingPortal(false);
-    }
-  }
-
-  async function handleCheckout() {
-    setLoadingCheckout(true);
-    try {
-      const response = await fetch('/api/checkout', { method: 'POST' });
-      const { checkoutUrl } = await response.json();
-      if (checkoutUrl) window.location.href = checkoutUrl;
-    } catch (error) {
-      console.error('Erro ao criar checkout:', error);
-    } finally {
-      setLoadingCheckout(false);
     }
   }
 
@@ -195,7 +184,7 @@ export default function ConfiguracoesView({
                   LIMITE MENSAL
                 </p>
                 <p style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#2d4a3e' }}>
-                  3 lotes/mês
+                  {assinante ? 'Ilimitado' : `${LOTES_GRATIS_POR_MES} lotes/mês`}
                 </p>
               </div>
               <div>
@@ -203,22 +192,22 @@ export default function ConfiguracoesView({
                   RECURSOS
                 </p>
                 <p style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#2d4a3e' }}>
-                  Com prévia
+                  {assinante ? 'Completos' : 'Só prévia'}
                 </p>
               </div>
             </div>
           </div>
 
           {/* NOVO: Lista de benefícios do plano pago */}
-          {plano === 'Gratuito' && (
+          {!assinante && (
             <>
               <p style={{ margin: '16px 0 8px', fontSize: 13, fontWeight: 700, color: '#2d4a3e' }}>
-                No plano pago você ganha:
+                No plano {PLANO_PAGO} você ganha:
               </p>
               <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: 8 }}>
                 {[
                   'Recursos de contestação completos e prontos para enviar',
-                  'Lotes ilimitados por mês (hoje: 3/mês)',
+                  `Lotes ilimitados por mês (hoje: ${LOTES_GRATIS_POR_MES}/mês)`,
                   'Auditoria de todas as guias, sem limite',
                 ].map((benefit) => (
                   <li key={benefit} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
@@ -232,37 +221,13 @@ export default function ConfiguracoesView({
             </>
           )}
 
-          {/* CTA melhorado */}
-          {plano === 'Gratuito' && valorRecuperavel > 0 && (
+          {!assinante && (
             <div style={{ marginTop: 20, paddingTop: 20, borderTop: '1px solid #dce8e2' }}>
-              <button
-                type="button"
-                className="rg-btn rg-btn-primary"
-                onClick={handleCheckout}
-                disabled={loadingCheckout}
-                style={{ width: '100%' }}
-              >
-                {loadingCheckout ? 'Processando...' : 'Assinar agora — R$ 197/mês'}
-              </button>
+              <BotaoAssinar bloco />
               <p style={{ margin: '8px 0 0', fontSize: 12, textAlign: 'center', color: '#8aa89e' }}>
-                Isso se paga com apenas R$ 197 do que você já identificou.
-              </p>
-            </div>
-          )}
-
-          {plano === 'Gratuito' && valorRecuperavel === 0 && (
-            <div style={{ marginTop: 20, paddingTop: 20, borderTop: '1px solid #dce8e2' }}>
-              <button
-                type="button"
-                className="rg-btn rg-btn-primary"
-                onClick={handleCheckout}
-                disabled={loadingCheckout}
-                style={{ width: '100%' }}
-              >
-                {loadingCheckout ? 'Processando...' : 'Assinar agora — R$ 197/mês'}
-              </button>
-              <p style={{ margin: '8px 0 0', fontSize: 12, textAlign: 'center', color: '#8aa89e' }}>
-                Cancelamento a qualquer momento, sem multa.
+                {valorRecuperavel > 0
+                  ? `Isso se paga com apenas R$ ${PRECO_MENSAL} do que você já identificou.`
+                  : 'Cancelamento a qualquer momento, sem multa.'}
               </p>
             </div>
           )}
