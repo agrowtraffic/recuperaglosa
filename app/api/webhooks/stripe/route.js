@@ -42,12 +42,16 @@ export async function POST(request) {
         );
         console.log(`🔔 [WEBHOOK] Tentando atualizar clinica ${clinicaId}...`);
 
+        /* Guardar o subscription_id junto: sem ele não dá para cancelar,
+           reconciliar nem conferir do nosso lado quem está pagando o quê.
+           A coluna existe no schema e vinha ficando sempre nula. */
         const { error: updateError, data: updateData } = await supabaseAdmin
           .from('clinica')
           .update({
             plano: 'ativo',
             status_assinatura: 'ativo',
             stripe_customer_id: session.customer,
+            stripe_subscription_id: session.subscription ?? null,
           })
           .eq('id', clinicaId)
           .select();

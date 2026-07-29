@@ -21,6 +21,7 @@ export default function ConfiguracoesView({
   const [secao, setSecao] = useState('clinica');
   const [salvando, setSalvando] = useState(false);
   const [loadingCheckout, setLoadingCheckout] = useState(false);
+  const [loadingPortal, setLoadingPortal] = useState(false);
   const [nome, setNome] = useState(clinica?.nome ?? '');
   const [cnpj, setCnpj] = useState(clinica?.cnpj ?? '');
   const [feedback, setFeedback] = useState(null); // { tipo: 'ok'|'erro', texto }
@@ -49,6 +50,35 @@ export default function ConfiguracoesView({
       setFeedback({ tipo: 'erro', texto: 'Não foi possível salvar. Tente novamente.' });
     } finally {
       setSalvando(false);
+    }
+  }
+
+  /* Portal do Stripe: é onde o cliente troca cartão, vê faturas e cancela.
+     O botão navegava para /configuracoes?tab=assinatura, uma aba que não
+     existe — ou seja, quem assinava não tinha como cancelar pelo app. */
+  async function handlePortal() {
+    setLoadingPortal(true);
+    setFeedback(null);
+    try {
+      const response = await fetch('/api/billing-portal', { method: 'POST' });
+      const dados = await response.json();
+
+      if (dados.portalUrl) {
+        window.location.href = dados.portalUrl;
+        return;
+      }
+
+      setFeedback({
+        tipo: 'erro',
+        texto: dados.error === 'sem_assinatura'
+          ? 'Nenhuma assinatura encontrada para esta clínica.'
+          : 'Não foi possível abrir o portal de cobrança.',
+      });
+    } catch (e) {
+      console.error('Erro ao abrir portal:', e);
+      setFeedback({ tipo: 'erro', texto: 'Não foi possível abrir o portal de cobrança.' });
+    } finally {
+      setLoadingPortal(false);
     }
   }
 
@@ -153,9 +183,10 @@ export default function ConfiguracoesView({
               <button
                 type="button"
                 className="rg-btn rg-btn-secondary rg-btn-sm"
-                onClick={() => router.push('/configuracoes?tab=assinatura')}
+                onClick={handlePortal}
+                disabled={loadingPortal}
               >
-                Gerenciar assinatura
+                {loadingPortal ? 'Abrindo…' : 'Gerenciar assinatura'}
               </button>
             </div>
             <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid #dce8e2', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>

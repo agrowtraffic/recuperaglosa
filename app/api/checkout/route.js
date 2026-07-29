@@ -65,6 +65,37 @@ export async function POST(request) {
       }
     }
 
+    /* ── Trava contra assinatura duplicada ──
+       Sem isto, cada clique em "Assinar" abre um checkout novo e o mesmo
+       cliente acumula assinaturas ativas — quatro cliques, quatro
+       cobranças de R$ 197 no mesmo cartão. Antes de abrir o checkout,
+       pergunta ao Stripe se este customer já tem assinatura viva. */
+    const assinaturasAtivas = await stripe.subscriptions.list({
+      customer: customerId,
+      status: 'active',
+      limit: 1,
+    });
+
+    const emTeste = await stripe.subscriptions.list({
+      customer: customerId,
+      status: 'trialing',
+      limit: 1,
+    });
+
+    if (assinaturasAtivas.data.length > 0 || emTeste.data.length > 0) {
+      const existente = assinaturasAtivas.data[0] ?? emTeste.data[0];
+      console.log(`⚠️ [CHECKOUT] Clínica ${clinicaId} já tem assinatura ${existente.id} — checkout recusado.`);
+
+      return NextResponse.json(
+        {
+          error: 'assinatura_existente',
+          message: 'Esta clínica já tem uma assinatura ativa. Use "Gerenciar assinatura" para alterar ou cancelar.',
+          subscriptionId: existente.id,
+        },
+        { status: 409 }
+      );
+    }
+
     // Criar Checkout Session
     console.log('✅ [CHECKOUT] Criando sessão com clinicaId:', clinicaId);
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` || 'https://recuperaglosa.vercel.app';
