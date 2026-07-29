@@ -1,8 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+
+/* O webhook do Stripe grava plano='ativo' na clinica. Aceita 'profissional'
+   também para tolerar renomeação futura do valor. */
+const PLANOS_PAGOS = new Set(['ativo', 'profissional']);
+const MAX_TENTATIVAS = 3;
+const INTERVALO_MS = 2000;
 
 export default function PagamentoConfirmadoClient() {
   const router = useRouter();
@@ -10,26 +16,38 @@ export default function PagamentoConfirmadoClient() {
   const sessionId = searchParams.get('session_id');
 
   const [status, setStatus] = useState('verificando'); // verificando | sucesso | erro | processando
-  const [planoAtivo, setPlanoAtivo] = useState(false);
-  const [tentativas, setTentativas] = useState(0);
+  /* Refs em vez de state: o retry roda dentro de um setTimeout e precisa
+     enxergar o valor atual, não o capturado no render que agendou. */
+  const vivoRef = useRef(true);
+  const timerRef = useRef(null);
 
   useEffect(() => {
+    vivoRef.current = true;
+
     if (!sessionId) {
       router.replace('/');
       return;
     }
 
-    verificarPagamento();
+    verificarPagamento(0);
+
+    return () => {
+      vivoRef.current = false;
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionId, router]);
 
-  async function verificarPagamento() {
+  async function verificarPagamento(tentativa) {
+    if (!vivoRef.current) return;
+
     try {
       const supabase = createClient();
 
       // Buscar usuario para pegar clinica_id
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       if (userError || !user) {
-        setStatus('erro');
+        if (vivoRef.current) setStatus('erro');
         return;
       }
 
@@ -40,7 +58,7 @@ export default function PagamentoConfirmadoClient() {
         .single();
 
       if (!usuarioData) {
-        setStatus('erro');
+        if (vivoRef.current) setStatus('erro');
         return;
       }
 
@@ -53,32 +71,33 @@ export default function PagamentoConfirmadoClient() {
 
       // Verificar sessão no Stripe
       const response = await fetch(`/api/pagamento-confirmado?session_id=${sessionId}`);
-      const { paymentStatus, stripePlano } = await response.json();
+      const { paymentStatus } = await response.json();
 
-      if (paymentStatus === 'paid') {
-        if (clinica?.plano === 'profissional') {
-          // Pagamento confirmado e plano atualizado no banco
-          setStatus('sucesso');
-          setPlanoAtivo(true);
-        } else {
-          // Pagamento confirmado mas plano ainda não atualizou (webhook pode estar atrasado)
-          if (tentativas < 3) {
-            setStatus('processando');
-            setTentativas(tentativas + 1);
-            // Retry após 2 segundos
-            setTimeout(() => verificarPagamento(), 2000);
-          } else {
-            // Após 3 tentativas, mostra sucesso mesmo assim (stripe confirmou, webhook virá)
-            setStatus('sucesso');
-            setPlanoAtivo(true);
-          }
-        }
-      } else {
+      if (!vivoRef.current) return;
+
+      if (paymentStatus !== 'paid') {
         setStatus('erro');
+        return;
       }
+
+      if (PLANOS_PAGOS.has(clinica?.plano)) {
+        // Pagamento confirmado e plano já atualizado no banco
+        setStatus('sucesso');
+        return;
+      }
+
+      if (tentativa < MAX_TENTATIVAS) {
+        // Webhook ainda não chegou — tenta de novo com o contador correto
+        setStatus('processando');
+        timerRef.current = setTimeout(() => verificarPagamento(tentativa + 1), INTERVALO_MS);
+        return;
+      }
+
+      // Stripe confirmou o pagamento; o webhook atualiza o banco em seguida
+      setStatus('sucesso');
     } catch (error) {
       console.error('Erro ao verificar pagamento:', error);
-      setStatus('erro');
+      if (vivoRef.current) setStatus('erro');
     }
   }
 
