@@ -2,31 +2,49 @@
    LOTES  →  app/(app)/lotes/page.jsx
    Tela de upload + histórico. É o começo de todo fluxo.
    ============================================================ */
+import { createClient } from "@/lib/supabase/server";
 import { PageHeader, EmptyState, StatusBadge, Money } from "@/app/_components/kit/Primitives";
 import { DataList } from "@/app/_components/kit/Data";
 import { UploadCloud } from "lucide-react";
+import UploadZone from "./UploadZone";
 
-export default function Lotes() {
+export const dynamic = "force-dynamic";
+
+export default async function Lotes() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const { data: usuario } = await supabase
+    .from("usuario")
+    .select("clinica_id")
+    .eq("id", user.id)
+    .single();
+
+  const clinicaId = usuario?.clinica_id;
+
+  const { data: clinica } = await supabase
+    .from("clinica")
+    .select("plano")
+    .eq("id", clinicaId)
+    .single();
+
+  const inicioMes = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString();
+
+  const { count: lotesDoMes } = await supabase
+    .from("lote")
+    .select("*", { count: "exact", head: true })
+    .eq("clinica_id", clinicaId)
+    .gte("criado_em", inicioMes);
+
+  const isGratuito = clinica?.plano !== "ativo";
+  const analisesRestantes = Math.max(0, 3 - (lotesDoMes ?? 0));
+
   return (
     <main className="rg-shell-content rg-stack">
       <PageHeader eyebrow="Lotes" titulo="O começo de toda recuperação"
         descricao="Cada XML da operadora vira uma leitura clara do que foi pago, glosado e recuperável." />
 
-      {/* Zona de upload — no celular vira botão cheio; arrastar não existe no toque */}
-      <section className="rg-card rg-card-pad rg-upload">
-        <div className="rg-stack-sm" style={{ alignItems: "center", textAlign: "center", padding: "24px 0" }}>
-          <span className="rg-empty-icon"><UploadCloud size={24} /></span>
-          <h2 className="rg-h2">Arraste o XML aqui</h2>
-          <p className="rg-sub">Padrão TISS. Até 10 arquivos por vez.</p>
-          <label className="rg-btn rg-btn-primary rg-btn-lg" style={{ marginTop: 8 }}>
-            Escolher arquivo
-            <input type="file" accept=".xml" multiple className="rg-sr" /* ⬛ PREENCHER: handler */ />
-          </label>
-          <p className="rg-caption">{"⬛ 3 de 5 envios usados no plano gratuito"}</p>
-        </div>
-        {/* ⬛ PREENCHER: durante o processamento, trocar por barra de progresso
-            com nome do arquivo + "Lendo guias…" / "Auditando…" / "Pronto" */}
-      </section>
+      <UploadZone isGratuito={isGratuito} analisesRestantes={analisesRestantes} />
 
       <section className="rg-card">
         <div className="rg-card-head"><h2 className="rg-h2">Histórico</h2></div>

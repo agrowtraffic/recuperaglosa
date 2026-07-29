@@ -23,8 +23,8 @@ export default async function VisaoGeral() {
         <div className="rg-card">
           <EmptyState icone={Upload}
             titulo="Nenhum demonstrativo enviado"
-            texto="Aceita arquivo XML no padrão TISS. Pode enviar vários de uma vez."
-            acao={<button className="rg-btn rg-btn-primary rg-btn-lg">Enviar XML</button>} />
+            texto="Aceita arquivo XML no padrão TISS."
+            acao={<a href="/lotes" className="rg-btn rg-btn-primary rg-btn-lg">Enviar XML</a>} />
         </div>
       </main>
     );
