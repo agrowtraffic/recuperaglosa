@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PageHeader, Field, Money } from '@/app/_components/kit/Primitives';
 import { CheckCircle2, Upload } from 'lucide-react';
+import { atualizarClinica } from './actions';
 
 export default function ConfiguracoesView({
   clinica = {
@@ -20,8 +21,36 @@ export default function ConfiguracoesView({
   const [secao, setSecao] = useState('clinica');
   const [salvando, setSalvando] = useState(false);
   const [loadingCheckout, setLoadingCheckout] = useState(false);
+  const [nome, setNome] = useState(clinica?.nome ?? '');
+  const [cnpj, setCnpj] = useState(clinica?.cnpj ?? '');
+  const [feedback, setFeedback] = useState(null); // { tipo: 'ok'|'erro', texto }
 
   const plano = clinica?.plano === 'ativo' || clinica?.plano === 'profissional' ? 'Profissional' : 'Gratuito';
+
+  async function handleSalvar() {
+    setSalvando(true);
+    setFeedback(null);
+    try {
+      const formData = new FormData();
+      formData.append('nome', nome);
+      formData.append('cnpj', cnpj);
+
+      const resultado = await atualizarClinica(formData);
+
+      if (resultado?.error) {
+        setFeedback({ tipo: 'erro', texto: resultado.error });
+        return;
+      }
+
+      setFeedback({ tipo: 'ok', texto: 'Dados da clínica atualizados.' });
+      router.refresh(); // recarrega o Server Component com os dados novos
+    } catch (e) {
+      console.error('Erro ao salvar clínica:', e);
+      setFeedback({ tipo: 'erro', texto: 'Não foi possível salvar. Tente novamente.' });
+    } finally {
+      setSalvando(false);
+    }
+  }
 
   async function handleCheckout() {
     setLoadingCheckout(true);
@@ -217,22 +246,44 @@ export default function ConfiguracoesView({
         <div className="rg-card-pad rg-stack">
           <div className="rg-grid-half">
             <Field id="nome" label="Nome da clínica">
-              <input id="nome" className="rg-input" defaultValue={clinica.nome} />
+              <input
+                id="nome"
+                className="rg-input"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+              />
             </Field>
             <Field id="cnpj" label="CNPJ" ajuda="Aparece nos recursos enviados à operadora">
-              <input id="cnpj" className="rg-input" inputMode="numeric" defaultValue={clinica.cnpj} />
+              <input
+                id="cnpj"
+                className="rg-input"
+                inputMode="numeric"
+                value={cnpj}
+                onChange={(e) => setCnpj(e.target.value)}
+              />
             </Field>
           </div>
+
+          {feedback && (
+            <p
+              role="status"
+              style={{
+                margin: 0,
+                fontSize: 13,
+                color: feedback.tipo === 'ok' ? '#166534' : '#991b1b',
+              }}
+            >
+              {feedback.tipo === 'ok' ? '✓ ' : '⚠ '}{feedback.texto}
+            </p>
+          )}
+
           <div className="rg-row">
             <div className="rg-spacer" />
             <button
               type="button"
               className="rg-btn rg-btn-primary"
               disabled={salvando}
-              onClick={() => {
-                setSalvando(true);
-                /* ⬛ PREENCHER: chamar mutation Supabase */
-              }}
+              onClick={handleSalvar}
             >
               {salvando ? 'Salvando…' : 'Salvar alterações'}
             </button>
