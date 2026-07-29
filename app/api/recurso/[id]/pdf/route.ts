@@ -25,10 +25,41 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   );
 
   try {
-    // Debug: verificar autenticação
-    const { data: user } = await supabase.auth.getUser();
-    console.log('🔐 [PDF] Usuário autenticado na rota:', user?.user?.id ?? 'NENHUM');
-    console.log('📋 [PDF] Buscando recurso com ID:', params.id);
+    /* ── Autenticação e plano ──
+       O RLS já impede ler recurso de outra clínica, mas não sabe nada de
+       plano: sem esta checagem, qualquer conta gratuita baixa o PDF
+       chamando a rota direto, e o paywall da tela vira enfeite. */
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: 'nao_autenticado' }, { status: 401 });
+    }
+
+    const { data: usuario } = await supabase
+      .from('usuario')
+      .select('clinica_id')
+      .eq('id', user.id)
+      .single();
+
+    if (!usuario) {
+      return NextResponse.json({ error: 'usuario_sem_clinica' }, { status: 403 });
+    }
+
+    const { data: clinicaPlano } = await supabase
+      .from('clinica')
+      .select('plano')
+      .eq('id', usuario.clinica_id)
+      .single();
+
+    if (clinicaPlano?.plano !== 'ativo') {
+      return NextResponse.json(
+        {
+          error: 'plano_insuficiente',
+          message: 'O download do recurso faz parte do plano Profissional.',
+        },
+        { status: 402 }
+      );
+    }
 
     // Buscar o recurso com todas as informações relacionadas
     const { data: recurso, error } = await supabase
@@ -65,23 +96,11 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
       .eq('id', params.id)
       .single();
 
-    console.log('❌ [PDF] Erro da query (se houver):', error?.message ?? 'nenhum');
-    console.log('✅ [PDF] Recurso retornado:', recurso ? 'SIM' : 'NÃO');
-
     if (error || !recurso) {
-      console.error('❌ [PDF] Erro ao buscar recurso:', error?.message || 'Recurso nulo');
-      return NextResponse.json(
-        {
-          error: 'Recurso não encontrado',
-          debug: {
-            errorMessage: error?.message,
-            recursoNull: !recurso,
-            userId: user?.user?.id,
-            recursoId: params.id,
-          }
-        },
-        { status: 404 }
-      );
+      /* Sem detalhe do banco na resposta: o cliente não precisa saber se
+         o recurso não existe ou se pertence a outra clínica. */
+      console.error('[PDF] Recurso não encontrado:', params.id, error?.message ?? '');
+      return NextResponse.json({ error: 'recurso_nao_encontrado' }, { status: 404 });
     }
 
     // Preparar dados para o PDF (com type assertion)
@@ -90,13 +109,6 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     const lote = Array.isArray(guia?.lote) ? guia.lote[0] : guia?.lote;
     const clinica = lote?.clinica;
     const itens = guia?.item || [];
-
-    if (guia) {
-      console.log('   - Tem guia?', !!guia);
-      console.log('   - Tem lote?', !!lote);
-      console.log('   - Tem clínica?', !!clinica);
-      console.log('   - Tem itens?', (itens?.length ?? 0) + ' itens');
-    }
 
     // Filtrar itens recorríveis
     const recorriveis = itens.filter((i: any) => i.recorrivel);

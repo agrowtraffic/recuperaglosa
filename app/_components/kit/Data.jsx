@@ -123,6 +123,12 @@ export function DataList({ colunas = [], linhas = [], mobile, onLinhaClick, vazi
 
             {mobile?.barra?.(l) && <RecoveryBar {...mobile.barra(l)} sm />}
 
+            {/* Ação da linha no celular. Sem isto, colunas de ação some
+                no cartão e o usuário de celular fica sem o botão. */}
+            {mobile?.acao?.(l) && (
+              <div className="rg-row" style={{ marginTop: 4 }}>{mobile.acao(l)}</div>
+            )}
+
             {onLinhaClick && (
               <span className="rg-row rg-caption" style={{ gap: 4, color: "var(--rg-recuperado-h)", fontWeight: 700 }}>
                 Ver detalhes <ChevronRight size={14} />

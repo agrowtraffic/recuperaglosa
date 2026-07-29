@@ -70,12 +70,25 @@ export default async function Recursos() {
             { chave: "gerado", titulo: "Gerado em" },
             { chave: "valor", titulo: "Valor contestado", alinhar: "right", render: (l) => <Money valor={l.valor} tam="sm" /> },
             { chave: "status", titulo: "Status", render: (l) => <StatusBadge status={ROTULO_STATUS[l.status] || "analise"} /> },
+            {
+              chave: "acao", titulo: "", alinhar: "right",
+              render: (l) => (
+                <a href={`/recursos/${l.id}`} className="rg-btn rg-btn-secondary rg-btn-sm">
+                  {assinante ? "Abrir" : "Ver prévia"}
+                </a>
+              ),
+            },
           ]}
           mobile={{
             titulo: (l) => `Guia ${l.guia}`,
             sub: (l) => `${l.operadora} · ${l.gerado}`,
             status: (l) => ROTULO_STATUS[l.status] || "analise",
             meta: [{ rotulo: "Contestado", valor: (l) => <Money valor={l.valor} tam="sm" /> }],
+            acao: (l) => (
+              <a href={`/recursos/${l.id}`} className="rg-btn rg-btn-secondary rg-btn-sm">
+                {assinante ? "Abrir recurso" : "Ver prévia"}
+              </a>
+            ),
           }}
           linhas={recursos}
           vazio={<EmptyState icone={FileCheck2} titulo="Nenhum recurso gerado"
