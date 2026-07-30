@@ -69,7 +69,7 @@ export async function POST(request) {
             .from('usuario')
             .select('id, email')
             .eq('clinica_id', clinicaId)
-            .single();
+            .maybeSingle();
 
           if (usuarioData?.email && resend) {
             try {

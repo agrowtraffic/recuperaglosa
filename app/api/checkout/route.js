@@ -98,7 +98,7 @@ export async function POST(request) {
 
     // Criar Checkout Session
     console.log('✅ [CHECKOUT] Criando sessão com clinicaId:', clinicaId);
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` || 'https://recuperaglosa.vercel.app';
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || (process.env.NEXT_PUBLIC_VERCEL_URL ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` : 'https://recuperaglosa.vercel.app');
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       payment_method_types: ['card'],
