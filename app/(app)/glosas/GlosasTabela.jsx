@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { EmptyState, Money, Chip, StatusBadge } from '@/app/_components/kit/Primitives';
 import { Prazo, BulkBar } from '@/app/_components/kit/Signature';
 import { DataList } from '@/app/_components/kit/Data';
@@ -14,6 +15,7 @@ const FILTROS = [
 ];
 
 export default function GlosasTabela({ glosas }) {
+  const router = useRouter();
   const [filtro, setFiltro] = useState('recorriveis');
   const [selecionadas, setSelecionadas] = useState(() => new Set());
 
@@ -106,7 +108,13 @@ export default function GlosasTabela({ glosas }) {
         <BulkBar
           n={visiveisSelecionadas.length}
           valor={valorSelecionado}
-          rotulo="Gerar recursos"
+          /* O recurso já é gerado automaticamente no upload (salvarLote()
+             cria um por guia recorrível), então não existe "gerar" aqui —
+             o documento já existe como rascunho. O botão leva para onde
+             ele está. Criar de novo duplicaria a linha em `recurso`, que
+             não tem unique em guia_id. */
+          rotulo="Ver recursos gerados"
+          onAcao={() => router.push('/recursos')}
           onLimpar={() => setSelecionadas(new Set())}
         />
       )}
