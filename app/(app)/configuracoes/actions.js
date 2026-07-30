@@ -24,6 +24,12 @@ export async function atualizarClinica(formData) {
 
   const nome = formData.get('nome')?.trim();
   const cnpj = formData.get('cnpj')?.trim() || '';
+  const responsavelNome = formData.get('responsavel_nome')?.trim() || '';
+  const responsavelConselho = formData.get('responsavel_conselho')?.trim() || '';
+  const responsavelRegistro = formData.get('responsavel_registro')?.trim() || '';
+  const responsavelUf = formData.get('responsavel_uf')?.trim().toUpperCase() || '';
+  const cnes = formData.get('cnes')?.trim() || '';
+  const codigoPrestador = formData.get('codigo_prestador')?.trim() || '';
 
   // Validações
   if (!nome || nome.length < 2) {
@@ -34,12 +40,22 @@ export async function atualizarClinica(formData) {
     return { error: 'CNPJ inválido (deve ter 14 dígitos ou estar em branco)' };
   }
 
+  if (responsavelUf && responsavelUf.length !== 2) {
+    return { error: 'UF do conselho deve ter 2 letras (ex: SP)' };
+  }
+
   // Atualizar na tabela clinica
   const { error: updateError } = await supabase
     .from('clinica')
     .update({
       nome: nome,
       cnpj: cnpj || null,
+      responsavel_nome: responsavelNome || null,
+      responsavel_conselho: responsavelConselho || null,
+      responsavel_registro: responsavelRegistro || null,
+      responsavel_uf: responsavelUf || null,
+      cnes: cnes || null,
+      codigo_prestador: codigoPrestador || null,
     })
     .eq('id', usuario.clinica_id);
 

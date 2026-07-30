@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Demonstrativo com glosas RECORRÍVEIS, para exercitar a geração de recurso.
+
+  Os outros fixtures usam códigos que, na Tabela 38 oficial, são glosas
+  legítimas (1007 carência, 1701 prazo, 1010 falta de assinatura). Eles
+  testam a triagem — provam que o app sabe dizer "não gaste seu tempo".
+  Este testa o caminho oposto: glosa com tese, recurso gerado.
+
+  Códigos usados, todos da Tabela 38:
+    1402  PROCEDIMENTO NÃO AUTORIZADO                    -> recorrer
+    3007  PROCEDIMENTOS ODONTOLÓGICOS DUPLICADOS         -> recorrer
+    2601  CODIFICAÇÃO INCORRETA/INADEQUADA DO PROCEDIMENTO -> recorrer
+    3081  RADIOGRAFIA INICIAL NÃO ENVIADA                -> enviar documento
+
+  A última guia mistura recorrível com não-recorrível de propósito: o
+  recurso deve sair só com os itens que têm tese.
+-->
+<ans:mensagemTISS xmlns:ans="http://www.ans.gov.br/padroes/tiss/schemas">
+  <ans:demonstrativoAnaliseConta>
+    <ans:nomeOperadora>ODONTO PREV SAUDE</ans:nomeOperadora>
+    <ans:registroANS>417823</ans:registroANS>
+    <ans:numeroDemonstrativo>DEM-2026-0475</ans:numeroDemonstrativo>
+    <ans:competencia>2026-06</ans:competencia>
+
+    <!-- Autorização: a operadora glosou apesar da senha na guia -->
+    <ans:guiaDemonstrativo>
+      <ans:numeroGuiaPrestador>G-2026-0475</ans:numeroGuiaPrestador>
+      <ans:numeroGuiaOperadora>OP-551204</ans:numeroGuiaOperadora>
+      <ans:nomeBeneficiario>MARIA APARECIDA SOUZA</ans:nomeBeneficiario>
+      <ans:numeroCarteira>4178230011992</ans:numeroCarteira>
+      <ans:dataAtendimento>2026-06-09</ans:dataAtendimento>
+      <ans:procedimento>
+        <ans:codigoProcedimento>81000103</ans:codigoProcedimento>
+        <ans:descricaoProcedimento>Tratamento endodontico em dente permanente birradicular</ans:descricaoProcedimento>
+        <ans:quantidadeExecutada>1</ans:quantidadeExecutada>
+        <ans:valorApresentado>680.00</ans:valorApresentado>
+        <ans:valorPago>0.00</ans:valorPago>
+        <ans:valorGlosa>680.00</ans:valorGlosa>
+        <ans:codigoGlosa>1402</ans:codigoGlosa>
+      </ans:procedimento>
+      <ans:procedimento>
+        <ans:codigoProcedimento>81000200</ans:codigoProcedimento>
+        <ans:descricaoProcedimento>Retratamento endodontico em dente permanente</ans:descricaoProcedimento>
+        <ans:quantidadeExecutada>1</ans:quantidadeExecutada>
+        <ans:valorApresentado>420.00</ans:valorApresentado>
+        <ans:valorPago>210.00</ans:valorPago>
+        <ans:valorGlosa>210.00</ans:valorGlosa>
+        <ans:codigoGlosa>2601</ans:codigoGlosa>
+      </ans:procedimento>
+    </ans:guiaDemonstrativo>
+
+    <!-- Duplicidade: restaurações em dentes diferentes, glosadas como repetidas -->
+    <ans:guiaDemonstrativo>
+      <ans:numeroGuiaPrestador>G-2026-0476</ans:numeroGuiaPrestador>
+      <ans:numeroGuiaOperadora>OP-551205</ans:numeroGuiaOperadora>
+      <ans:nomeBeneficiario>JOAO CARLOS PEREIRA</ans:nomeBeneficiario>
+      <ans:numeroCarteira>4178230014455</ans:numeroCarteira>
+      <ans:dataAtendimento>2026-06-16</ans:dataAtendimento>
+      <ans:procedimento>
+        <ans:codigoProcedimento>85200157</ans:codigoProcedimento>
+        <ans:descricaoProcedimento>Restauracao em resina composta - dente 16 - face oclusal</ans:descricaoProcedimento>
+        <ans:quantidadeExecutada>1</ans:quantidadeExecutada>
+        <ans:valorApresentado>190.00</ans:valorApresentado>
+        <ans:valorPago>190.00</ans:valorPago>
+      </ans:procedimento>
+      <ans:procedimento>
+        <ans:codigoProcedimento>85200157</ans:codigoProcedimento>
+        <ans:descricaoProcedimento>Restauracao em resina composta - dente 26 - face oclusal</ans:descricaoProcedimento>
+        <ans:quantidadeExecutada>1</ans:quantidadeExecutada>
+        <ans:valorApresentado>190.00</ans:valorApresentado>
+        <ans:valorPago>0.00</ans:valorPago>
+        <ans:valorGlosa>190.00</ans:valorGlosa>
+        <ans:codigoGlosa>3007</ans:codigoGlosa>
+      </ans:procedimento>
+      <ans:procedimento>
+        <ans:codigoProcedimento>85200157</ans:codigoProcedimento>
+        <ans:descricaoProcedimento>Restauracao em resina composta - dente 36 - face mesial</ans:descricaoProcedimento>
+        <ans:quantidadeExecutada>1</ans:quantidadeExecutada>
+        <ans:valorApresentado>190.00</ans:valorApresentado>
+        <ans:valorPago>0.00</ans:valorPago>
+        <ans:valorGlosa>190.00</ans:valorGlosa>
+        <ans:codigoGlosa>3007</ans:codigoGlosa>
+      </ans:procedimento>
+    </ans:guiaDemonstrativo>
+
+    <!-- Mista: um item com tese, outro que só precisa de documento -->
+    <ans:guiaDemonstrativo>
+      <ans:numeroGuiaPrestador>G-2026-0477</ans:numeroGuiaPrestador>
+      <ans:nomeBeneficiario>ANA LUCIA RODRIGUES</ans:nomeBeneficiario>
+      <ans:numeroCarteira>4178230018820</ans:numeroCarteira>
+      <ans:dataAtendimento>2026-06-23</ans:dataAtendimento>
+      <ans:procedimento>
+        <ans:codigoProcedimento>84000201</ans:codigoProcedimento>
+        <ans:descricaoProcedimento>Coroa total em ceramica pura - dente 21</ans:descricaoProcedimento>
+        <ans:quantidadeExecutada>1</ans:quantidadeExecutada>
+        <ans:valorApresentado>1250.00</ans:valorApresentado>
+        <ans:valorPago>0.00</ans:valorPago>
+        <ans:valorGlosa>1250.00</ans:valorGlosa>
+        <ans:codigoGlosa>1402</ans:codigoGlosa>
+      </ans:procedimento>
+      <ans:procedimento>
+        <ans:codigoProcedimento>81000103</ans:codigoProcedimento>
+        <ans:descricaoProcedimento>Tratamento endodontico - dente 21</ans:descricaoProcedimento>
+        <ans:quantidadeExecutada>1</ans:quantidadeExecutada>
+        <ans:valorApresentado>560.00</ans:valorApresentado>
+        <ans:valorPago>0.00</ans:valorPago>
+        <ans:valorGlosa>560.00</ans:valorGlosa>
+        <ans:codigoGlosa>3081</ans:codigoGlosa>
+      </ans:procedimento>
+    </ans:guiaDemonstrativo>
+  </ans:demonstrativoAnaliseConta>
+</ans:mensagemTISS>

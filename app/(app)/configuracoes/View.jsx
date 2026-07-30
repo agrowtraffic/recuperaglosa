@@ -25,6 +25,12 @@ export default function ConfiguracoesView({
   const [loadingPortal, setLoadingPortal] = useState(false);
   const [nome, setNome] = useState(clinica?.nome ?? '');
   const [cnpj, setCnpj] = useState(clinica?.cnpj ?? '');
+  const [responsavelNome, setResponsavelNome] = useState(clinica?.responsavel_nome ?? '');
+  const [responsavelConselho, setResponsavelConselho] = useState(clinica?.responsavel_conselho ?? '');
+  const [responsavelRegistro, setResponsavelRegistro] = useState(clinica?.responsavel_registro ?? '');
+  const [responsavelUf, setResponsavelUf] = useState(clinica?.responsavel_uf ?? '');
+  const [cnes, setCnes] = useState(clinica?.cnes ?? '');
+  const [codigoPrestador, setCodigoPrestador] = useState(clinica?.codigo_prestador ?? '');
   const [feedback, setFeedback] = useState(null); // { tipo: 'ok'|'erro', texto }
 
   const assinante = ehPago(clinica);
@@ -37,6 +43,12 @@ export default function ConfiguracoesView({
       const formData = new FormData();
       formData.append('nome', nome);
       formData.append('cnpj', cnpj);
+      formData.append('responsavel_nome', responsavelNome);
+      formData.append('responsavel_conselho', responsavelConselho);
+      formData.append('responsavel_registro', responsavelRegistro);
+      formData.append('responsavel_uf', responsavelUf);
+      formData.append('cnes', cnes);
+      formData.append('codigo_prestador', codigoPrestador);
 
       const resultado = await atualizarClinica(formData);
 
@@ -258,6 +270,76 @@ export default function ConfiguracoesView({
                 onChange={(e) => setCnpj(e.target.value)}
               />
             </Field>
+          </div>
+
+          {/* NOVO: responsável técnico — assina o recurso de glosa */}
+          <div style={{ marginTop: 8, paddingTop: 16, borderTop: '1px solid var(--rg-line)' }}>
+            <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 700, color: 'var(--rg-ink-800)' }}>
+              Responsável técnico
+            </p>
+            <p style={{ margin: '0 0 12px', fontSize: 12, color: 'var(--rg-ink-400)' }}>
+              Assina o recurso de glosa. Sem esses dados, o PDF sai com linhas em branco para preencher à mão.
+            </p>
+            <div className="rg-grid-half">
+              <Field id="responsavel_nome" label="Nome completo">
+                <input
+                  id="responsavel_nome"
+                  className="rg-input"
+                  value={responsavelNome}
+                  onChange={(e) => setResponsavelNome(e.target.value)}
+                  placeholder="Ex: Dra. Ana Paula Ribeiro"
+                />
+              </Field>
+              <Field id="cnes" label="CNES">
+                <input
+                  id="cnes"
+                  className="rg-input"
+                  inputMode="numeric"
+                  value={cnes}
+                  onChange={(e) => setCnes(e.target.value)}
+                />
+              </Field>
+            </div>
+            <div className="rg-grid-half" style={{ marginTop: 12 }}>
+              <Field id="responsavel_conselho" label="Conselho" ajuda="Ex: CRO, CRM">
+                <input
+                  id="responsavel_conselho"
+                  className="rg-input"
+                  value={responsavelConselho}
+                  onChange={(e) => setResponsavelConselho(e.target.value)}
+                  placeholder="CRO"
+                />
+              </Field>
+              <Field id="responsavel_registro" label="Número do registro">
+                <input
+                  id="responsavel_registro"
+                  className="rg-input"
+                  value={responsavelRegistro}
+                  onChange={(e) => setResponsavelRegistro(e.target.value)}
+                />
+              </Field>
+            </div>
+            <div className="rg-grid-half" style={{ marginTop: 12 }}>
+              <Field id="responsavel_uf" label="UF do conselho">
+                <input
+                  id="responsavel_uf"
+                  className="rg-input"
+                  maxLength={2}
+                  style={{ textTransform: 'uppercase' }}
+                  value={responsavelUf}
+                  onChange={(e) => setResponsavelUf(e.target.value)}
+                  placeholder="SP"
+                />
+              </Field>
+              <Field id="codigo_prestador" label="Código de prestador" ajuda="Cadastro na operadora, se houver um único">
+                <input
+                  id="codigo_prestador"
+                  className="rg-input"
+                  value={codigoPrestador}
+                  onChange={(e) => setCodigoPrestador(e.target.value)}
+                />
+              </Field>
+            </div>
           </div>
 
           {feedback && (

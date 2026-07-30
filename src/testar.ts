@@ -9,6 +9,7 @@ const arquivos = [
   "fixtures/demonstrativo-1.xml",
   "fixtures/demonstrativo-2.xml",
   "fixtures/demonstrativo-3.xml",
+  "fixtures/demonstrativo-4-recorrivel.xml",
 ];
 
 for (const f of arquivos) {
@@ -39,14 +40,36 @@ for (const f of arquivos) {
   }
 }
 
-// exemplo de recurso gerado
-const lote1 = parseDemonstrativo(readFileSync(arquivos[0], "utf8"));
-const r = gerarRecurso(lote1.guias[0], lote1, {
-  nome: "CLINICA EXEMPLO LTDA",
-  cnpj: "00.000.000/0001-00",
-});
+/* Exemplo de recurso gerado.
+
+   Percorre as guias em vez de assumir a primeira: guia cujos itens são
+   todos de glosa legítima (carência, prazo) não gera recurso — e isso é
+   o comportamento certo, não uma falha. Antes daqui saía "undefined". */
+const clinica = { nome: "CLINICA EXEMPLO LTDA", cnpj: "00.000.000/0001-00" };
 
 console.log("\n" + "#".repeat(62));
 console.log("EXEMPLO DE RECURSO GERADO");
 console.log("#".repeat(62));
-console.log(r?.texto);
+
+let achou = false;
+for (const f of arquivos) {
+  const lote = parseDemonstrativo(readFileSync(f, "utf8"));
+  for (const guia of lote.guias) {
+    const r = gerarRecurso(guia, lote, clinica);
+    if (r) {
+      console.log(`(${f} — guia ${guia.numeroGuia})\n`);
+      console.log(r.texto);
+      achou = true;
+      break;
+    }
+  }
+  if (achou) break;
+}
+
+if (!achou) {
+  console.log(
+    "Nenhuma guia dos fixtures gerou recurso — todos os itens glosados\n" +
+      "caíram em motivo não recorrível. Se isso não era esperado, conferir\n" +
+      "a ação atribuída aos códigos em src/tiss/motivos.ts.",
+  );
+}

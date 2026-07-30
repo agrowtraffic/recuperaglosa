@@ -65,6 +65,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     const { data: recurso, error } = await supabase
       .from('recurso')
       .select(`
+        id,
         valor_pleiteado,
         guia:guia_id (
           numero_guia,
@@ -79,11 +80,18 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
             clinica:clinica_id (
               nome,
               cnpj,
-              logo_url
+              logo_url,
+              responsavel_nome,
+              responsavel_conselho,
+              responsavel_registro,
+              responsavel_uf,
+              cnes
             )
           ),
           item (
             id,
+            codigo_tuss,
+            descricao,
             codigo_glosa,
             motivo_glosa,
             valor_apresentado,
@@ -120,18 +128,56 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
       );
     }
 
-    // Preparar itens da tabela para o PDF
-    const itensPDF = recorriveis.map((item: any) => ({
-      descricao: item.motivo_glosa || '—',
-      apresentado: `R$ ${Number(item.valor_apresentado || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-      pago: `R$ ${Number(item.valor_pago || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-      glosado: `R$ ${Number(item.valor_glosado || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-    }));
+    const brl = (n: number) =>
+      `R$ ${Number(n || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-    // Buscar argumento dinâmico do motivo
-    const codigoGlosa = recorriveis[0]?.codigo_glosa || '—';
-    const motivoConfig = MOTIVOS[codigoGlosa];
-    const argumentoFinal = motivoConfig?.argumento || 'Solicita-se a reanálise e reprocessamento conforme fundamentação técnica em anexo.';
+    /* ── Agrupar por motivo ──
+       Uma guia pode ter itens glosados por motivos diferentes (ex: um
+       item sem autorização, outro em duplicidade). Cada motivo tem sua
+       própria fundamentação — misturar tudo sob o primeiro código da
+       lista faz o recurso argumentar a coisa errada para metade dos
+       itens. Mantém a ordem em que os motivos aparecem na guia. */
+    const ordemMotivos: string[] = [];
+    const porMotivo = new Map<string, any[]>();
+    for (const item of recorriveis) {
+      const codigo = item.codigo_glosa || 'SEM_CODIGO';
+      if (!porMotivo.has(codigo)) {
+        porMotivo.set(codigo, []);
+        ordemMotivos.push(codigo);
+      }
+      porMotivo.get(codigo)!.push(item);
+    }
+
+    const grupos = ordemMotivos.map((codigoGlosa) => {
+      const itensDoGrupo = porMotivo.get(codigoGlosa)!;
+      const motivoConfig = MOTIVOS[codigoGlosa];
+      const subtotal = itensDoGrupo.reduce((s, i) => s + Number(i.valor_glosado || 0), 0);
+
+      return {
+        codigoGlosa,
+        /* Descrição oficial da Tabela 38, a mesma que a operadora usou —
+           nunca o nosso argumento. */
+        motivoDescricao: motivoConfig?.descricao || itensDoGrupo[0]?.motivo_glosa || 'Motivo não especificado',
+        argumento:
+          motivoConfig?.argumento ||
+          'Solicita-se a reanálise e reprocessamento conforme fundamentação técnica em anexo.',
+        itens: itensDoGrupo.map((item: any) => ({
+          /* Procedimento de verdade — código TUSS + descrição — nunca o
+             motivo da glosa, que é outra coisa. */
+          procedimento: [item.codigo_tuss, item.descricao].filter(Boolean).join(' — ') || '—',
+          apresentado: brl(item.valor_apresentado),
+          pago: brl(item.valor_pago),
+          glosado: brl(item.valor_glosado),
+        })),
+        subtotal: brl(subtotal),
+      };
+    });
+
+    const dataEmissao = new Date().toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    });
 
     // Renderizar PDF
     const buffer = await renderToBuffer(
@@ -139,6 +185,11 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
         clinicaNome: clinica?.nome || 'Clínica',
         clinicaCnpj: clinica?.cnpj || '—',
         clinicaLogoUrl: clinica?.logo_url,
+        responsavelNome: clinica?.responsavel_nome,
+        responsavelConselho: clinica?.responsavel_conselho,
+        responsavelRegistro: clinica?.responsavel_registro,
+        responsavelUf: clinica?.responsavel_uf,
+        responsavelCnes: clinica?.cnes,
         operadora: lote?.operadora || '—',
         registroAns: lote?.registro_ans,
         competencia: lote?.competencia,
@@ -147,14 +198,10 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
         beneficiario: guia?.beneficiario,
         carteira: guia?.carteira,
         dataAtendimento: guia?.data_atendimento,
-        itens: itensPDF,
-        motivoCodigo: codigoGlosa,
-        motivoDescricao: recorriveis[0]?.motivo_glosa || '—',
-        motivoArgumento: argumentoFinal,
-        valorTotal: `R$ ${Number((recurso as any).valor_pleiteado || 0).toLocaleString('pt-BR', {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })}`,
+        grupos,
+        valorTotal: brl((recurso as any).valor_pleiteado),
+        dataEmissao,
+        protocolo: r.id ? String(r.id).slice(0, 8).toUpperCase() : undefined,
       })
     );
 
