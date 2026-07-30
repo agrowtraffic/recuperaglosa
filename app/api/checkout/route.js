@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { enviarFinalizacaoPagamento } from '@/lib/emails';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
@@ -114,6 +115,29 @@ export async function POST(request) {
       metadata: { clinica_id: clinicaId },
     });
     console.log('✅ [CHECKOUT] Sessão criada com ID:', session.id, 'metadata:', session.metadata);
+
+    try {
+      const validade = new Date(session.expires_at * 1000).toLocaleString('pt-BR', {
+        timeZone: 'America/Sao_Paulo',
+        dateStyle: 'short',
+        timeStyle: 'short',
+      });
+
+      const envio = await enviarFinalizacaoPagamento({
+        para: user.email,
+        paymentUrl: session.url,
+        orderId: session.id,
+        paymentDueDate: validade,
+        valor: Number(session.amount_total ?? 19700) / 100,
+      });
+
+      if (!envio.enviado) {
+        console.warn(`⚠️ [CHECKOUT] E-mail de retomada não enviado: ${envio.motivo}`);
+      }
+    } catch (emailError) {
+      /* A criação do checkout continua válida mesmo se o e-mail falhar. */
+      console.error('⚠️ [CHECKOUT] Erro ao enviar e-mail de retomada:', emailError);
+    }
 
     return NextResponse.json({
       success: true,
