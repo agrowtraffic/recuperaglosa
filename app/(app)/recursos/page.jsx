@@ -19,7 +19,7 @@ const ROTULO_STATUS = {
   rascunho: "rascunho",
   enviado: "enviado",
   ganho: "recuperado",
-  perdido: "perdido",
+  perdido: "recusado",
 };
 
 export default async function Recursos() {

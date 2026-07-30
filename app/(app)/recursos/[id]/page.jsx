@@ -12,6 +12,7 @@ import { getContexto, getRecurso } from "@/lib/dados-clinica";
 import { ehPago, PLANO_PAGO } from "@/lib/plano";
 import BotaoAssinar from "@/app/_components/kit/BotaoAssinar";
 import AcoesRecurso from "./AcoesRecurso";
+import AcompanharRecurso from "./AcompanharRecurso";
 
 export const metadata = { title: 'Recurso' };
 
@@ -21,7 +22,7 @@ const ROTULO_STATUS = {
   rascunho: "rascunho",
   enviado: "enviado",
   ganho: "recuperado",
-  perdido: "perdido",
+  perdido: "recusado",
 };
 
 export default async function RecursoDetalhe({ params }) {
@@ -54,12 +55,26 @@ export default async function RecursoDetalhe({ params }) {
           </div>
           <div>
             <p className="rg-eyebrow">Situação</p>
-            <StatusBadge status={ROTULO_STATUS[recurso.status] || "analise"} />
+            <StatusBadge status={ROTULO_STATUS[recurso.status] || "rascunho"} />
             <p className="rg-caption" style={{ marginTop: 6 }}>
               Demonstrativo {recurso.demonstrativo} · competência {recurso.competencia}
             </p>
           </div>
         </div>
+
+        {/* Acompanhamento: só para quem assinou, porque quem não assinou
+            nem vê o texto completo — marcar "enviei à operadora" um
+            documento que você não pode ler não faz sentido. */}
+        {planoPago && (
+          <div style={{ marginTop: 18, paddingTop: 18, borderTop: "1px solid var(--rg-line)" }}>
+            <AcompanharRecurso
+              recursoId={recurso.id}
+              status={recurso.status}
+              enviadoEm={recurso.enviadoEm}
+              resolvidoEm={recurso.resolvidoEm}
+            />
+          </div>
+        )}
       </section>
 
       {/* O documento */}

@@ -33,6 +33,10 @@ const STATUS = {
   glosado:    { classe: "rg-badge-glosado",    texto: "Glosado" },
   recorrivel: { classe: "rg-badge-glosado",    texto: "Recorrível" },
   perdido:    { classe: "rg-badge-perdido",    texto: "Prazo vencido" },
+  /* Glosa 'perdido' é prazo vencido; recurso 'perdido' é a operadora ter
+     mantido a glosa depois de analisar. Coisas diferentes, rótulos
+     diferentes — o badge de prazo em um recurso analisado mentiria. */
+  recusado:   { classe: "rg-badge-perdido",    texto: "Glosa mantida" },
   enviado:    { classe: "rg-badge-neutro",     texto: "Recurso enviado" },
   processado: { classe: "rg-badge-recuperado", texto: "Processado" },
   processando:{ classe: "rg-badge-analise",    texto: "Processando" },
