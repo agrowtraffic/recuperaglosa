@@ -70,7 +70,22 @@ export default async function Recursos() {
             { chave: "guia", titulo: "Guia" },
             { chave: "operadora", titulo: "Operadora" },
             { chave: "gerado", titulo: "Gerado em" },
-            { chave: "valor", titulo: "Valor contestado", alinhar: "right", render: (l) => <Money valor={l.valor} tam="sm" /> },
+            {
+              chave: "valor", titulo: "Valor contestado", alinhar: "right",
+              /* Ganho parcial mostrando só o contestado, ao lado do selo
+                 "Recuperado", faria parecer que o valor inteiro voltou. */
+              render: (l) =>
+                l.status === "ganho" && l.valorRecuperado != null && l.valorRecuperado < l.valor ? (
+                  <span>
+                    <Money valor={l.valorRecuperado} tam="sm" cor="var(--rg-recuperado-h)" />
+                    <span className="rg-caption" style={{ display: "block" }}>
+                      de <Money valor={l.valor} tam="sm" />
+                    </span>
+                  </span>
+                ) : (
+                  <Money valor={l.valor} tam="sm" />
+                ),
+            },
             { chave: "status", titulo: "Status", render: (l) => <StatusBadge status={ROTULO_STATUS[l.status] || "analise"} /> },
             {
               chave: "acao", titulo: "", alinhar: "right",

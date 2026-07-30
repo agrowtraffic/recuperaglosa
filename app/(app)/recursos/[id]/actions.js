@@ -14,6 +14,7 @@
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import { ehPago } from '@/lib/plano';
+import { parseValorBRL } from '@/lib/valor';
 
 /* De onde se pode ir para onde. O banco tem constraint de domínio, mas
    ele não conhece a ordem — 'rascunho' direto para 'ganho' passaria no
@@ -25,17 +26,35 @@ const TRANSICOES = {
   perdido: ['enviado'],
 };
 
-const DATAS_POR_DESTINO = {
-  // Entrar em 'enviado' carimba o envio e limpa a resolução (é um
-  // retorno, se veio de ganho/perdido).
-  enviado: { enviado_em: () => new Date().toISOString(), resolvido_em: () => null },
-  ganho: { resolvido_em: () => new Date().toISOString() },
-  perdido: { resolvido_em: () => new Date().toISOString() },
-  // Voltar para rascunho desfaz tudo: o recurso nunca saiu.
-  rascunho: { enviado_em: () => null, resolvido_em: () => null },
+/* Colunas que cada destino carimba, além do próprio status. Voltar
+   atrás precisa limpar o que a ida escreveu — senão fica data de
+   resolução em recurso reaberto, ou valor recuperado em recurso que
+   voltou a ser rascunho. */
+const CAMPOS_POR_DESTINO = {
+  // Entrar em 'enviado' carimba o envio e desfaz a resolução (é um
+  // retorno, quando vem de ganho/perdido).
+  enviado: () => ({
+    enviado_em: new Date().toISOString(),
+    resolvido_em: null,
+    valor_recuperado: null,
+  }),
+  // 'ganho' recebe o valor à parte, em montarGanho() — depende do
+  // pleiteado, que só conhecemos depois de ler o recurso.
+  perdido: () => ({ resolvido_em: new Date().toISOString(), valor_recuperado: null }),
+  // Voltar para rascunho desfaz tudo: o recurso nunca saiu daqui.
+  rascunho: () => ({ enviado_em: null, resolvido_em: null, valor_recuperado: null }),
 };
 
-export async function mudarStatusRecurso(recursoId, novoStatus) {
+/**
+ * Muda a situação do recurso.
+ *
+ * @param {string} recursoId
+ * @param {'rascunho'|'enviado'|'ganho'|'perdido'} novoStatus
+ * @param {string} [valorRecebido] Quanto a operadora pagou, como a
+ *   pessoa digitou. Só usado ao marcar 'ganho'. Vazio significa aceite
+ *   integral do que foi pleiteado.
+ */
+export async function mudarStatusRecurso(recursoId, novoStatus, valorRecebido) {
   if (!recursoId) return { error: 'Recurso não informado.' };
 
   if (!Object.keys(TRANSICOES).includes(novoStatus)) {
@@ -74,7 +93,7 @@ export async function mudarStatusRecurso(recursoId, novoStatus) {
      propósito, para não revelar a existência do id). */
   const { data: atual } = await supabase
     .from('recurso')
-    .select('id, status')
+    .select('id, status, valor_pleiteado')
     .eq('id', recursoId)
     .maybeSingle();
 
@@ -94,10 +113,40 @@ export async function mudarStatusRecurso(recursoId, novoStatus) {
     };
   }
 
-  const carimbos = DATAS_POR_DESTINO[novoStatus] ?? {};
   const alteracoes = { status: novoStatus };
-  for (const [coluna, valor] of Object.entries(carimbos)) {
-    alteracoes[coluna] = valor();
+
+  if (novoStatus === 'ganho') {
+    const pleiteado = Number(atual.valor_pleiteado ?? 0);
+
+    /* Campo vazio = aceite integral. É o caso mais comum e não deve
+       exigir digitação: a pessoa clica e confirma o que já está lá. */
+    const informado = valorRecebido == null || String(valorRecebido).trim() === ''
+      ? pleiteado
+      : parseValorBRL(valorRecebido);
+
+    if (informado == null) {
+      return { error: 'Não entendi o valor. Use apenas números, como 1.234,50.' };
+    }
+
+    if (informado <= 0) {
+      return {
+        error: 'Se a operadora não pagou nada, registre como "Manteve a glosa".',
+      };
+    }
+
+    /* Recuperar mais do que se pleiteou não existe neste fluxo — seria
+       erro de digitação (vírgula no lugar errado) virando número
+       inflado no card "Recuperado". */
+    if (informado > pleiteado) {
+      return {
+        error: `O valor recebido não pode passar do pleiteado (R$ ${pleiteado.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}).`,
+      };
+    }
+
+    alteracoes.resolvido_em = new Date().toISOString();
+    alteracoes.valor_recuperado = informado;
+  } else {
+    Object.assign(alteracoes, CAMPOS_POR_DESTINO[novoStatus]?.() ?? {});
   }
 
   /* `.select()` no fim é o que revela bloqueio de RLS: um UPDATE barrado
@@ -107,7 +156,7 @@ export async function mudarStatusRecurso(recursoId, novoStatus) {
     .from('recurso')
     .update(alteracoes)
     .eq('id', recursoId)
-    .select('id, status, enviado_em, resolvido_em');
+    .select('id, status, enviado_em, resolvido_em, valor_recuperado');
 
   if (erroUpdate) {
     console.error('[recurso] Falha ao mudar status:', erroUpdate.message);

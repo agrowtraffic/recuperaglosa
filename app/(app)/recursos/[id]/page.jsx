@@ -50,8 +50,30 @@ export default async function RecursoDetalhe({ params }) {
       <section className="rg-card rg-card-pad">
         <div className="rg-grid-half">
           <div>
-            <p className="rg-eyebrow">Valor pleiteado</p>
-            <Money valor={recurso.valor} tam="lg" cor="var(--rg-glosado-h)" />
+            {/* Depois de recuperado, o número que importa é o que entrou —
+                e em verde, não no laranja de glosa. Mantém o pleiteado
+                abaixo quando os dois diferem, senão some a informação de
+                que parte não voltou. */}
+            {recurso.status === 'ganho' ? (
+              <>
+                <p className="rg-eyebrow">Valor recuperado</p>
+                <Money
+                  valor={recurso.valorRecuperado ?? recurso.valor}
+                  tam="lg"
+                  cor="var(--rg-recuperado-h)"
+                />
+                {recurso.valorRecuperado != null && recurso.valorRecuperado < recurso.valor && (
+                  <p className="rg-caption" style={{ marginTop: 4 }}>
+                    de <Money valor={recurso.valor} tam="sm" /> pleiteados
+                  </p>
+                )}
+              </>
+            ) : (
+              <>
+                <p className="rg-eyebrow">Valor pleiteado</p>
+                <Money valor={recurso.valor} tam="lg" cor="var(--rg-glosado-h)" />
+              </>
+            )}
           </div>
           <div>
             <p className="rg-eyebrow">Situação</p>
@@ -70,6 +92,8 @@ export default async function RecursoDetalhe({ params }) {
             <AcompanharRecurso
               recursoId={recurso.id}
               status={recurso.status}
+              valorPleiteado={recurso.valor}
+              valorRecuperado={recurso.valorRecuperado}
               enviadoEm={recurso.enviadoEm}
               resolvidoEm={recurso.resolvidoEm}
             />
