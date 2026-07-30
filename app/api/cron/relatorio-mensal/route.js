@@ -108,7 +108,7 @@ export async function GET(request) {
       try {
         const { data: lotes } = await supabase
           .from('lote')
-          .select('total_apresentado, total_pago, total_glosado')
+          .select('id, operadora, total_apresentado, total_pago, total_glosado')
           .eq('clinica_id', clinica.id)
           .gte('criado_em', inicio.toISOString())
           .lt('criado_em', fim.toISOString());
@@ -124,6 +124,85 @@ export async function GET(request) {
         const apresentado = lotes.reduce((s, l) => s + Number(l.total_apresentado ?? 0), 0);
         const pago = lotes.reduce((s, l) => s + Number(l.total_pago ?? 0), 0);
         const glosado = lotes.reduce((s, l) => s + Number(l.total_glosado ?? 0), 0);
+
+        const loteIds = lotes.map((l) => l.id);
+        const { data: guias, error: erroGuias } = await supabase
+          .from('guia')
+          .select('id, lote_id')
+          .in('lote_id', loteIds);
+
+        if (erroGuias) throw erroGuias;
+
+        const guiaIds = (guias ?? []).map((g) => g.id);
+        let itens = [];
+        let recursos = [];
+
+        if (guiaIds.length > 0) {
+          const [resultadoItens, resultadoRecursos] = await Promise.all([
+            supabase
+              .from('item')
+              .select('guia_id, valor_glosado, recorrivel')
+              .in('guia_id', guiaIds)
+              .gt('valor_glosado', 0),
+            supabase
+              .from('recurso')
+              .select('guia_id, valor_pleiteado, valor_recuperado, status, enviado_em')
+              .in('guia_id', guiaIds),
+          ]);
+
+          if (resultadoItens.error) throw resultadoItens.error;
+          if (resultadoRecursos.error) throw resultadoRecursos.error;
+
+          itens = resultadoItens.data ?? [];
+          recursos = resultadoRecursos.data ?? [];
+        }
+
+        const recuperavel = itens
+          .filter((i) => i.recorrivel)
+          .reduce((s, i) => s + Number(i.valor_glosado ?? 0), 0);
+
+        const recursosDecididos = recursos.filter(
+          (r) => r.status === 'ganho' || r.status === 'perdido'
+        );
+        const valorDecidido = recursosDecididos.reduce(
+          (s, r) => s + Number(r.valor_pleiteado ?? 0),
+          0
+        );
+        const recuperado = recursos
+          .filter((r) => r.status === 'ganho')
+          .reduce(
+            (s, r) => s + Number(r.valor_recuperado ?? r.valor_pleiteado ?? 0),
+            0
+          );
+        const taxaRecuperacao = valorDecidido > 0
+          ? Math.round((recuperado / valorDecidido) * 100)
+          : null;
+
+        const limiteAtraso = Date.now() - 30 * 24 * 60 * 60 * 1000;
+        const guiaPorId = new Map((guias ?? []).map((g) => [g.id, g]));
+        const lotePorId = new Map(lotes.map((l) => [l.id, l]));
+        const atrasadoPorOperadora = new Map();
+
+        for (const recurso of recursos) {
+          if (
+            recurso.status !== 'enviado' ||
+            !recurso.enviado_em ||
+            new Date(recurso.enviado_em).getTime() >= limiteAtraso
+          ) continue;
+
+          const guia = guiaPorId.get(recurso.guia_id);
+          const operadora = lotePorId.get(guia?.lote_id)?.operadora || 'Operadora não identificada';
+          const valor = Number(recurso.valor_pleiteado ?? 0);
+          atrasadoPorOperadora.set(
+            operadora,
+            (atrasadoPorOperadora.get(operadora) ?? 0) + valor
+          );
+        }
+
+        const prioridade = [...atrasadoPorOperadora.entries()]
+          .sort((a, b) => b[1] - a[1])[0] ?? null;
+        const operadoraPrioritaria = prioridade?.[0] ?? null;
+        const valorAtrasado = prioridade?.[1] ?? 0;
 
         /* O destinatário é o dono (role 'owner'). Convite de equipe ainda
            não existe, mas quando existir o resumo financeiro não deve ir
@@ -149,7 +228,13 @@ export async function GET(request) {
           apresentado,
           pago,
           glosado,
-          planoPago: clinica.plano === 'ativo',
+          qtdGuias: guias?.length ?? 0,
+          qtdGlosas: itens.length,
+          recuperavel,
+          recuperado,
+          taxaRecuperacao,
+          valorAtrasado,
+          operadoraPrioritaria,
         });
 
         if (envio.enviado) {
