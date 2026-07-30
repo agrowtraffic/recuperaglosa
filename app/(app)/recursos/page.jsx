@@ -16,7 +16,7 @@ export const metadata = { title: 'Recursos' };
 export const dynamic = "force-dynamic";
 
 const ROTULO_STATUS = {
-  rascunho: "analise",
+  rascunho: "rascunho",
   enviado: "enviado",
   ganho: "recuperado",
   perdido: "perdido",

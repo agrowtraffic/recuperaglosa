@@ -25,6 +25,11 @@ export function Money({ valor = 0, tam = "md", sinal = false, cor }) {
 const STATUS = {
   recuperado: { classe: "rg-badge-recuperado", texto: "Recuperado" },
   analise:    { classe: "rg-badge-analise",    texto: "Em análise" },
+  /* 'rascunho' é o recurso assim que o sistema gera o documento — ainda
+     não foi revisado nem enviado a ninguém. "Em análise" sugere que a
+     operadora já está avaliando, o que não é o caso: era o rótulo
+     antigo do rascunho, e confundia quem lê a tabela. */
+  rascunho:   { classe: "rg-badge-neutro",     texto: "Rascunho" },
   glosado:    { classe: "rg-badge-glosado",    texto: "Glosado" },
   recorrivel: { classe: "rg-badge-glosado",    texto: "Recorrível" },
   perdido:    { classe: "rg-badge-perdido",    texto: "Prazo vencido" },
