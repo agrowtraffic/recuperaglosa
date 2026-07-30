@@ -50,7 +50,7 @@ export default async function RecursoDetalhe({ params }) {
         <div className="rg-grid-half">
           <div>
             <p className="rg-eyebrow">Valor pleiteado</p>
-            <Money valor={recurso.valor} tam="lg" cor="var(--rg-glosado)" />
+            <Money valor={recurso.valor} tam="lg" cor="var(--rg-glosado-h)" />
           </div>
           <div>
             <p className="rg-eyebrow">Situação</p>

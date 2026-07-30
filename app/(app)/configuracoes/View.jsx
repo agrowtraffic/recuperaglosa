@@ -105,23 +105,23 @@ export default function ConfiguracoesView({
               style={{
                 borderRadius: 12,
                 padding: '20px',
-                background: 'var(--rg-brand-bg, #edfbf2)',
-                border: '1px solid var(--rg-brand, #128437)',
+                background: 'var(--rg-recuperado-bg)',
+                border: '1px solid var(--rg-recuperado-h)',
                 marginBottom: 20,
               }}
             >
-              <p style={{ margin: '0 0 8px', fontSize: 13, color: '#8aa89e' }}>
+              <p style={{ margin: '0 0 8px', fontSize: 13, color: 'var(--rg-ink-400)' }}>
                 VALOR JÁ IDENTIFICADO
               </p>
               <p style={{
                 margin: '0 0 4px',
                 fontSize: 28,
                 fontWeight: 800,
-                color: 'var(--rg-brand, #128437)',
+                color: 'var(--rg-recuperado-h)',
               }}>
-                <Money valor={valorRecuperavel} tam="lg" cor="var(--rg-brand, #128437)" />
+                <Money valor={valorRecuperavel} tam="lg" cor="var(--rg-recuperado-h)" />
               </p>
-              <p style={{ margin: 0, fontSize: 14, color: '#5a7a6e', lineHeight: 1.5 }}>
+              <p style={{ margin: 0, fontSize: 14, color: 'var(--rg-ink-600)', lineHeight: 1.5 }}>
                 em glosas recuperáveis. Assine para gerar os recursos de contestação e reaver esse valor.
               </p>
             </div>
@@ -130,15 +130,15 @@ export default function ConfiguracoesView({
               style={{
                 borderRadius: 12,
                 padding: '20px',
-                background: '#f1f5f9',
-                border: '1px solid #dce8e2',
+                background: 'var(--rg-muted)',
+                border: '1px solid var(--rg-line)',
                 marginBottom: 20,
               }}
             >
-              <p style={{ margin: '0 0 8px', fontSize: 13, color: '#8aa89e' }}>
+              <p style={{ margin: '0 0 8px', fontSize: 13, color: 'var(--rg-ink-400)' }}>
                 PRÓXIMO PASSO
               </p>
-              <p style={{ margin: '0 0 12px', fontSize: 14, color: '#2d4a3e', lineHeight: 1.5 }}>
+              <p style={{ margin: '0 0 12px', fontSize: 14, color: 'var(--rg-ink-800)', lineHeight: 1.5 }}>
                 Envie seu primeiro demonstrativo para descobrir quanto sua clínica pode recuperar.
               </p>
               <button
@@ -155,17 +155,17 @@ export default function ConfiguracoesView({
           <div
             style={{
               borderRadius: 12,
-              border: '1px solid #dce8e2',
+              border: '1px solid var(--rg-line)',
               padding: '16px',
               marginBottom: 20,
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <p style={{ margin: '0 0 4px', fontSize: 11, fontWeight: 700, color: '#8aa89e', textTransform: 'uppercase' }}>
+                <p style={{ margin: '0 0 4px', fontSize: 11, fontWeight: 700, color: 'var(--rg-ink-400)', textTransform: 'uppercase' }}>
                   Plano atual
                 </p>
-                <p style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#2d4a3e' }}>
+                <p style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--rg-ink-800)' }}>
                   {plano}
                 </p>
               </div>
@@ -178,20 +178,20 @@ export default function ConfiguracoesView({
                 {loadingPortal ? 'Abrindo…' : 'Gerenciar assinatura'}
               </button>
             </div>
-            <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid #dce8e2', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--rg-line)', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               <div>
-                <p style={{ margin: '0 0 4px', fontSize: 11, fontWeight: 700, color: '#8aa89e' }}>
+                <p style={{ margin: '0 0 4px', fontSize: 11, fontWeight: 700, color: 'var(--rg-ink-400)' }}>
                   LIMITE MENSAL
                 </p>
-                <p style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#2d4a3e' }}>
+                <p style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--rg-ink-800)' }}>
                   {assinante ? 'Ilimitado' : `${LOTES_GRATIS_POR_MES} lotes/mês`}
                 </p>
               </div>
               <div>
-                <p style={{ margin: '0 0 4px', fontSize: 11, fontWeight: 700, color: '#8aa89e' }}>
+                <p style={{ margin: '0 0 4px', fontSize: 11, fontWeight: 700, color: 'var(--rg-ink-400)' }}>
                   RECURSOS
                 </p>
-                <p style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#2d4a3e' }}>
+                <p style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--rg-ink-800)' }}>
                   {assinante ? 'Completos' : 'Só prévia'}
                 </p>
               </div>
@@ -201,7 +201,7 @@ export default function ConfiguracoesView({
           {/* NOVO: Lista de benefícios do plano pago */}
           {!assinante && (
             <>
-              <p style={{ margin: '16px 0 8px', fontSize: 13, fontWeight: 700, color: '#2d4a3e' }}>
+              <p style={{ margin: '16px 0 8px', fontSize: 13, fontWeight: 700, color: 'var(--rg-ink-800)' }}>
                 No plano {PLANO_PAGO} você ganha:
               </p>
               <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: 8 }}>
@@ -211,8 +211,8 @@ export default function ConfiguracoesView({
                   'Auditoria de todas as guias, sem limite',
                 ].map((benefit) => (
                   <li key={benefit} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                    <CheckCircle2 size={20} color="var(--rg-brand, #128437)" style={{ flexShrink: 0, marginTop: 2 }} />
-                    <span style={{ fontSize: 14, color: '#2d4a3e', lineHeight: 1.4 }}>
+                    <CheckCircle2 size={20} color="var(--rg-recuperado-h)" style={{ flexShrink: 0, marginTop: 2 }} />
+                    <span style={{ fontSize: 14, color: 'var(--rg-ink-800)', lineHeight: 1.4 }}>
                       {benefit}
                     </span>
                   </li>
@@ -222,9 +222,9 @@ export default function ConfiguracoesView({
           )}
 
           {!assinante && (
-            <div style={{ marginTop: 20, paddingTop: 20, borderTop: '1px solid #dce8e2' }}>
+            <div style={{ marginTop: 20, paddingTop: 20, borderTop: '1px solid var(--rg-line)' }}>
               <BotaoAssinar bloco />
-              <p style={{ margin: '8px 0 0', fontSize: 12, textAlign: 'center', color: '#8aa89e' }}>
+              <p style={{ margin: '8px 0 0', fontSize: 12, textAlign: 'center', color: 'var(--rg-ink-400)' }}>
                 {valorRecuperavel > 0
                   ? `Isso se paga com apenas R$ ${PRECO_MENSAL} do que você já identificou.`
                   : 'Cancelamento a qualquer momento, sem multa.'}
@@ -266,7 +266,7 @@ export default function ConfiguracoesView({
               style={{
                 margin: 0,
                 fontSize: 13,
-                color: feedback.tipo === 'ok' ? '#166534' : '#991b1b',
+                color: feedback.tipo === 'ok' ? 'var(--rg-recuperado-h)' : 'var(--rg-perdido-h)',
               }}
             >
               {feedback.tipo === 'ok' ? '✓ ' : '⚠ '}{feedback.texto}
@@ -293,11 +293,8 @@ export default function ConfiguracoesView({
           <h2 className="rg-h2">Equipe</h2>
         </div>
         <div className="rg-card-pad rg-stack">
-          <button className="rg-btn rg-btn-secondary" disabled title="Em breve">
-            Convidar pessoa
-          </button>
           <p className="rg-caption">
-            Convite de equipe chega em breve. Hoje o acesso é individual por clínica.
+            O acesso é individual por clínica. Convite de equipe chega em breve.
           </p>
         </div>
       </section>

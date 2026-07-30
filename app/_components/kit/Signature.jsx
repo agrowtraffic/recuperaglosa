@@ -49,7 +49,7 @@ export function MoneyRail({ atual, estagios = {} }) {
             <Money
               valor={d.valor || 0}
               tam="md"
-              cor={e.id === "recuperado" ? "var(--rg-recuperado-h)" : e.id === "glosado" ? "var(--rg-glosado)" : undefined}
+              cor={e.id === "recuperado" ? "var(--rg-recuperado-h)" : e.id === "glosado" ? "var(--rg-glosado-h)" : undefined}
             />
             <span className="rg-rail-qtd">{d.qtd != null ? `${d.qtd} guias` : e.legenda}</span>
           </button>

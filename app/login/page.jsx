@@ -2,9 +2,9 @@
    app/login/page.jsx  — Server Component
    Renderiza o painel de marca (esquerdo) + LoginForm (direito).
    ============================================================ */
-import Image from 'next/image';
 import Link from 'next/link';
 import LoginForm from './LoginForm';
+import { Brand } from '@/app/_components/kit/Brand';
 import styles from './login.module.css';
 
 /* Alturas das barras do gráfico decorativo (0–100) */
@@ -31,15 +31,8 @@ export default function LoginPage({ searchParams }) {
       <aside className={styles.brandPanel}>
         <div className={styles.brandContent}>
 
-          {/* Logo branco */}
-          <Image
-            src="/logos/recupera-glosa-monocromatico-branco.svg"
-            width={176}
-            height={40}
-            alt="RecuperaGlosa"
-            priority
-            className={styles.brandLogo}
-          />
+          {/* Logo em branco, sobre o painel escuro */}
+          <Brand tom="claro" altura={40} className={styles.brandLogo} />
 
           {/* Badge */}
           <span className={styles.eyebrow}>
@@ -109,13 +102,7 @@ export default function LoginPage({ searchParams }) {
 
         {/* Logo horizontal — só aparece no mobile (brandPanel está hidden) */}
         <div className={styles.mobileLogo}>
-          <Image
-            src="/logos/recupera-glosa-horizontal.svg"
-            width={205}
-            height={48}
-            alt="RecuperaGlosa"
-            priority
-          />
+          <Brand altura={40} />
         </div>
 
         <div className={styles.accessContent}>

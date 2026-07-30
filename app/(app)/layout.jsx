@@ -5,7 +5,19 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import AppShell from '@/app/_components/kit/AppShell';
 import { nomeDoPlano } from '@/lib/plano';
-import { Settings, Lock } from 'lucide-react';
+import { Settings, LogOut } from 'lucide-react';
+
+/* Item do menu de perfil. Usa os tokens do sistema em vez de hex solto,
+   para não divergir do resto do app quando a paleta mudar. */
+const itemMenu = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: 10,
+  padding: '11px 14px',
+  fontSize: 14,
+  color: 'var(--rg-ink-800)',
+  textDecoration: 'none',
+};
 
 export default function AppLayout({ children }){
  const router = useRouter();
@@ -67,17 +79,21 @@ export default function AppLayout({ children }){
      plano={nomeDoPlano(clinica)}
      contadores={contadores}
      onNovoLote={handleNovoLote}
-   >
-     {/* Menu de perfil — encaixado na topbar */}
-     <div style={{ position: 'absolute', right: 16, top: 0, height: '100%', display: 'flex', alignItems: 'center' }} ref={profileRef}>
+     perfil={
+     /* Vai como prop, não como children: passado por children ele caía
+        dentro da área de conteúdo, e como `position:absolute` sem nenhum
+        ancestral posicionado se ancorava no viewport — o avatar aparecia
+        solto no meio da página, sobre o conteúdo. */
+     <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }} ref={profileRef}>
        <button
          onClick={() => setProfileOpen(o => !o)}
          aria-expanded={profileOpen}
-         aria-haspopup="true"
-         className="rg-btn rg-btn-icon rg-btn-ghost"
-         style={{ position: 'relative' }}
+         aria-haspopup="menu"
+         aria-label={`Conta de ${clinica?.nome || 'sua clínica'}`}
+         title="Sua conta"
+         className="rg-avatar"
        >
-         <span style={{ fontSize: 14, fontWeight: 700 }}>{(clinica?.nome || 'C').charAt(0).toUpperCase()}</span>
+         {(clinica?.nome || 'C').charAt(0).toUpperCase()}
        </button>
        {profileOpen && (
          <div
@@ -86,29 +102,35 @@ export default function AppLayout({ children }){
              position: 'absolute',
              top: '100%',
              right: 0,
-             background: '#FFFEFB',
-             border: '1px solid #DCE5DF',
-             borderRadius: 10,
-             minWidth: 160,
+             background: 'var(--rg-surface)',
+             border: '1px solid var(--rg-line)',
+             borderRadius: 'var(--rg-r-sm)',
+             minWidth: 190,
              zIndex: 1000,
-             boxShadow: '0 4px 6px rgba(0,0,0,0.07)',
-             marginTop: 8
+             boxShadow: 'var(--rg-shadow-up)',
+             marginTop: 8,
+             overflow: 'hidden',
            }}
          >
+           <p
+             style={{
+               margin: 0,
+               padding: '10px 14px',
+               fontSize: 12,
+               color: 'var(--rg-ink-400)',
+               borderBottom: '1px solid var(--rg-line-soft)',
+               whiteSpace: 'nowrap',
+               overflow: 'hidden',
+               textOverflow: 'ellipsis',
+             }}
+           >
+             {clinica?.nome || 'Sua clínica'}
+           </p>
            <Link
              href="/configuracoes"
              role="menuitem"
              onClick={() => setProfileOpen(false)}
-             style={{
-               display: 'flex',
-               alignItems: 'center',
-               gap: 8,
-               padding: '10px 12px',
-               fontSize: 13,
-               color: '#334155',
-               textDecoration: 'none',
-               borderBottom: '1px solid #DCE5DF'
-             }}
+             style={{ ...itemMenu, borderBottom: '1px solid var(--rg-line-soft)' }}
            >
              <Settings size={16} /> Configurações
            </Link>
@@ -117,25 +139,22 @@ export default function AppLayout({ children }){
              onClick={handleSignOut}
              disabled={signingOut}
              style={{
-               display: 'flex',
-               alignItems: 'center',
-               gap: 8,
-               padding: '10px 12px',
-               fontSize: 13,
-               color: '#334155',
+               ...itemMenu,
                border: 'none',
                background: 'none',
-               cursor: signingOut ? 'not-allowed' : 'pointer',
                width: '100%',
                textAlign: 'left',
-               opacity: signingOut ? 0.6 : 1
+               cursor: signingOut ? 'not-allowed' : 'pointer',
+               opacity: signingOut ? 0.6 : 1,
              }}
            >
-             <Lock size={16} /> {signingOut ? 'Saindo...' : 'Sair'}
+             <LogOut size={16} /> {signingOut ? 'Saindo…' : 'Sair'}
            </button>
          </div>
        )}
      </div>
+     }
+   >
      {children}
    </AppShell>
  );

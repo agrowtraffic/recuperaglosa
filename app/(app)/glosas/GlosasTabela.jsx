@@ -74,7 +74,7 @@ export default function GlosasTabela({ glosas }) {
             { chave: 'motivo', titulo: 'Motivo da glosa' },
             { chave: 'operadora', titulo: 'Operadora' },
             { chave: 'prazo', titulo: 'Prazo', largura: 96, render: (l) => <Prazo dias={l.prazo} total={90} /> },
-            { chave: 'valor', titulo: 'Recuperável', alinhar: 'right', render: (l) => <Money valor={l.valor} tam="sm" cor="var(--rg-glosado)" /> },
+            { chave: 'valor', titulo: 'Recuperável', alinhar: 'right', render: (l) => <Money valor={l.valor} tam="sm" cor="var(--rg-glosado-h)" /> },
             { chave: 'status', titulo: 'Status', render: (l) => <StatusBadge status={l.status} /> },
           ]}
           mobile={{

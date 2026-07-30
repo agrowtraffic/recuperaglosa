@@ -19,7 +19,7 @@ import { PLANO_PAGO } from "@/lib/plano";
 import { Brand } from "./Brand";
 import {
   LayoutDashboard, Boxes, FileText, AlertTriangle, FileCheck2,
-  BarChart3, Settings, Menu, X, Bell, MoreHorizontal, Plus,
+  BarChart3, Settings, Menu, X, MoreHorizontal, Plus,
 } from "lucide-react";
 
 export const NAV = [
@@ -34,10 +34,11 @@ export const NAV = [
 
 export default function AppShell({
   children,
-  nomeClinica = "Sua clínica",   /* ⬛ PREENCHER: nome real da clínica */
-  plano = "Gratuito",            /* ⬛ PREENCHER: "Gratuito" | "Ativo" */
-  contadores = {},               /* ⬛ PREENCHER: { glosas: 12 } */
-  onNovoLote,                    /* ⬛ PREENCHER: abre upload de XML */
+  nomeClinica = "Sua clínica",
+  plano = "Gratuito",
+  contadores = {},               /* { glosas: 12 } */
+  onNovoLote,                    /* abre o upload de XML */
+  perfil = null,                 /* menu de perfil, renderizado na topbar */
 }) {
   const [drawer, setDrawer] = useState(false);
   const [mais, setMais] = useState(false);
@@ -63,7 +64,10 @@ export default function AppShell({
       {/* -------- SIDEBAR / GAVETA -------- */}
       <aside className="rg-sidebar" aria-label="Navegação principal">
         <div className="rg-sidebar-brand">
-          <Brand tom="claro" />
+          {/* No modo rail (1024–1279px) a sidebar encolhe e só cabe o
+              símbolo — os dois são renderizados e o CSS alterna. */}
+          <span className="rg-marca-completa"><Brand tom="claro" altura={30} /></span>
+          <span className="rg-marca-simbolo"><Brand tom="claro" compacto altura={34} /></span>
           <button
             className="rg-btn rg-btn-icon rg-btn-ghost rg-only-mobile"
             style={{ marginLeft: "auto", color: "#fff" }}
@@ -123,13 +127,13 @@ export default function AppShell({
 
           <CommandTrigger />
 
-          <button className="rg-btn rg-btn-icon rg-btn-ghost" aria-label="Notificações" disabled title="Em breve">
-            <Bell size={19} />
-          </button>
+          {/* Sino de notificações removido: era um botão permanentemente
+              desabilitado, e controle morto na topbar é o que mais faz o
+              produto parecer inacabado. Volta quando existir de verdade. */}
           <button className="rg-btn rg-btn-primary rg-btn-sm rg-hide-mobile" onClick={onNovoLote}>
             <Plus size={16} /> Enviar XML
           </button>
-          {/* ⬛ PREENCHER: menu de perfil já existente do projeto */}
+          {perfil}
         </header>
 
         {children}

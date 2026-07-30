@@ -50,7 +50,7 @@ export default function GuiasTabela({ guias }) {
           { chave: 'data', titulo: 'Atendimento', largura: 120 },
           { chave: 'apresentado', titulo: 'Apresentado', alinhar: 'right', render: (l) => <Money valor={l.apresentado} tam="sm" /> },
           { chave: 'pago', titulo: 'Pago', alinhar: 'right', render: (l) => <Money valor={l.pago} tam="sm" cor="var(--rg-recuperado-h)" /> },
-          { chave: 'glosado', titulo: 'Glosado', alinhar: 'right', render: (l) => <Money valor={l.glosado} tam="sm" cor="var(--rg-glosado)" /> },
+          { chave: 'glosado', titulo: 'Glosado', alinhar: 'right', render: (l) => <Money valor={l.glosado} tam="sm" cor="var(--rg-glosado-h)" /> },
           { chave: 'divisao', titulo: 'Divisão', largura: 120, render: (l) => <RecoveryBar sm pago={l.pago} recuperavel={l.glosado} perdido={0} /> },
         ]}
         mobile={{

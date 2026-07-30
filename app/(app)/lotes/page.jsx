@@ -45,7 +45,7 @@ export default async function Lotes() {
             { chave: "operadora", titulo: "Operadora" },
             { chave: "data", titulo: "Enviado em" },
             { chave: "guias", titulo: "Guias", alinhar: "right" },
-            { chave: "recuperavel", titulo: "Glosado", alinhar: "right", render: (l) => <Money valor={l.recuperavel} tam="sm" cor="var(--rg-glosado)" /> },
+            { chave: "recuperavel", titulo: "Glosado", alinhar: "right", render: (l) => <Money valor={l.recuperavel} tam="sm" cor="var(--rg-glosado-h)" /> },
             { chave: "status", titulo: "Status", render: (l) => <StatusBadge status={l.status} /> },
           ]}
           mobile={{

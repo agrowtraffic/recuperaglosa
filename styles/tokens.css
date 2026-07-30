@@ -18,7 +18,7 @@
   --rg-ink-900: #10231f;   /* superfícies escuras */
   --rg-ink-800: #17302b;   /* texto principal */
   --rg-ink-600: #3d5751;   /* texto forte secundário */
-  --rg-ink-400: #6f817c;   /* texto de apoio, labels */
+  --rg-ink-400: #61706c;   /* texto de apoio, labels — 4.57:1 no pior fundo */
   --rg-ink-300: #9aa9a4;   /* placeholder, ícone inativo */
   --rg-line:    #dce5df;   /* bordas */
   --rg-line-soft: #eaf0ec;
@@ -28,11 +28,14 @@
   --rg-canvas:  #f4f6ef;   /* fundo quente e vivo */
   --rg-muted:   #edf2e9;   /* linhas zebradas, chips */
 
-  /* Semântica — cada cor tem UM significado, sempre o mesmo */
+  /* Semântica — cada cor tem UM significado, sempre o mesmo.
+     A variante -h é a mesma cor escurecida até passar 4.5:1 sobre os
+     fundos do app. Use a base em preenchimentos, barras e ícones; use a
+     -h sempre que a cor virar TEXTO, que é onde o contraste importa. */
   --rg-recuperado: #0b9a73;  --rg-recuperado-h: #08765a;  --rg-recuperado-bg: #e8f7f0;
-  --rg-analise:    #b67a19;  --rg-analise-bg:    #fff5d9;
-  --rg-glosado:    #e36d45;  --rg-glosado-bg:    #fff0e9;
-  --rg-perdido:    #c94d55;  --rg-perdido-bg:    #fdecef;
+  --rg-analise:    #b67a19;  --rg-analise-h:    #936314;  --rg-analise-bg:    #fff5d9;
+  --rg-glosado:    #e36d45;  --rg-glosado-h:    #ad5334;  --rg-glosado-bg:    #fff0e9;
+  --rg-perdido:    #c94d55;  --rg-perdido-h:    #b9474e;  --rg-perdido-bg:    #fdecef;
   --rg-neutro:     #637770;  --rg-neutro-bg:     #edf2ef;
 
   /* Forma */
@@ -88,7 +91,10 @@ body.rg {
 .rg-money-lg   { font-size: 26px; line-height: 1.1; }
 .rg-money-md   { font-size: 18px; line-height: 1.2; }
 .rg-money-sm   { font-size: 15px; line-height: 1.2; }
-.rg-money .cent{ font-size: .68em; font-weight: 700; opacity: .62; margin-left: 1px; }
+/* Os centavos ficam subordinados por tamanho e peso, não por opacidade.
+   Com opacity .62 nenhum valor do app passava contraste — nem em tinta
+   principal (4.17:1). A hierarquia visual se mantém sem isso. */
+.rg-money .cent{ font-size: .68em; font-weight: 700; margin-left: 1px; }
 .rg-num        { font-variant-numeric: tabular-nums; }
 
 .rg-h1 { font-size: 22px; font-weight: 700; letter-spacing: -.015em; margin: 0; }
@@ -141,7 +147,7 @@ body.rg {
 .rg-btn-secondary:hover:not(:disabled) { background: var(--rg-muted); }
 .rg-btn-ghost     { background: transparent; color: var(--rg-ink-600); }
 .rg-btn-ghost:hover:not(:disabled) { background: var(--rg-muted); }
-.rg-btn-danger    { background: var(--rg-perdido-bg); color: var(--rg-perdido); border-color: #fecaca; }
+.rg-btn-danger    { background: var(--rg-perdido-bg); color: var(--rg-perdido-h); border-color: #fecaca; }
 
 .rg-btn-sm  { height: 34px; padding: 0 var(--rg-3); font-size: 13px; }
 .rg-btn-lg  { height: 48px; padding: 0 var(--rg-5); font-size: 15px; }
@@ -155,6 +161,19 @@ body.rg {
   .rg-btn-icon { width: 44px; height: 44px; }
 }
 
+/* Avatar da conta na topbar. No celular cresce para 44px, que é o
+   mínimo de alvo de toque. */
+.rg-avatar {
+  width: 36px; height: 36px; flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--rg-line); border-radius: 50%;
+  background: var(--rg-muted); color: var(--rg-ink-800);
+  font: inherit; font-size: 14px; font-weight: 700; cursor: pointer;
+  transition: background .16s var(--rg-ease);
+}
+.rg-avatar:hover { background: var(--rg-line-soft); }
+@media (max-width: 767px) { .rg-avatar { width: 44px; height: 44px; } }
+
 /* ---------- 6. SELO DE STATUS ---------- */
 .rg-badge {
   display: inline-flex; align-items: center; gap: 6px;
@@ -163,9 +182,9 @@ body.rg {
 }
 .rg-badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 .rg-badge-recuperado { background: var(--rg-recuperado-bg); color: var(--rg-recuperado-h); }
-.rg-badge-analise    { background: var(--rg-analise-bg);    color: var(--rg-analise); }
+.rg-badge-analise    { background: var(--rg-analise-bg);    color: var(--rg-analise-h); }
 .rg-badge-glosado    { background: var(--rg-glosado-bg);    color: #c2410c; }
-.rg-badge-perdido    { background: var(--rg-perdido-bg);    color: var(--rg-perdido); }
+.rg-badge-perdido    { background: var(--rg-perdido-bg);    color: var(--rg-perdido-h); }
 .rg-badge-neutro     { background: var(--rg-neutro-bg);     color: var(--rg-neutro); }
 
 /* ---------- 7. ASSINATURA: BARRA DE RECUPERAÇÃO ----------
@@ -252,7 +271,7 @@ body.rg {
 .rg-input:focus { outline: none; border-color: var(--rg-recuperado); box-shadow: 0 0 0 3px rgba(22,163,74,.14); }
 .rg-input[aria-invalid="true"] { border-color: var(--rg-perdido); }
 .rg-help  { font-size: 12.5px; color: var(--rg-ink-400); }
-.rg-error { font-size: 12.5px; font-weight: 700; color: var(--rg-perdido); }
+.rg-error { font-size: 12.5px; font-weight: 700; color: var(--rg-perdido-h); }
 
 .rg-toolbar {
   display: flex; align-items: center; gap: var(--rg-2); flex-wrap: wrap;
@@ -307,7 +326,7 @@ body.rg {
 }
 .rg-nav-item:hover { background: rgba(255,255,255,.06); color: #fff; }
 .rg-nav-item[aria-current="page"] { background: rgba(22,163,74,.16); color: #fff; box-shadow: inset 2px 0 0 var(--rg-recuperado); }
-.rg-nav-count { margin-left: auto; font-size: 12px; font-weight: 800; color: var(--rg-glosado); font-variant-numeric: tabular-nums; }
+.rg-nav-count { margin-left: auto; font-size: 12px; font-weight: 800; color: var(--rg-glosado-h); font-variant-numeric: tabular-nums; }
 
 .rg-main { padding-left: var(--rg-sidebar); }
 
@@ -597,60 +616,14 @@ body.rg {
   outline-offset: 3px;
 }
 
-/* Marca — barras que sobem + arco de retorno. */
-.rg-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  width: max-content;
-  color: var(--rg-brand);
-  text-decoration: none;
-}
-.rg-brand-claro { color: #fff; }
-.rg-brand-mark {
-  position: relative;
-  width: 34px;
-  height: 34px;
-  flex: 0 0 34px;
-  overflow: hidden;
-  border-radius: 11px 11px 11px 4px;
-  background: var(--rg-brand);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.12);
-}
-.rg-brand-claro .rg-brand-mark { background: var(--rg-pulse); box-shadow: none; }
-.rg-brand-mark i {
-  position: absolute;
-  bottom: 8px;
-  width: 4px;
-  border-radius: 5px 5px 1px 1px;
-  background: var(--rg-pulse);
-}
-.rg-brand-claro .rg-brand-mark i { background: var(--rg-brand-deep); }
-.rg-brand-mark i:nth-child(1) { left: 8px; height: 7px; }
-.rg-brand-mark i:nth-child(2) { left: 15px; height: 12px; }
-.rg-brand-mark i:nth-child(3) { left: 22px; height: 18px; }
-.rg-brand-mark::after {
-  content: "";
-  position: absolute;
-  top: 6px;
-  right: 5px;
-  width: 11px;
-  height: 11px;
-  border: 2px solid var(--rg-pulse);
-  border-bottom-color: transparent;
-  border-left-color: transparent;
-  border-radius: 50%;
-  transform: rotate(-8deg);
-}
-.rg-brand-claro .rg-brand-mark::after { border-top-color: var(--rg-brand-deep); border-right-color: var(--rg-brand-deep); }
-.rg-brand-name {
-  font-size: 17px;
-  font-weight: 800;
-  line-height: 1;
-  letter-spacing: -.055em;
-}
-.rg-brand-name span { color: var(--rg-recuperado); }
-.rg-brand-claro .rg-brand-name span { color: var(--rg-pulse); }
+/* Marca — o logo vem do kit oficial (public/marca/), pelo componente
+   Brand. O wordmark que existia aqui era desenhado em CSS e não
+   correspondia à marca real.
+
+   Na sidebar os dois formatos são renderizados; o CSS decide qual
+   aparece conforme a largura. */
+.rg-marca-completa { display: inline-flex; align-items: center; }
+.rg-marca-simbolo  { display: none; align-items: center; }
 
 /* Tipografia: títulos amplos e números com presença editorial. */
 .rg-h1 {
@@ -760,6 +733,9 @@ body.rg {
 .rg-badge { height: 26px; padding: 0 10px; border: 1px solid currentColor; border-color: color-mix(in srgb, currentColor 18%, transparent); }
 .rg-badge::before { box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 12%, transparent); }
 .rg-chip { height: 38px; border-radius: 11px; background: var(--rg-paper); }
+/* No celular o filtro é o controle mais tocado da tela de glosas —
+   precisa dos 44px de alvo, como os demais botões. */
+@media (max-width: 767px) { .rg-chip { height: 44px; } }
 .rg-chip:hover, .rg-chip[aria-pressed="true"] { border-color: var(--rg-brand-soft); }
 .rg-chip[aria-pressed="true"] { color: var(--rg-brand); background: rgba(201,246,107,.28); box-shadow: inset 0 0 0 1px rgba(7,59,50,.05); }
 .rg-input { border-radius: 11px; border-color: var(--rg-hair-strong); background: var(--rg-paper); }
@@ -1033,8 +1009,8 @@ body.rg {
 
 @media (max-width: 1279px) and (min-width: 1024px) {
   .rg-sidebar-brand { justify-content: center; padding: 0; }
-  .rg-sidebar-brand .rg-brand-name { display: none; }
-  .rg-sidebar-brand .rg-brand-mark { width: 38px; height: 38px; flex-basis: 38px; }
+  .rg-marca-completa { display: none; }
+  .rg-marca-simbolo  { display: inline-flex; }
   .rg-nav-item { width: 48px; height: 48px; }
 }
 

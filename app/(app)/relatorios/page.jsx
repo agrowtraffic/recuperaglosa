@@ -46,8 +46,7 @@ export default async function Relatorios() {
   return (
     <main className="rg-shell-content rg-stack">
       <PageHeader eyebrow="Relatórios" titulo="O retorno que você consegue provar"
-        descricao="Acompanhe o que voltou para o caixa e onde ainda existe oportunidade."
-        acoes={<button className="rg-btn rg-btn-secondary" disabled title="Em breve">Exportar PDF</button>} />
+        descricao="Acompanhe o que voltou para o caixa e onde ainda existe oportunidade." />
 
       <MoneyRail atual="recuperado" estagios={resumo.estagios} />
 

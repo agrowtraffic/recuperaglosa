@@ -35,7 +35,7 @@ export default async function Glosas() {
       <div className="rg-grid-kpi" style={{ gridTemplateColumns: "repeat(3, 1fr)" }}>
         <div className="rg-card rg-card-pad">
           <p className="rg-eyebrow">Recuperável</p>
-          <Money valor={resumo.recuperavel} tam="lg" cor="var(--rg-glosado)" />
+          <Money valor={resumo.recuperavel} tam="lg" cor="var(--rg-glosado-h)" />
           <p className="rg-caption">
             {glosas.filter((g) => g.status === "recorrivel").length} glosas recorríveis
           </p>
