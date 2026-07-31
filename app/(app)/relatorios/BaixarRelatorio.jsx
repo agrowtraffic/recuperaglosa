@@ -2,12 +2,16 @@
 
 import { useState } from 'react';
 import { Download } from 'lucide-react';
+import { formatarCompetencia } from '@/lib/relatorios';
 
-/* Baixa o relatório em PDF sob demanda.
+/* Baixa o relatório em PDF sob demanda, do histórico inteiro ou de uma
+   competência.
 
-   Até agora o relatório só saía do app pelo e-mail do dia 1º. Quem
-   precisa mandar o número para o contador no dia 12 ficava sem opção. */
-export default function BaixarRelatorio() {
+   Até então o relatório só saía do app pelo envio automático do dia 1º,
+   sempre do mês anterior. Quem precisa fechar o trimestre com o contador,
+   ou reenviar um mês específico, não tinha por onde. */
+export default function BaixarRelatorio({ competencias = [] }) {
+  const [mes, setMes] = useState('');
   const [baixando, setBaixando] = useState(false);
   const [erro, setErro] = useState('');
 
@@ -15,14 +19,12 @@ export default function BaixarRelatorio() {
     setBaixando(true);
     setErro('');
     try {
-      const res = await fetch('/api/relatorio/pdf');
+      const res = await fetch(`/api/relatorio/pdf${mes ? `?mes=${mes}` : ''}`);
 
       if (!res.ok) {
-        setErro(
-          res.status === 401
-            ? 'Sua sessão expirou. Entre novamente para baixar.'
-            : 'Não foi possível gerar o PDF.'
-        );
+        if (res.status === 401) setErro('Sua sessão expirou. Entre novamente para baixar.');
+        else if (res.status === 404) setErro('Nenhum demonstrativo nessa competência.');
+        else setErro('Não foi possível gerar o PDF.');
         return;
       }
 
@@ -33,7 +35,7 @@ export default function BaixarRelatorio() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `relatorio-glosas-${new Date().toISOString().slice(0, 10)}.pdf`;
+      a.download = `relatorio-glosas-${mes || new Date().toISOString().slice(0, 10)}.pdf`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -48,6 +50,26 @@ export default function BaixarRelatorio() {
 
   return (
     <div className="rg-row" style={{ gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+      {/* Com uma competência só, escolher não é escolha: o seletor some e
+          o botão baixa o que existe. */}
+      {competencias.length > 1 && (
+        <>
+          <label htmlFor="rel-mes" className="rg-sr-only">Competência do relatório</label>
+          <select
+            id="rel-mes"
+            className="rg-select"
+            value={mes}
+            onChange={(e) => { setMes(e.target.value); setErro(''); }}
+            disabled={baixando}
+          >
+            <option value="">Todo o histórico</option>
+            {competencias.map((c) => (
+              <option key={c} value={c}>{formatarCompetencia(c)}</option>
+            ))}
+          </select>
+        </>
+      )}
+
       <button
         type="button"
         className="rg-btn rg-btn-secondary rg-btn-sm"
@@ -56,6 +78,7 @@ export default function BaixarRelatorio() {
       >
         <Download size={15} /> {baixando ? 'Gerando…' : 'Baixar PDF'}
       </button>
+
       {erro && (
         <span role="alert" className="rg-caption" style={{ color: 'var(--rg-glosado-h)' }}>
           {erro}

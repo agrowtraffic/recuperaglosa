@@ -10,6 +10,7 @@ import {
   desempenhoPorOperadora,
   recursosAguardando,
   resumoDosRecursos,
+  formatarCompetencia,
 } from '../lib/relatorios.js';
 
 let falhas = 0;
@@ -35,6 +36,16 @@ ok(diasEntre('2026-07-01T23:00:00Z', '2026-07-02T01:00:00Z') === 1, 'vira o dia,
 ok(diasEntre(null, '2026-07-01T00:00:00Z') === null, 'sem início devolve null');
 ok(diasEntre('2026-07-01T00:00:00Z', null) === null, 'sem fim devolve null');
 ok(diasEntre('lixo', '2026-07-01T00:00:00Z') === null, 'data inválida devolve null');
+
+console.log('\n=== formatarCompetencia ===');
+ok(formatarCompetencia('2026-07') === 'julho/2026', '2026-07 vira julho/2026');
+ok(formatarCompetencia('2026-01') === 'janeiro/2026', 'mês 01 não vira dezembro do ano anterior');
+ok(formatarCompetencia('2026-12') === 'dezembro/2026', 'mês 12 é o último, não estoura o array');
+/* Competência vem de XML de operadora: chega torta com alguma frequência.
+   Melhor mostrar como veio do que 'undefined/NaN' no cabeçalho do PDF. */
+ok(formatarCompetencia('2026-13') === '2026-13', 'mês inválido volta intacto');
+ok(formatarCompetencia('julho') === 'julho', 'texto fora do formato volta intacto');
+ok(formatarCompetencia(null) === '—', 'nulo vira travessão');
 
 console.log('\n=== Rascunho não conta como envio ===');
 {

@@ -273,6 +273,31 @@ body.rg {
 .rg-help  { font-size: 12.5px; color: var(--rg-ink-400); }
 .rg-error { font-size: 12.5px; font-weight: 700; color: var(--rg-perdido-h); }
 
+/* Select compacto, para ficar ao lado de um .rg-btn-sm numa barra de
+   ações. Herda a moldura e o foco do .rg-input, mas com largura pelo
+   conteúdo — um seletor de mês não deve ocupar a linha inteira. */
+.rg-select {
+  height: 34px; padding: 0 var(--rg-3);
+  background: var(--rg-surface); border: 1px solid var(--rg-line);
+  border-radius: var(--rg-r-sm); font: inherit; font-size: 13px; font-weight: 700;
+  color: var(--rg-ink-800); cursor: pointer;
+  transition: border-color .16s var(--rg-ease), box-shadow .16s var(--rg-ease);
+}
+.rg-select:focus { outline: none; border-color: var(--rg-recuperado); box-shadow: 0 0 0 3px rgba(22,163,74,.14); }
+.rg-select:disabled { opacity: .6; cursor: not-allowed; }
+@media (max-width: 767px) {
+  /* Mesmo mínimo de alvo de toque dos botões. 16px no font-size porque
+     abaixo disso o iOS dá zoom ao abrir o seletor. */
+  .rg-select { height: 40px; font-size: 16px; }
+}
+
+/* Texto só para leitor de tela: rótulo que a interface dispensa
+   visualmente mas o controle não pode ficar sem. */
+.rg-sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
 .rg-toolbar {
   display: flex; align-items: center; gap: var(--rg-2); flex-wrap: wrap;
   padding: var(--rg-3) var(--rg-4); border-bottom: 1px solid var(--rg-line-soft);

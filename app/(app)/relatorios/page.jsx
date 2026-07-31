@@ -54,8 +54,14 @@ export default async function Relatorios() {
       <PageHeader eyebrow="Relatórios" titulo="O retorno que você consegue provar"
         descricao="Acompanhe o que voltou para o caixa e onde ainda existe oportunidade."
         /* Só oferece o download quando existe demonstrativo processado:
-           um PDF de relatório zerado não serve para mandar a ninguém. */
-        acoes={temDados ? <BaixarRelatorio /> : null} />
+           um PDF de relatório zerado não serve para mandar a ninguém.
+           Competências da mais recente para a mais antiga — quem baixa
+           quer quase sempre o mês que acabou de fechar. */
+        acoes={temDados ? (
+          <BaixarRelatorio
+            competencias={porCompetencia.map((c) => c.competencia).reverse()}
+          />
+        ) : null} />
 
       <MoneyRail atual="recuperado" estagios={resumo.estagios} />
 

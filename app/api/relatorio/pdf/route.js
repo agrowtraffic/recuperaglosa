@@ -19,7 +19,7 @@ import {
   agruparPorOperadora, agruparPorCompetencia,
 } from '@/lib/dados-clinica';
 import {
-  desempenhoPorOperadora, recursosAguardando, resumoDosRecursos,
+  desempenhoPorOperadora, recursosAguardando, resumoDosRecursos, formatarCompetencia,
 } from '@/lib/relatorios';
 
 export const dynamic = 'force-dynamic';
@@ -30,9 +30,8 @@ export const maxDuration = 60;
 const brl = (n) =>
   `R$ ${Number(n || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-/* Rótulo do período coberto. A tela agrega todo o histórico, então o PDF
-   declara o intervalo real dos demonstrativos em vez de inventar um mês —
-   sem isso o documento impresso não diz a que período se refere. */
+/* Rótulo do período coberto. Sem isso o documento impresso não diz a que
+   período se refere — e quem arquiva o PDF descobre isso tarde demais. */
 function rotularPeriodo(porCompetencia) {
   const competencias = porCompetencia
     .map((c) => c.competencia)
@@ -40,11 +39,11 @@ function rotularPeriodo(porCompetencia) {
     .sort();
 
   if (!competencias.length) return 'todo o histórico';
-  if (competencias.length === 1) return `competência ${competencias[0]}`;
-  return `${competencias[0]} a ${competencias[competencias.length - 1]}`;
+  if (competencias.length === 1) return formatarCompetencia(competencias[0]);
+  return `${formatarCompetencia(competencias[0])} a ${formatarCompetencia(competencias[competencias.length - 1])}`;
 }
 
-export async function GET() {
+export async function GET(request) {
   try {
     const { supabase, clinicaId, clinica } = await getContexto();
 
@@ -54,11 +53,37 @@ export async function GET() {
       return NextResponse.json({ error: 'nao_autenticado' }, { status: 401 });
     }
 
-    const [lotes, glosas, recursos] = await Promise.all([
+    /* ?mes=AAAA-MM recorta uma competência; sem o parâmetro, o PDF cobre
+       todo o histórico, que é o que a tela mostra. */
+    const mes = new URL(request.url).searchParams.get('mes');
+
+    if (mes && !/^\d{4}-(0[1-9]|1[0-2])$/.test(mes)) {
+      return NextResponse.json(
+        { error: 'mes_invalido', esperado: 'AAAA-MM' },
+        { status: 400 }
+      );
+    }
+
+    const [todosLotes, todasGlosas, todosRecursos] = await Promise.all([
       getLotes(supabase, clinicaId),
       getGlosas(supabase, clinicaId),
       getRecursos(supabase, clinicaId),
     ]);
+
+    /* Filtra as três listas pelo mesmo critério. Recortar só os lotes
+       deixaria os totais de glosa e de recurso falando de outro período —
+       o cabeçalho diria "julho" e os números seriam do histórico inteiro. */
+    const doMes = (item) => !mes || item.competencia === mes;
+    const lotes = todosLotes.filter(doMes);
+    const glosas = todasGlosas.filter(doMes);
+    const recursos = todosRecursos.filter(doMes);
+
+    if (mes && !lotes.length) {
+      return NextResponse.json(
+        { error: 'sem_dados_no_periodo' },
+        { status: 404 }
+      );
+    }
 
     const resumo = calcularResumo({ lotes, glosas, recursos });
     const porOperadora = agruparPorOperadora(lotes);
@@ -127,9 +152,10 @@ export async function GET() {
       })
     );
 
-    /* Data no nome do arquivo: quem baixa todo mês acumula os PDFs na
-       mesma pasta, e "relatorio-glosas.pdf (3)" não diz de quando é. */
-    const carimbo = new Date().toISOString().slice(0, 10);
+    /* Quem baixa todo mês acumula os PDFs na mesma pasta, e
+       "relatorio-glosas.pdf (3)" não diz de quando é. Com recorte, o nome
+       leva a competência; sem recorte, a data de emissão. */
+    const carimbo = mes || new Date().toISOString().slice(0, 10);
 
     return new NextResponse(buffer, {
       headers: {
