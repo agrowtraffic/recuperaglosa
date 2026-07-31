@@ -6,6 +6,29 @@ import { Resend } from 'resend';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://recuperaglosa.com.br';
+const TEMPLATE_PAGAMENTO_CONFIRMADO = 'recupera-glosa-pagamento-confirmado';
+
+function formatarDataPagamento(timestamp) {
+  const data = timestamp ? new Date(timestamp * 1000) : new Date();
+  return data.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+}
+
+function formatarValorPagamento(valorEmCentavos) {
+  return Number((valorEmCentavos ?? 0) / 100).toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  });
+}
+
+function formatarMetodoPagamento(metodo) {
+  const nomes = {
+    card: 'Cartão',
+    boleto: 'Boleto',
+    pix: 'Pix',
+  };
+  return nomes[metodo] || 'Pagamento online';
+}
 
 export async function POST(request) {
   try {
@@ -73,57 +96,34 @@ export async function POST(request) {
 
           if (usuarioData?.email && resend) {
             try {
-              // Enviar e-mail de boas-vindas via Resend
-              await resend.emails.send({
-                from: 'Recupera Glosa <naoresponda@recuperaglosa.com.br>',
-                to: usuarioData.email,
-                subject: 'Seu plano Profissional está ativo 🎉',
-                html: `
-                  <!DOCTYPE html>
-                  <html>
-                    <head>
-                      <style>
-                        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; line-height: 1.6; color: #333; }
-                        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                        .header { text-align: center; padding-bottom: 30px; border-bottom: 2px solid #eee; }
-                        .logo { font-size: 24px; font-weight: bold; color: #16a34a; }
-                        .content { padding: 30px 0; }
-                        .benefits { list-style: none; padding: 0; }
-                        .benefits li { padding: 10px 0; padding-left: 30px; position: relative; }
-                        .benefits li:before { content: "✓"; position: absolute; left: 0; color: #16a34a; font-weight: bold; }
-                        .cta { text-align: center; margin: 30px 0; }
-                        .cta a { background-color: #16a34a; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; display: inline-block; }
-                        .footer { border-top: 1px solid #eee; padding-top: 20px; font-size: 12px; color: #666; text-align: center; }
-                      </style>
-                    </head>
-                    <body>
-                      <div class="container">
-                        <div class="header">
-                          <div class="logo">🎉 Bem-vindo ao RecuperaGlosa!</div>
-                        </div>
-                        <div class="content">
-                          <p>Olá,</p>
-                          <p>Seu pagamento foi confirmado com sucesso! Seu plano <strong>Profissional</strong> já está ativo.</p>
-                          <p style="margin-top: 20px; font-weight: bold;">Agora você tem acesso a:</p>
-                          <ul class="benefits">
-                            <li>Recursos de contestação completos e prontos para enviar</li>
-                            <li>Auditorias ilimitadas por mês (contra 3/mês no plano gratuito)</li>
-                            <li>Suporte prioritário da nossa equipe</li>
-                          </ul>
-                          <div class="cta">
-                            <a href="${process.env.NEXT_PUBLIC_SITE_URL}">Acessar o RecuperaGlosa →</a>
-                          </div>
-                          <p>Qualquer dúvida ou sugestão, fale conosco: <strong>suporte@recuperaglosa.com.br</strong></p>
-                          <p>Abraço,<br/>Time RecuperaGlosa</p>
-                        </div>
-                        <div class="footer">
-                          <p>© 2026 RecuperaGlosa. Todos os direitos reservados.</p>
-                        </div>
-                      </div>
-                    </body>
-                  </html>
-                `
-              });
+              const metodo = session.payment_method_types?.[0];
+              const { error: emailError } = await resend.emails.send(
+                {
+                  from: 'Recupera Glosa <naoresponda@recuperaglosa.com.br>',
+                  to: usuarioData.email,
+                  template: {
+                    id: TEMPLATE_PAGAMENTO_CONFIRMADO,
+                    variables: {
+                      ACCESS_URL: SITE,
+                      PRODUCT_NAME: 'Plano Profissional',
+                      ORDER_ID: session.id,
+                      PAYMENT_DATE: formatarDataPagamento(session.created),
+                      PAYMENT_METHOD: formatarMetodoPagamento(metodo),
+                      AMOUNT: formatarValorPagamento(session.amount_total),
+                      BENEFIT_1: 'Recursos de contestação completos e prontos para enviar',
+                      BENEFIT_2: 'Auditorias ilimitadas para identificar oportunidades de recuperação',
+                      BENEFIT_3: 'Suporte prioritário da equipe Recupera Glosa',
+                    },
+                  },
+                },
+                {
+                  headers: {
+                    'Idempotency-Key': `pagamento-confirmado-${session.id}`,
+                  },
+                }
+              );
+
+              if (emailError) throw emailError;
               console.log(`✅ [WEBHOOK] E-mail enviado para ${usuarioData.email}`);
             } catch (emailError) {
               console.error(`⚠️ [WEBHOOK] Erro ao enviar e-mail para ${usuarioData.email}:`, emailError);

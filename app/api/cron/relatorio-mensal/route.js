@@ -10,11 +10,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import { enviarRelatorioMensal } from '@/lib/emails';
-import {
-  desempenhoPorOperadora,
-  recursosAguardando,
-  resumoDosRecursos,
-} from '@/lib/relatorios.js';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
@@ -113,7 +108,7 @@ export async function GET(request) {
       try {
         const { data: lotes } = await supabase
           .from('lote')
-          .select('id, total_apresentado, total_pago, total_glosado, operadora')
+          .select('id, operadora, total_apresentado, total_pago, total_glosado')
           .eq('clinica_id', clinica.id)
           .gte('criado_em', inicio.toISOString())
           .lt('criado_em', fim.toISOString());
@@ -130,71 +125,84 @@ export async function GET(request) {
         const pago = lotes.reduce((s, l) => s + Number(l.total_pago ?? 0), 0);
         const glosado = lotes.reduce((s, l) => s + Number(l.total_glosado ?? 0), 0);
 
-        /* Buscar recursos criados neste período. recurso → guia → lote
-           para pegar a operadora. */
-        const { data: guias } = await supabase
+        const loteIds = lotes.map((l) => l.id);
+        const { data: guias, error: erroGuias } = await supabase
           .from('guia')
           .select('id, lote_id')
-          .in('lote_id', lotes.map((l) => l.id));
+          .in('lote_id', loteIds);
 
-        const guiaIds = guias?.map((g) => g.id) ?? [];
+        if (erroGuias) throw erroGuias;
 
+        const guiaIds = (guias ?? []).map((g) => g.id);
+        let itens = [];
         let recursos = [];
-        if (guiaIds.length) {
-          const { data: recursosRaw } = await supabase
-            .from('recurso')
-            .select(
-              'id, valor_pleiteado, status, criado_em, enviado_em, resolvido_em, valor_recuperado, guia_id'
-            )
-            .in('guia_id', guiaIds)
-            .gte('criado_em', inicio.toISOString())
-            .lt('criado_em', fim.toISOString());
 
-          /* Montar mapa de guia → operadora para enriquecer recursos. */
-          const operadoraPorGuia = new Map();
-          for (const g of guias ?? []) {
-            const lote = lotes.find((l) => l.id === g.lote_id);
-            if (lote) {
-              operadoraPorGuia.set(g.id, lote.operadora);
-            }
-          }
+        if (guiaIds.length > 0) {
+          const [resultadoItens, resultadoRecursos] = await Promise.all([
+            supabase
+              .from('item')
+              .select('guia_id, valor_glosado, recorrivel')
+              .in('guia_id', guiaIds)
+              .gt('valor_glosado', 0),
+            supabase
+              .from('recurso')
+              .select('guia_id, valor_pleiteado, valor_recuperado, status, enviado_em')
+              .in('guia_id', guiaIds),
+          ]);
 
-          /* Normalizar: os recursos retornam sem operadora; buscamos via guia. */
-          recursos = (recursosRaw ?? []).map((r) => ({
-            id: r.id,
-            valor: r.valor_pleiteado,
-            operadora: operadoraPorGuia.get(r.guia_id) || '—',
-            status: r.status,
-            enviadoEmISO: r.enviado_em,
-            resolvidoEmISO: r.resolvido_em,
-            valorRecuperado: r.valor_recuperado,
-          }));
+          if (resultadoItens.error) throw resultadoItens.error;
+          if (resultadoRecursos.error) throw resultadoRecursos.error;
+
+          itens = resultadoItens.data ?? [];
+          recursos = resultadoRecursos.data ?? [];
         }
 
-        const resumo = resumoDosRecursos(recursos);
-        const desempenho = desempenhoPorOperadora(recursos);
-        const aguardando = recursosAguardando(recursos, fim);
+        const recuperavel = itens
+          .filter((i) => i.recorrivel)
+          .reduce((s, i) => s + Number(i.valor_glosado ?? 0), 0);
 
-        /* Recursos parados há 30+ dias — a operadora que não responde. */
-        const operadorasMorosas = aguardando
-          .filter((r) => r.diasEsperando >= 30)
-          .reduce((mapa, r) => {
-            const op = r.operadora || '—';
-            mapa.set(op, (mapa.get(op) ?? 0) + Number(r.valor ?? 0));
-            return mapa;
-          }, new Map());
+        const recursosDecididos = recursos.filter(
+          (r) => r.status === 'ganho' || r.status === 'perdido'
+        );
+        const valorDecidido = recursosDecididos.reduce(
+          (s, r) => s + Number(r.valor_pleiteado ?? 0),
+          0
+        );
+        const recuperado = recursos
+          .filter((r) => r.status === 'ganho')
+          .reduce(
+            (s, r) => s + Number(r.valor_recuperado ?? r.valor_pleiteado ?? 0),
+            0
+          );
+        const taxaRecuperacao = valorDecidido > 0
+          ? Math.round((recuperado / valorDecidido) * 100)
+          : null;
 
-        const dadosRecursos = {
-          recuperado: resumo.recuperado,
-          ganhos: resumo.ganhos,
-          perdidos: resumo.perdidos,
-          aguardando: resumo.aguardando,
-          operadorasMorosas: [...operadorasMorosas.entries()].map(([op, val]) => ({
-            operadora: op,
-            valor: val,
-          })),
-          desempenho: desempenho.sort((a, b) => (b.recuperado ?? 0) - (a.recuperado ?? 0)),
-        };
+        const limiteAtraso = Date.now() - 30 * 24 * 60 * 60 * 1000;
+        const guiaPorId = new Map((guias ?? []).map((g) => [g.id, g]));
+        const lotePorId = new Map(lotes.map((l) => [l.id, l]));
+        const atrasadoPorOperadora = new Map();
+
+        for (const recurso of recursos) {
+          if (
+            recurso.status !== 'enviado' ||
+            !recurso.enviado_em ||
+            new Date(recurso.enviado_em).getTime() >= limiteAtraso
+          ) continue;
+
+          const guia = guiaPorId.get(recurso.guia_id);
+          const operadora = lotePorId.get(guia?.lote_id)?.operadora || 'Operadora não identificada';
+          const valor = Number(recurso.valor_pleiteado ?? 0);
+          atrasadoPorOperadora.set(
+            operadora,
+            (atrasadoPorOperadora.get(operadora) ?? 0) + valor
+          );
+        }
+
+        const prioridade = [...atrasadoPorOperadora.entries()]
+          .sort((a, b) => b[1] - a[1])[0] ?? null;
+        const operadoraPrioritaria = prioridade?.[0] ?? null;
+        const valorAtrasado = prioridade?.[1] ?? 0;
 
         /* O destinatário é o dono (role 'owner'). Convite de equipe ainda
            não existe, mas quando existir o resumo financeiro não deve ir
@@ -220,8 +228,13 @@ export async function GET(request) {
           apresentado,
           pago,
           glosado,
-          planoPago: clinica.plano === 'ativo',
-          ...dadosRecursos,
+          qtdGuias: guias?.length ?? 0,
+          qtdGlosas: itens.length,
+          recuperavel,
+          recuperado,
+          taxaRecuperacao,
+          valorAtrasado,
+          operadoraPrioritaria,
         });
 
         if (envio.enviado) {
