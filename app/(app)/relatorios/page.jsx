@@ -14,6 +14,7 @@ import {
 import {
   desempenhoPorOperadora, recursosAguardando, resumoDosRecursos,
 } from "@/lib/relatorios";
+import BaixarRelatorio from "./BaixarRelatorio";
 
 export const metadata = { title: 'Relatórios' };
 
@@ -51,7 +52,10 @@ export default async function Relatorios() {
   return (
     <main className="rg-shell-content rg-stack">
       <PageHeader eyebrow="Relatórios" titulo="O retorno que você consegue provar"
-        descricao="Acompanhe o que voltou para o caixa e onde ainda existe oportunidade." />
+        descricao="Acompanhe o que voltou para o caixa e onde ainda existe oportunidade."
+        /* Só oferece o download quando existe demonstrativo processado:
+           um PDF de relatório zerado não serve para mandar a ninguém. */
+        acoes={temDados ? <BaixarRelatorio /> : null} />
 
       <MoneyRail atual="recuperado" estagios={resumo.estagios} />
 
