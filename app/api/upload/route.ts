@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 import { parseDemonstrativo } from '@/src/tiss/parser';
 import { salvarLote } from '@/src/db/persistir';
 import { enviarNotificacaoGlosa } from '@/lib/emails';
+import { computeFileHash } from '@/src/utils/fileHash';
 
 /* Janela de silêncio entre notificações de glosa da mesma clínica.
    Quem sobe cinco demonstrativos seguidos não deve receber cinco
@@ -110,6 +111,30 @@ export async function POST(req: Request) {
     );
   }
 
+  // ✅ Verificar duplicação: mesma clínica + mesmo arquivo
+  const arquivoHash = computeFileHash(xmlText);
+  console.log('🔍 [UPLOAD] Hash do arquivo:', arquivoHash);
+
+  const { data: loteDuplicado } = await supabase
+    .from('lote')
+    .select('id, criado_em')
+    .eq('clinica_id', usuario.clinica_id)
+    .eq('arquivo_hash', arquivoHash)
+    .maybeSingle();
+
+  if (loteDuplicado) {
+    console.log('⚠️ [UPLOAD] Arquivo duplicado detectado:', loteDuplicado.id);
+    return NextResponse.json(
+      {
+        error: 'arquivo_duplicado',
+        message: 'Este arquivo já foi enviado anteriormente. O lote anterior será mantido.',
+        loteIdExistente: loteDuplicado.id,
+        criadoEm: loteDuplicado.criado_em,
+      },
+      { status: 409 }
+    );
+  }
+
   // ✅ Fazer upload do arquivo original pro Storage (auditoria)
   const path = `${usuario.clinica_id}/${Date.now()}-${file.name}`;
   console.log('📤 [UPLOAD] Fazendo upload do arquivo original:', path);
@@ -132,7 +157,7 @@ export async function POST(req: Request) {
     resultado = await salvarLote(usuario.clinica_id, publicUrl, lote, {
       nome: clinica?.nome ?? 'Clínica',
       cnpj: clinica?.cnpj ?? undefined,
-    }, supabase); // ← Passando cliente autenticado
+    }, supabase, arquivoHash); // ← Passando cliente autenticado + arquivo_hash
     console.log('✅ [UPLOAD] Lote salvo com sucesso:', resultado.loteId);
   } catch (e: any) {
     console.error('❌ [UPLOAD] Erro ao salvar lote:', e.message);

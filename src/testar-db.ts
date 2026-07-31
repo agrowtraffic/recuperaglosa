@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { supabase } from "./db/client";
 import { parseDemonstrativo } from "./tiss/parser";
 import { salvarLote, resumoGlosaPorMotivo } from "./db/persistir";
+import { computeFileHash } from "./utils/fileHash";
 
 async function main() {
   // 1. clínica de teste (idempotente: reaproveita se já existir)
@@ -29,11 +30,12 @@ async function main() {
   // 2. parseia e persiste o fixture 1
   const xml = readFileSync("fixtures/demonstrativo-1.xml", "utf8");
   const lote = parseDemonstrativo(xml);
+  const arquivoHash = computeFileHash(xml);
 
   const { loteId, guias } = await salvarLote(clinicaId!, null, lote, {
     nome: nomeClinica,
     cnpj: "00.000.000/0001-00",
-  });
+  }, undefined, arquivoHash);
   console.log(`Lote salvo: ${loteId} (${guias} guias)`);
 
   // 3. confere direto do banco (prova que RLS/view funcionam)

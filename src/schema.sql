@@ -35,6 +35,7 @@ create table lote (
   competencia       text,                                -- 'AAAA-MM'
   numero_demonstr   text,
   arquivo_url       text,                                -- Supabase Storage
+  arquivo_hash      text,                                -- SHA256 hash para deduplicação
   status            text not null default 'processando', -- processando | ok | erro
   erro_msg          text,
   total_apresentado numeric(12,2) default 0,
@@ -43,6 +44,7 @@ create table lote (
   criado_em         timestamptz not null default now()
 );
 create index on lote(clinica_id, criado_em desc);
+create unique index on lote(clinica_id, arquivo_hash) where arquivo_hash is not null;
 
 -- ---------- 4. GUIA ----------
 create table guia (

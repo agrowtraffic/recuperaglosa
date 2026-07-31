@@ -10,10 +10,9 @@ import { gerarRecurso } from "../tiss/recurso";
  * ⚠️ IMPORTANTE: Se `supabaseClient` não for fornecido, usa service_role (scripts de teste).
  * Para upload de usuário real, DEVE passar o cliente autenticado do usuário para respeitar RLS.
  *
- * Idempotência simples: não existe ainda deduplicação por
- * numeroDemonstrativo. Isso é aceitável no Dia 4 (single-tenant de teste);
- * antes de v1 pública, adicionar unique constraint em
- * (clinica_id, operadora, numeroDemonstrativo) e checar antes de inserir.
+ * Deduplicação: arquivo_hash (SHA256 do conteúdo XML) garante que
+ * o mesmo arquivo não seja processado duas vezes. A rota de upload
+ * verifica duplicação antes de chamar esta função.
  */
 export async function salvarLote(
   clinicaId: string,
@@ -21,6 +20,7 @@ export async function salvarLote(
   lote: LoteParsed,
   clinica: { nome: string; cnpj?: string },
   supabaseClient?: SupabaseClient,
+  arquivoHash?: string,
 ) {
   const supabase = supabaseClient || defaultSupabase;
 
@@ -33,6 +33,7 @@ export async function salvarLote(
       competencia: lote.competencia ?? null,
       numero_demonstr: lote.numeroDemonstrativo ?? null,
       arquivo_url: arquivoUrl,
+      arquivo_hash: arquivoHash ?? null,
       status: lote.guias.length > 0 ? "ok" : "erro",
       erro_msg: lote.avisos.join(" | ") || null,
       total_apresentado: lote.totalApresentado,
