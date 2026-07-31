@@ -161,18 +161,8 @@ body.rg {
   .rg-btn-icon { width: 44px; height: 44px; }
 }
 
-/* Avatar da conta na topbar. No celular cresce para 44px, que é o
-   mínimo de alvo de toque. */
-.rg-avatar {
-  width: 36px; height: 36px; flex-shrink: 0;
-  display: inline-flex; align-items: center; justify-content: center;
-  border: 1px solid var(--rg-line); border-radius: 50%;
-  background: var(--rg-muted); color: var(--rg-ink-800);
-  font: inherit; font-size: 14px; font-weight: 700; cursor: pointer;
-  transition: background .16s var(--rg-ease);
-}
-.rg-avatar:hover { background: var(--rg-line-soft); }
-@media (max-width: 767px) { .rg-avatar { width: 44px; height: 44px; } }
+/* O .rg-avatar foi removido junto com o botão "C" da topbar: a conta
+   agora se abre pelo próprio bloco da clínica (.rg-clinic-btn). */
 
 /* ---------- 6. SELO DE STATUS ---------- */
 .rg-badge {
@@ -828,7 +818,10 @@ body.rg {
   backdrop-filter: blur(18px) saturate(1.25);
 }
 .rg-clinic { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.rg-clinic > span {
+/* :not(.rg-clinic-seta) porque o bloco ganhou um segundo <span> direto,
+   o da seta do menu — sem a exclusão ele herda o selo inteiro e vira um
+   quadrado da marca de 34px no lugar do ícone. */
+.rg-clinic > span:not(.rg-clinic-seta) {
   display: grid;
   place-items: center;
   width: 34px;
@@ -844,6 +837,26 @@ body.rg {
 .rg-clinic div { display: flex; flex-direction: column; min-width: 0; }
 .rg-clinic small { color: var(--rg-ink-400); font-size: 9px; font-weight: 800; letter-spacing: .11em; text-transform: uppercase; }
 .rg-clinic strong { overflow: hidden; max-width: 26vw; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
+
+/* Quando o bloco da clínica é também o gatilho do menu da conta.
+   Reseta o botão e devolve o alinhamento à esquerda que o .rg-btn
+   centralizaria. */
+.rg-clinic-btn {
+  border: 1px solid transparent; background: none; font: inherit;
+  text-align: left; cursor: pointer; padding: 4px 8px 4px 4px;
+  border-radius: var(--rg-r-sm);
+  transition: background .16s var(--rg-ease), border-color .16s var(--rg-ease);
+}
+.rg-clinic-btn:hover { background: var(--rg-line-soft); }
+.rg-clinic-btn:focus-visible {
+  outline: none; border-color: var(--rg-recuperado);
+  box-shadow: 0 0 0 3px rgba(22,163,74,.14);
+}
+.rg-clinic-seta {
+  display: inline-flex; color: var(--rg-ink-400); flex: 0 0 auto;
+  transition: transform .16s var(--rg-ease);
+}
+.rg-clinic-btn[aria-expanded="true"] .rg-clinic-seta { transform: rotate(180deg); }
 
 .rg-shell-content { padding: 32px clamp(18px, 3vw, 40px) 48px; }
 .rg-pagehead { align-items: end; padding-bottom: 4px; }

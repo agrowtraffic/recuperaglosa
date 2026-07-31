@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import AppShell from '@/app/_components/kit/AppShell';
 import { nomeDoPlano } from '@/lib/plano';
-import { Settings, LogOut } from 'lucide-react';
+import { Settings, LogOut, ChevronDown } from 'lucide-react';
 
 /* Item do menu de perfil. Usa os tokens do sistema em vez de hex solto,
    para não divergir do resto do app quando a paleta mudar. */
@@ -76,18 +76,26 @@ export default function AppChrome({ children, clinica, contadores }){
      perfil={
      /* Vai como prop, não como children: passado por children ele caía
         dentro da área de conteúdo, e como `position:absolute` sem nenhum
-        ancestral posicionado se ancorava no viewport — o avatar aparecia
+        ancestral posicionado se ancorava no viewport — o menu aparecia
         solto no meio da página, sobre o conteúdo. */
      <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }} ref={profileRef}>
        <button
          onClick={() => setProfileOpen(o => !o)}
          aria-expanded={profileOpen}
          aria-haspopup="menu"
-         aria-label={`Conta de ${clinica?.nome || 'sua clínica'}`}
          title="Sua conta"
-         className="rg-avatar"
+         className="rg-clinic rg-clinic-btn"
        >
-         {(clinica?.nome || 'C').charAt(0).toUpperCase()}
+         <span aria-hidden="true">RG</span>
+         <div>
+           <small>Clínica ativa</small>
+           <strong>{clinica?.nome || 'Sua clínica'}</strong>
+         </div>
+         {/* O ícone vai dentro de um span porque o transform do CSS não
+             pega no <svg> deste contexto — nem inline. No span pega. */}
+         <span className="rg-clinic-seta" aria-hidden="true">
+           <ChevronDown size={15} />
+         </span>
        </button>
        {profileOpen && (
          <div
@@ -95,7 +103,10 @@ export default function AppChrome({ children, clinica, contadores }){
            style={{
              position: 'absolute',
              top: '100%',
-             right: 0,
+             /* Ancorado à esquerda: o gatilho passou a ser o bloco da
+                clínica, que fica no começo da topbar. Ancorar à direita
+                jogaria o menu para fora da tela no celular. */
+             left: 0,
              background: 'var(--rg-surface)',
              border: '1px solid var(--rg-line)',
              borderRadius: 'var(--rg-r-sm)',
@@ -106,20 +117,8 @@ export default function AppChrome({ children, clinica, contadores }){
              overflow: 'hidden',
            }}
          >
-           <p
-             style={{
-               margin: 0,
-               padding: '10px 14px',
-               fontSize: 12,
-               color: 'var(--rg-ink-400)',
-               borderBottom: '1px solid var(--rg-line-soft)',
-               whiteSpace: 'nowrap',
-               overflow: 'hidden',
-               textOverflow: 'ellipsis',
-             }}
-           >
-             {clinica?.nome || 'Sua clínica'}
-           </p>
+           {/* O cabeçalho com o nome da clínica saiu: o gatilho do menu
+               agora é o próprio bloco que mostra esse nome, logo acima. */}
            <Link
              href="/configuracoes"
              role="menuitem"

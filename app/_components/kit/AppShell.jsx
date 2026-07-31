@@ -115,13 +115,22 @@ export default function AppShell({
             aria-expanded={drawer}
           ><Menu size={20} /></button>
 
-          <div className="rg-clinic">
-            <span aria-hidden="true">RG</span>
-            <div>
-              <small>Clínica ativa</small>
-              <strong>{nomeClinica}</strong>
+          {/* A identificação da clínica é também o menu da conta. Antes
+              eram dois elementos: este bloco, estático, e um avatar "C"
+              do outro lado da topbar que abria Configurações/Sair. Quem
+              procurava onde sair não olhava para a inicial solta no canto
+              — e o nome da clínica aparecia duas vezes, aqui e no
+              cabeçalho do próprio menu. Sem `perfil`, cai no bloco
+              estático de sempre. */}
+          {perfil ?? (
+            <div className="rg-clinic">
+              <span aria-hidden="true">RG</span>
+              <div>
+                <small>Clínica ativa</small>
+                <strong>{nomeClinica}</strong>
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="rg-spacer" />
 
@@ -133,7 +142,6 @@ export default function AppShell({
           <button className="rg-btn rg-btn-primary rg-btn-sm rg-hide-mobile" onClick={onNovoLote}>
             <Plus size={16} /> Enviar XML
           </button>
-          {perfil}
         </header>
 
         {children}
