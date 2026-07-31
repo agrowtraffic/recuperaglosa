@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { X } from 'lucide-react';
 import { PASSOS } from './passos';
 
@@ -27,6 +27,11 @@ export default function TourGuiado({ aberto, aoFechar, chaveConclusao }) {
   const [indice, setIndice] = useState(0);
   const [alvoRect, setAlvoRect] = useState(null);
   const [visiveis, setVisiveis] = useState([]);
+  /* Altura real do balão, medida depois de renderizar. Já foi um número
+     fixo aqui, e errava: o texto varia de tamanho a cada passo, então
+     qualquer chute deixa o balão em cima do alvo que ele deveria
+     destacar em alguma combinação de passo e altura de tela. */
+  const [balaoAltura, setBalaoAltura] = useState(190);
   const balaoRef = useRef(null);
 
   /* Monta o roteiro no momento em que abre, não na renderização: os
@@ -48,14 +53,31 @@ export default function TourGuiado({ aberto, aoFechar, chaveConclusao }) {
   }, [passo]);
 
   /* Traz o alvo para a tela antes de medir, senão o recorte fica fora da
-     área visível em telas menores. */
+     área visível em telas menores.
+
+     Alvo alto vai para o topo, não para o centro: centralizar um bloco
+     que ocupa metade da tela divide a sobra em duas faixas, e aí o balão
+     não cabe de nenhum lado. Encostando no topo, a sobra fica toda
+     embaixo e o balão cabe inteiro. */
   useEffect(() => {
     if (!aberto || !passo) return;
     const el = passo.alvo ? document.querySelector(passo.alvo) : null;
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (el) {
+      const alto = el.getBoundingClientRect().height > window.innerHeight * 0.4;
+      el.scrollIntoView({ behavior: 'smooth', block: alto ? 'start' : 'center' });
+    }
     const t = setTimeout(medir, el ? 320 : 0);
     return () => clearTimeout(t);
   }, [aberto, passo, medir]);
+
+  /* Mede o balão depois que ele existe no DOM. useLayoutEffect e não
+     useEffect: reposiciona antes da pintura, senão o balão aparece no
+     lugar errado por um quadro. */
+  useLayoutEffect(() => {
+    if (!aberto || !balaoRef.current) return;
+    const h = balaoRef.current.getBoundingClientRect().height;
+    if (h && Math.abs(h - balaoAltura) > 1) setBalaoAltura(h);
+  }, [aberto, indice, alvoRect, balaoAltura]);
 
   useEffect(() => {
     if (!aberto) return;
@@ -108,19 +130,30 @@ export default function TourGuiado({ aberto, aoFechar, chaveConclusao }) {
   if (!alvoRect) {
     estiloBalao = { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
   } else {
-    const cabeAbaixo = alvoRect.top + alvoRect.height + ESPACO + 220 < window.innerHeight;
+    const alturaTela = window.innerHeight;
+    const precisa = balaoAltura + ESPACO;
+    const folgaAbaixo = alturaTela - (alvoRect.top + alvoRect.height);
+    const folgaAcima = alvoRect.top;
+
     const lado = passo.posicao === 'direita' && alvoRect.left + alvoRect.width + ESPACO + LARGURA < window.innerWidth;
 
     if (lado) {
       estiloBalao = {
-        top: Math.max(12, Math.min(alvoRect.top, window.innerHeight - 260)),
+        top: Math.max(12, Math.min(alvoRect.top, alturaTela - balaoAltura - 12)),
         left: alvoRect.left + alvoRect.width + ESPACO,
       };
     } else {
       const esq = Math.max(12, Math.min(alvoRect.left, window.innerWidth - LARGURA - 12));
-      estiloBalao = cabeAbaixo
-        ? { top: alvoRect.top + alvoRect.height + ESPACO, left: esq }
-        : { top: Math.max(12, alvoRect.top - ESPACO - 220), left: esq };
+      /* Abaixo quando cabe; senão acima quando cabe; senão o lado com
+         mais folga, encostado na borda. O último caso é geometria pura —
+         alvo alto em tela baixa não deixa espaço em lugar nenhum — e aí
+         encostar na borda é o que menos cobre o alvo. */
+      let topo;
+      if (folgaAbaixo >= precisa) topo = alvoRect.top + alvoRect.height + ESPACO;
+      else if (folgaAcima >= precisa) topo = alvoRect.top - ESPACO - balaoAltura;
+      else topo = folgaAbaixo >= folgaAcima ? alturaTela - balaoAltura - 12 : 12;
+
+      estiloBalao = { top: topo, left: esq };
     }
   }
 
