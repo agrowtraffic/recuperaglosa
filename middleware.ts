@@ -50,6 +50,20 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
+    /* Visitante na raiz vê a landing, não o formulário de login. Quem
+       chega em recuperaglosa.com.br pela primeira vez veio de anúncio ou
+       de busca e ainda não tem conta — mandar direto para o login pede
+       senha de quem nem sabe o que o produto faz.
+
+       Reescrita e não redirect: a URL continua sendo a raiz. Um 307 para
+       /inicio jogaria fora o endereço que vai em anúncio, e-mail e busca,
+       e dividiria o sinal de SEO entre dois endereços. */
+    if (pathname === '/') {
+      const landing = NextResponse.rewrite(new URL('/inicio', request.url));
+      response.cookies.getAll().forEach((c) => landing.cookies.set(c.name, c.value, c));
+      return landing;
+    }
+
     const redirectResponse = NextResponse.redirect(new URL('/login', request.url));
     // Preserva cookies renovados por getUser() mesmo no caminho de redirect
     response.cookies.getAll().forEach((c) => redirectResponse.cookies.set(c.name, c.value, c));
