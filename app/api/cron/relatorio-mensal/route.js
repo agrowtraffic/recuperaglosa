@@ -10,6 +10,11 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import { enviarRelatorioMensal } from '@/lib/emails';
+import {
+  desempenhoPorOperadora,
+  recursosAguardando,
+  resumoDosRecursos,
+} from '@/lib/relatorios.js';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
@@ -108,7 +113,7 @@ export async function GET(request) {
       try {
         const { data: lotes } = await supabase
           .from('lote')
-          .select('total_apresentado, total_pago, total_glosado')
+          .select('id, total_apresentado, total_pago, total_glosado, operadora')
           .eq('clinica_id', clinica.id)
           .gte('criado_em', inicio.toISOString())
           .lt('criado_em', fim.toISOString());
@@ -124,6 +129,72 @@ export async function GET(request) {
         const apresentado = lotes.reduce((s, l) => s + Number(l.total_apresentado ?? 0), 0);
         const pago = lotes.reduce((s, l) => s + Number(l.total_pago ?? 0), 0);
         const glosado = lotes.reduce((s, l) => s + Number(l.total_glosado ?? 0), 0);
+
+        /* Buscar recursos criados neste período. recurso → guia → lote
+           para pegar a operadora. */
+        const { data: guias } = await supabase
+          .from('guia')
+          .select('id, lote_id')
+          .in('lote_id', lotes.map((l) => l.id));
+
+        const guiaIds = guias?.map((g) => g.id) ?? [];
+
+        let recursos = [];
+        if (guiaIds.length) {
+          const { data: recursosRaw } = await supabase
+            .from('recurso')
+            .select(
+              'id, valor_pleiteado, status, criado_em, enviado_em, resolvido_em, valor_recuperado, guia_id'
+            )
+            .in('guia_id', guiaIds)
+            .gte('criado_em', inicio.toISOString())
+            .lt('criado_em', fim.toISOString());
+
+          /* Montar mapa de guia → operadora para enriquecer recursos. */
+          const operadoraPorGuia = new Map();
+          for (const g of guias ?? []) {
+            const lote = lotes.find((l) => l.id === g.lote_id);
+            if (lote) {
+              operadoraPorGuia.set(g.id, lote.operadora);
+            }
+          }
+
+          /* Normalizar: os recursos retornam sem operadora; buscamos via guia. */
+          recursos = (recursosRaw ?? []).map((r) => ({
+            id: r.id,
+            valor: r.valor_pleiteado,
+            operadora: operadoraPorGuia.get(r.guia_id) || '—',
+            status: r.status,
+            enviadoEmISO: r.enviado_em,
+            resolvidoEmISO: r.resolvido_em,
+            valorRecuperado: r.valor_recuperado,
+          }));
+        }
+
+        const resumo = resumoDosRecursos(recursos);
+        const desempenho = desempenhoPorOperadora(recursos);
+        const aguardando = recursosAguardando(recursos, fim);
+
+        /* Recursos parados há 30+ dias — a operadora que não responde. */
+        const operadorasMorosas = aguardando
+          .filter((r) => r.diasEsperando >= 30)
+          .reduce((mapa, r) => {
+            const op = r.operadora || '—';
+            mapa.set(op, (mapa.get(op) ?? 0) + Number(r.valor ?? 0));
+            return mapa;
+          }, new Map());
+
+        const dadosRecursos = {
+          recuperado: resumo.recuperado,
+          ganhos: resumo.ganhos,
+          perdidos: resumo.perdidos,
+          aguardando: resumo.aguardando,
+          operadorasMorosas: [...operadorasMorosas.entries()].map(([op, val]) => ({
+            operadora: op,
+            valor: val,
+          })),
+          desempenho: desempenho.sort((a, b) => (b.recuperado ?? 0) - (a.recuperado ?? 0)),
+        };
 
         /* O destinatário é o dono (role 'owner'). Convite de equipe ainda
            não existe, mas quando existir o resumo financeiro não deve ir
@@ -150,6 +221,7 @@ export async function GET(request) {
           pago,
           glosado,
           planoPago: clinica.plano === 'ativo',
+          ...dadosRecursos,
         });
 
         if (envio.enviado) {
