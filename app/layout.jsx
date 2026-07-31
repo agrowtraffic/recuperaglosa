@@ -8,11 +8,17 @@ const manrope = Manrope({ subsets: ['latin'], display: 'swap' });
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
+  /* Sem metadataBase o Next monta URL relativa em canonical e Open Graph,
+     e cada domínio que servisse o app se anunciava como original. Fixar
+     aqui faz todo link absoluto apontar para o domínio oficial, venha a
+     requisição de onde vier. */
+  metadataBase: new URL('https://recuperaglosa.com.br'),
   title: {
     default: 'RecuperaGlosa',
     template: '%s · RecuperaGlosa',
   },
   description: 'Auditoria de glosas de convênio para clínicas e consultórios.',
+  alternates: { canonical: '/' },
 };
 
 export default function RootLayout({ children }) {
