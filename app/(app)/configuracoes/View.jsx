@@ -272,8 +272,14 @@ export default function ConfiguracoesView({
             </Field>
           </div>
 
-          {/* NOVO: responsável técnico — assina o recurso de glosa */}
-          <div style={{ marginTop: 8, paddingTop: 16, borderTop: '1px solid var(--rg-line)' }}>
+          {/* Responsável técnico — assina o recurso de glosa.
+              O id é alvo dos avisos que aparecem na tela do recurso e
+              logo depois do pagamento: sem ele o link cairia no topo da
+              página e a pessoa teria que caçar a seção. */}
+          <div
+            id="responsavel"
+            style={{ marginTop: 8, paddingTop: 16, borderTop: '1px solid var(--rg-line)', scrollMarginTop: 90 }}
+          >
             <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 700, color: 'var(--rg-ink-800)' }}>
               Responsável técnico
             </p>

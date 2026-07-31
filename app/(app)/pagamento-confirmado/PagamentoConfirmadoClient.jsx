@@ -196,6 +196,49 @@ export default function PagamentoConfirmadoClient() {
             ))}
           </ul>
 
+          {/* Pedido do responsável técnico fica aqui, e não no cadastro:
+              no cadastro é burocracia antes de a pessoa ver valor, e trava
+              a entrada. Aqui ela acabou de pagar para ter os recursos
+              completos e está pronta para configurar — e é o último
+              momento antes de gerar o primeiro PDF, que sem esses dados
+              sai com a linha de assinatura em branco. */}
+          <div style={{
+            textAlign: 'left',
+            padding: '14px 16px',
+            marginBottom: '16px',
+            borderRadius: '10px',
+            border: '1px solid #d9e5dd',
+            background: '#f4f8f5'
+          }}>
+            <p style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: 700, color: '#0f172a' }}>
+              Falta 1 minuto para o recurso sair assinado
+            </p>
+            <p style={{ margin: '0 0 10px', fontSize: '13px', color: '#5c706a', lineHeight: 1.5 }}>
+              Cadastre o responsável técnico da clínica — nome, conselho e registro.
+              Sem isso, todo PDF sai com a linha de assinatura em branco para
+              preencher à mão.
+            </p>
+            <button
+              onClick={() => {
+                fetch('/api/revalidate', { method: 'POST' }).then(() => {
+                  router.push('/configuracoes#responsavel');
+                });
+              }}
+              style={{
+                padding: '9px 14px',
+                background: '#fff',
+                color: '#0f172a',
+                border: '1px solid #cbd5e1',
+                borderRadius: '8px',
+                fontWeight: 600,
+                fontSize: '13px',
+                cursor: 'pointer'
+              }}
+            >
+              Cadastrar responsável
+            </button>
+          </div>
+
           <button
             onClick={() => {
               // Revalidar cache antes de ir pro dashboard

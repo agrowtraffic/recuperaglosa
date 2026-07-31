@@ -7,7 +7,7 @@
    ============================================================ */
 import { notFound } from "next/navigation";
 import { PageHeader, Money, StatusBadge } from "@/app/_components/kit/Primitives";
-import { Lock, ArrowLeft } from "lucide-react";
+import { Lock, ArrowLeft, PenLine } from "lucide-react";
 import { getContexto, getRecurso } from "@/lib/dados-clinica";
 import { ehPago, PLANO_PAGO } from "@/lib/plano";
 import BotaoAssinar from "@/app/_components/kit/BotaoAssinar";
@@ -112,6 +112,49 @@ export default async function RecursoDetalhe({ params }) {
             liberado={recurso.completo}
           />
         </div>
+
+        {/* ── Aviso de assinatura ausente ──
+            Sem responsável técnico cadastrado, o PDF sai com a linha de
+            assinatura em branco para preencher à mão. Os campos existem
+            em /configuracoes, mas no fim da página — quem baixa o recurso
+            só descobria o problema com o documento já impresso.
+
+            Aparece aqui, ao lado do botão que gera o PDF, e só para quem
+            pode baixar: no plano gratuito o download está bloqueado e o
+            aviso seria barulho sobre um problema que a pessoa não tem.
+            Não bloqueia o download — assinar à mão é saída legítima. */}
+        {recurso.completo && !clinica?.responsavel_nome && (
+          <div
+            className="rg-card-pad"
+            style={{ paddingTop: 0 }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                gap: 12,
+                padding: '14px 16px',
+                borderRadius: 12,
+                border: '1px solid var(--rg-glosado)',
+                background: 'var(--rg-glosado-bg)',
+              }}
+            >
+              <PenLine size={18} color="var(--rg-glosado-h)" style={{ flex: '0 0 auto', marginTop: 2 }} />
+              <div style={{ minWidth: 0 }}>
+                <p style={{ margin: '0 0 4px', fontSize: 14, fontWeight: 700, color: 'var(--rg-ink-800)' }}>
+                  O PDF vai sair sem assinatura
+                </p>
+                <p className="rg-sub" style={{ margin: '0 0 10px' }}>
+                  Falta o responsável técnico da clínica. Sem ele, a linha de
+                  assinatura sai em branco e você precisa preencher à mão em cada
+                  recurso enviado.
+                </p>
+                <a href="/configuracoes#responsavel" className="rg-btn rg-btn-secondary rg-btn-sm">
+                  Cadastrar responsável
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="rg-card-pad">
           <pre
