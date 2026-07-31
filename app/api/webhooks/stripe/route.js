@@ -111,7 +111,7 @@ export async function POST(request) {
                             <li>Suporte prioritário da nossa equipe</li>
                           </ul>
                           <div class="cta">
-                            <a href="https://recuperaglosa.vercel.app">Acessar o RecuperaGlosa →</a>
+                            <a href="${process.env.NEXT_PUBLIC_SITE_URL}">Acessar o RecuperaGlosa →</a>
                           </div>
                           <p>Qualquer dúvida ou sugestão, fale conosco: <strong>suporte@recuperaglosa.com.br</strong></p>
                           <p>Abraço,<br/>Time RecuperaGlosa</p>
