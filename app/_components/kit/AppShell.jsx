@@ -139,7 +139,13 @@ export default function AppShell({
           {/* Sino de notificações removido: era um botão permanentemente
               desabilitado, e controle morto na topbar é o que mais faz o
               produto parecer inacabado. Volta quando existir de verdade. */}
-          <button className="rg-btn rg-btn-primary rg-btn-sm rg-hide-mobile" onClick={onNovoLote}>
+          <button
+            className="rg-btn rg-btn-primary rg-btn-sm rg-hide-mobile"
+            onClick={onNovoLote}
+            /* Âncora do tutorial. Fica no botão e não numa classe de
+               layout porque é o botão em si que o passo explica. */
+            data-tour="enviar-xml"
+          >
             <Plus size={16} /> Enviar XML
           </button>
         </header>

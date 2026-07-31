@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import AppShell from '@/app/_components/kit/AppShell';
 import { nomeDoPlano } from '@/lib/plano';
-import { Settings, LogOut, ChevronDown } from 'lucide-react';
+import { Settings, LogOut, ChevronDown, HelpCircle } from 'lucide-react';
+import TourGuiado from '@/app/_components/tour/TourGuiado';
 
 /* Item do menu de perfil. Usa os tokens do sistema em vez de hex solto,
    para não divergir do resto do app quando a paleta mudar. */
@@ -29,11 +30,34 @@ const itemMenu = {
    outra ("refresh_token_not_found"), e quem gravasse o cookie por último
    deixava no navegador um token já queimado — daí o middleware não achava
    sessão na navegação seguinte e devolvia a pessoa para o /login. */
-export default function AppChrome({ children, clinica, contadores }){
+export default function AppChrome({ children, clinica, contadores, clinicaId }){
  const router = useRouter();
  const [signingOut, setSigningOut] = useState(false);
  const [profileOpen, setProfileOpen] = useState(false);
+ const [tourAberto, setTourAberto] = useState(false);
  const profileRef = useRef(null);
+
+ /* Por clínica, e não uma chave global: em máquina compartilhada na
+    recepção, quem entra depois com outra conta merece ver o tutorial. */
+ const chaveTour = clinicaId ? `rg-tutorial-${clinicaId}` : null;
+
+ /* Abre sozinho só na primeira visita. Roda depois da montagem porque
+    localStorage não existe no servidor, e num timeout curto para o
+    conteúdo da página já estar no DOM — o roteiro monta a partir dos
+    alvos que encontra, e medir cedo demais descartaria passos que
+    existem. */
+ useEffect(() => {
+   if (!chaveTour) return;
+   let visto = null;
+   try {
+     visto = localStorage.getItem(chaveTour);
+   } catch {
+     return; /* sem storage, não insiste: melhor nunca abrir do que abrir toda vez */
+   }
+   if (visto) return;
+   const t = setTimeout(() => setTourAberto(true), 700);
+   return () => clearTimeout(t);
+ }, [chaveTour]);
 
  useEffect(() => {
    if (!profileOpen) return;
@@ -119,6 +143,24 @@ export default function AppChrome({ children, clinica, contadores }){
          >
            {/* O cabeçalho com o nome da clínica saiu: o gatilho do menu
                agora é o próprio bloco que mostra esse nome, logo acima. */}
+           {/* Fica no menu da clínica porque é onde a pessoa procura
+               quando trava — e é o lugar que o último passo do tutorial
+               indica para revê-lo. */}
+           <button
+             role="menuitem"
+             onClick={() => { setProfileOpen(false); setTourAberto(true); }}
+             style={{
+               ...itemMenu,
+               border: 'none',
+               background: 'none',
+               width: '100%',
+               textAlign: 'left',
+               cursor: 'pointer',
+               borderBottom: '1px solid var(--rg-line-soft)',
+             }}
+           >
+             <HelpCircle size={16} /> Ver tutorial
+           </button>
            <Link
              href="/configuracoes"
              role="menuitem"
@@ -149,6 +191,11 @@ export default function AppChrome({ children, clinica, contadores }){
      }
    >
      {children}
+     <TourGuiado
+       aberto={tourAberto}
+       aoFechar={() => setTourAberto(false)}
+       chaveConclusao={chaveTour}
+     />
    </AppShell>
  );
 }

@@ -38,6 +38,43 @@ export default async function VisaoGeral() {
             texto="Aceita arquivo XML no padrão TISS."
             acao={<a href="/lotes" className="rg-btn rg-btn-primary rg-btn-lg">Enviar XML</a>} />
         </div>
+
+        {/* ── Como funciona ──
+            O tutorial guiado abre sozinho na primeira visita, mas quem
+            dispensa fica sem nada — e esta é a única tela que a pessoa vê
+            antes de entender o produto. Some sozinho no primeiro upload,
+            junto com o resto do estado vazio: não precisa de "não mostrar
+            de novo" nem de estado guardado em lugar nenhum. */}
+        <section className="rg-card">
+          <div className="rg-card-head">
+            <h2 className="rg-h2">Como funciona</h2>
+            <span className="rg-caption">3 passos</span>
+          </div>
+          <div className="rg-card-pad">
+            <ol className="rg-passos">
+              <li>
+                <strong>Baixe o demonstrativo no portal da operadora.</strong>
+                {' '}É o arquivo XML que ela publica quando fecha o pagamento de um lote
+                de guias, no padrão TISS/ANS.
+              </li>
+              <li>
+                <strong>Envie aqui.</strong>
+                {' '}A auditoria recalcula guia por guia a partir do que foi apresentado e
+                do que foi pago — em vez de repetir o valor de glosa que a operadora
+                informou.
+              </li>
+              <li>
+                <strong>Saia com o recurso escrito.</strong>
+                {' '}Para cada glosa que ainda está no prazo, o sistema monta a contestação
+                com a fundamentação do motivo usado pela operadora. Você revisa, baixa em
+                PDF e envia.
+              </li>
+            </ol>
+            <p className="rg-caption" style={{ marginTop: 14 }}>
+              Glosa é a diferença entre o que você faturou e o que o convênio pagou.
+            </p>
+          </div>
+        </section>
       </main>
     );
   }

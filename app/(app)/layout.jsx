@@ -22,7 +22,10 @@ export default async function AppLayout({ children }) {
   const glosas = clinicaId ? await getGlosasCount(supabase, clinicaId) : 0;
 
   return (
-    <AppChrome clinica={clinica} contadores={{ glosas }}>
+    /* clinicaId vai junto só para o tutorial saber de quem é a marca de
+       "já vi": em recepção com máquina compartilhada, a próxima conta
+       precisa ver o tutorial de novo. */
+    <AppChrome clinica={clinica} contadores={{ glosas }} clinicaId={clinicaId}>
       {children}
     </AppChrome>
   );

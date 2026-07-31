@@ -281,6 +281,69 @@ body.rg {
   .rg-select { height: 40px; font-size: 16px; }
 }
 
+/* Lista numerada de "como funciona". O contador vem de CSS e não do
+   marcador nativo do <ol> para o número poder virar disco da marca. */
+.rg-passos { list-style: none; margin: 0; padding: 0; counter-reset: passo; display: grid; gap: 14px; }
+.rg-passos li {
+  counter-increment: passo; position: relative; padding-left: 38px;
+  font-size: 14px; line-height: 1.55; color: var(--rg-ink-600);
+}
+.rg-passos li::before {
+  content: counter(passo);
+  position: absolute; left: 0; top: -1px;
+  display: grid; place-items: center; width: 26px; height: 26px;
+  border-radius: var(--rg-r-pill); background: var(--rg-brand); color: var(--rg-pulse);
+  font-size: 12px; font-weight: 800;
+}
+.rg-passos strong { color: var(--rg-ink-800); font-weight: 700; }
+
+/* ---------- TUTORIAL GUIADO ----------
+   O recorte de destaque é um box-shadow gigante: o retângulo fica
+   transparente e a sombra cobre todo o resto da tela. Evita SVG com
+   máscara e acompanha o elemento só mudando top/left/width/height. */
+.rg-tour { position: fixed; inset: 0; z-index: 2000; }
+.rg-tour-veu { position: absolute; inset: 0; background: rgba(6, 32, 27, .55); }
+.rg-tour-recorte {
+  position: absolute; border-radius: var(--rg-r-sm);
+  box-shadow: 0 0 0 9999px rgba(6, 32, 27, .55);
+  border: 2px solid var(--rg-pulse);
+  /* O furo não intercepta clique: quem quiser mexer na tela por trás
+     consegue, e o balão continua por cima. */
+  pointer-events: none;
+  transition: top .2s var(--rg-ease), left .2s var(--rg-ease),
+              width .2s var(--rg-ease), height .2s var(--rg-ease);
+}
+.rg-tour-balao {
+  position: absolute; width: 360px; max-width: calc(100vw - 24px);
+  background: var(--rg-surface); border: 1px solid var(--rg-line);
+  border-radius: var(--rg-r); box-shadow: var(--rg-shadow-up);
+  padding: 18px 18px 14px;
+}
+.rg-tour-balao:focus { outline: none; }
+.rg-tour-contador {
+  margin: 0 0 6px; font-size: 11px; font-weight: 800; letter-spacing: .09em;
+  text-transform: uppercase; color: var(--rg-ink-400);
+}
+.rg-tour-fechar {
+  position: absolute; top: 10px; right: 10px;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; padding: 0; cursor: pointer;
+  border: none; background: none; border-radius: var(--rg-r-sm);
+  color: var(--rg-ink-400);
+}
+.rg-tour-fechar:hover { background: var(--rg-line-soft); color: var(--rg-ink-800); }
+.rg-tour-acoes { display: flex; align-items: center; gap: 6px; margin-top: 14px; }
+
+@media (max-width: 767px) {
+  /* No celular o balão para de perseguir o alvo e ancora embaixo: com
+     360px de largura em tela estreita, seguir o elemento jogava metade
+     do texto para fora. */
+  .rg-tour-balao {
+    top: auto !important; bottom: 12px;
+    left: 12px !important; right: 12px; width: auto; transform: none !important;
+  }
+}
+
 /* Texto só para leitor de tela: rótulo que a interface dispensa
    visualmente mas o controle não pode ficar sem. */
 .rg-sr-only {
