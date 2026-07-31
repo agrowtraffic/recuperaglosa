@@ -14,6 +14,11 @@ export async function GET(request) {
     if (!error) {
       return NextResponse.redirect(new URL(next, request.url));
     }
+
+    /* Sem este log a falha era invisível: a pessoa voltava para o login e
+       não havia como saber se o código expirou, se o verifier do PKCE não
+       estava no navegador ou se a origem do redirect divergia. */
+    console.error('[CALLBACK] Falha ao trocar código por sessão:', error.message);
   }
 
   return NextResponse.redirect(new URL('/login?erro=oauth', request.url));

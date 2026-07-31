@@ -88,14 +88,27 @@ export async function POST(request) {
   confirmationUrl.searchParams.set('type', 'signup');
   confirmationUrl.searchParams.set('next', '/completar-cadastro');
 
+  /* enviarConfirmacaoConta() tem dois modos de falhar: lança (erro do
+     Resend) ou devolve { enviado: false } quando nem tenta — sem
+     RESEND_API_KEY, por exemplo. Antes só o throw era tratado, então a
+     segunda forma passava batido: o usuário era criado, a API respondia
+     ok, a tela dizia "confirme seu e-mail" e o e-mail nunca saía. Pior,
+     o endereço ficava queimado — tentar de novo dá email_ja_cadastrado. */
+  let motivoFalha = null;
+
   try {
-    await enviarConfirmacaoConta({
+    const envio = await enviarConfirmacaoConta({
       para: email,
       confirmationUrl: confirmationUrl.toString(),
       userId: data.user.id,
     });
+    if (!envio?.enviado) motivoFalha = envio?.motivo || 'motivo não informado';
   } catch (emailError) {
-    console.error('[SIGNUP] Falha ao enviar confirmação:', emailError?.message);
+    motivoFalha = emailError?.message || 'exceção sem mensagem';
+  }
+
+  if (motivoFalha) {
+    console.error('[SIGNUP] Confirmação não enviada:', motivoFalha);
     await admin.auth.admin.deleteUser(data.user.id).catch((rollbackError) => {
       console.error('[SIGNUP] Falha ao desfazer cadastro:', rollbackError?.message);
     });
