@@ -61,15 +61,25 @@ export default function LoginForm({ initialMode = 'login' }) {
         if (!/[0-9]/.test(password)) { setError('A senha deve conter números.'); setLoading(false); return; }
         if (password !== confirmPassword) { setError('As senhas não coincidem.'); setLoading(false); return; }
         if (!acceptedTerms) { setError('Aceite os termos para continuar.'); setLoading(false); return; }
-        const { error: signupError } = await supabase.auth.signUp({
-          email: email.trim().toLowerCase(),
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/auth/confirm`,
-            data: { firstName: firstName.trim(), lastName: lastName.trim() }
-          }
+        const signupResponse = await fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: email.trim().toLowerCase(),
+            password,
+            firstName: firstName.trim(),
+            lastName: lastName.trim(),
+          }),
         });
-        if (signupError) throw signupError;
+        const signupResult = await signupResponse.json().catch(() => ({}));
+        if (!signupResponse.ok) {
+          const messages = {
+            email_ja_cadastrado: 'Este e-mail já possui uma conta.',
+            email_nao_enviado: 'Não foi possível enviar a confirmação. Tente novamente.',
+            senha_invalida: 'A senha informada não atende aos requisitos.',
+          };
+          throw new Error(messages[signupResult.error] || 'Não foi possível criar sua conta. Tente novamente.');
+        }
         setSuccess(true);
       } else if (isRecovery) {
         const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
