@@ -59,6 +59,27 @@ export async function middleware(request: NextRequest) {
        /inicio jogaria fora o endereço que vai em anúncio, e-mail e busca,
        e dividiria o sinal de SEO entre dois endereços. */
     if (pathname === '/') {
+      /* Link de recuperação de senha que caiu na raiz.
+
+         O Supabase só honra o `redirectTo` que a aplicação pede se ele
+         estiver na allow-list do projeto; fora dela, ele descarta o
+         pedido e usa o Site URL — que é a raiz. O resultado é um `code`
+         de recuperação chegando aqui, onde não existe nada para trocá-lo
+         por sessão: a pessoa clicava no e-mail e via a landing.
+
+         Encaminhar para quem sabe trocar o código resolve sem depender
+         de configuração. Vale manter mesmo depois de a allow-list ser
+         corrigida: é a diferença entre uma config errada custar uma
+         recuperação de senha ou custar nada. */
+      const code = request.nextUrl.searchParams.get('code');
+      if (code) {
+        const destino = new URL('/auth/reset-password', request.url);
+        destino.searchParams.set('code', code);
+        const encaminha = NextResponse.redirect(destino);
+        response.cookies.getAll().forEach((c) => encaminha.cookies.set(c.name, c.value, c));
+        return encaminha;
+      }
+
       const landing = NextResponse.rewrite(new URL('/inicio', request.url));
       response.cookies.getAll().forEach((c) => landing.cookies.set(c.name, c.value, c));
       return landing;
