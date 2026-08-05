@@ -107,11 +107,13 @@ export default function LoginPage({ searchParams }) {
 
         <div className={styles.accessContent}>
 
-          {/* Intro */}
+          {/* Intro. O título saiu daqui e foi para o LoginForm: as abas
+              trocam o modo no cliente, e um título renderizado no
+              servidor descrevia a tela errada — em "Recuperar senha"
+              apareciam dois títulos empilhados. Só o selo, que vale para
+              qualquer modo, continua aqui. */}
           <div className={styles.formIntro}>
             <span className={styles.secureLabel}><i /> Acesso seguro</span>
-            <h2>Bem-vindo de volta</h2>
-            <p>Informe seu e-mail para receber um link de acesso seguro.</p>
           </div>
 
           {erro && (
@@ -123,11 +125,14 @@ export default function LoginPage({ searchParams }) {
           {/* Formulário (Client Component) */}
           <LoginForm initialMode={initialMode} />
 
-          {/* Trust row */}
+          {/* Trust row. Anunciava "Sem senha para esquecer" e "Link de uso
+              único", que descreviam o login por link mágico — removido por
+              estar quebrado. Prometer na tela o que o produto não faz é
+              pior do que não prometer nada. */}
           <div className={styles.trustRow} aria-label="Características de segurança">
-            <span>Sem senha para esquecer</span>
+            <span>Dados isolados por clínica</span>
             <i aria-hidden="true" />
-            <span>Link de uso único</span>
+            <span>Conexão criptografada</span>
           </div>
 
           {/* CTA cadastro */}

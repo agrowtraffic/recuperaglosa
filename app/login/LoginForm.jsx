@@ -21,7 +21,12 @@ function passwordScore(pwd) {
   return s;
 }
 
-const MODES = ['login', 'signup', 'magic', 'recovery'];
+/* O modo 'magic' (link de uso único) foi removido: dependia de
+   /auth/confirm tratar o `code` do PKCE, coisa que aquela rota nunca fez
+   — ela só lê `token_hash` — então o link do e-mail caía em
+   /login?erro=link-invalido. Entrar com senha e entrar com Google já
+   cobrem o caso, e ambos funcionam. */
+const MODES = ['login', 'signup', 'recovery'];
 
 export default function LoginForm({ initialMode = 'login' }) {
   const router = useRouter();
@@ -39,7 +44,6 @@ export default function LoginForm({ initialMode = 'login' }) {
 
   const isSignup   = mode === 'signup';
   const isRecovery = mode === 'recovery';
-  const isMagic    = mode === 'magic';
   const score      = passwordScore(password);
 
   const changeMode = useCallback((next) => {
@@ -87,13 +91,6 @@ export default function LoginForm({ initialMode = 'login' }) {
         });
         if (resetError) throw resetError;
         setSuccess(true);
-      } else if (isMagic) {
-        const { error: otpError } = await supabase.auth.signInWithOtp({
-          email,
-          options: { emailRedirectTo: `${window.location.origin}/auth/confirm` }
-        });
-        if (otpError) throw otpError;
-        setSuccess(true);
       } else {
         // Login com e-mail e senha
         const { error: loginError } = await supabase.auth.signInWithPassword({
@@ -128,25 +125,20 @@ export default function LoginForm({ initialMode = 'login' }) {
     }
   }
 
-  /* ── Estado de sucesso (signup / magic link / recovery) ──
-     São três caminhos diferentes e cada um manda um e-mail diferente.
-     Antes o signup caía no texto de recuperação de senha: quem acabava
-     de criar conta lia "enviamos as instruções de recuperação". */
+  /* ── Estado de sucesso (signup / recovery) ──
+     Cada caminho manda um e-mail diferente. Antes o signup caía no texto
+     de recuperação de senha: quem acabava de criar conta lia "enviamos as
+     instruções de recuperação". */
   if (success) {
     const conteudo = isSignup
       ? {
           titulo: 'Confirme seu e-mail',
           corpo: <>Enviamos um link de confirmação para <strong>{email}</strong>.<br />Clique nele para ativar sua conta.</>,
         }
-      : isMagic
-        ? {
-            titulo: 'Link enviado!',
-            corpo: <>Enviamos um link de acesso para <strong>{email}</strong>.<br />Clique nele para entrar — sem senha.</>,
-          }
-        : {
-            titulo: 'E-mail enviado!',
-            corpo: <>Enviamos as instruções de recuperação para <strong>{email}</strong>.</>,
-          };
+      : {
+          titulo: 'E-mail enviado!',
+          corpo: <>Enviamos as instruções de recuperação para <strong>{email}</strong>.</>,
+        };
 
     return (
       <div className={styles.successCard}>
@@ -163,8 +155,28 @@ export default function LoginForm({ initialMode = 'login' }) {
 
   return (
     <div>
+      {/* ── Cabeçalho do modo ──
+          Fica aqui, e não na página, porque só este componente sabe em
+          que modo está: as abas trocam o modo no cliente, e um título
+          renderizado no servidor ficaria descrevendo a tela errada.
+          Antes havia um título fixo em page.jsx além deste, então em
+          "Recuperar senha" apareciam os dois empilhados — e o de cima
+          falava de link de acesso, que nem existe mais. */}
+      <div className={styles.modeHeading}>
+        <h3>
+          {isRecovery ? 'Recuperar senha' : isSignup ? 'Criar sua conta' : 'Bem-vindo de volta'}
+        </h3>
+        <p>
+          {isRecovery
+            ? 'Informe seu e-mail e enviaremos as instruções de recuperação.'
+            : isSignup
+              ? 'Descubra gratuitamente quanto sua clínica pode recuperar.'
+              : 'Entre com seu e-mail e senha.'}
+        </p>
+      </div>
+
       {/* ── Tabs Entrar / Criar conta ── */}
-      {!isRecovery && !isMagic && (
+      {!isRecovery && (
         <div className={styles.modeTabs} role="tablist" aria-label="Modo de acesso">
           <button
             type="button"
@@ -187,20 +199,8 @@ export default function LoginForm({ initialMode = 'login' }) {
         </div>
       )}
 
-      {/* ── Cabeçalho do modo ── */}
-      {(isRecovery || isMagic) && (
-        <div className={styles.modeHeading}>
-          <h3>{isRecovery ? 'Recuperar senha' : 'Link de acesso'}</h3>
-          <p>
-            {isRecovery
-              ? 'Informe seu e-mail e enviaremos as instruções de recuperação.'
-              : 'Receba um link de uso único — sem precisar de senha.'}
-          </p>
-        </div>
-      )}
-
       {/* ── Botão Google (só login/signup) ── */}
-      {!isRecovery && !isMagic && (
+      {!isRecovery && (
         <button
           type="button"
           className={styles.googleButton}
@@ -218,7 +218,7 @@ export default function LoginForm({ initialMode = 'login' }) {
       )}
 
       {/* ── Separador ── */}
-      {!isRecovery && !isMagic && (
+      {!isRecovery && (
         <div className={styles.orDivider} aria-hidden="true">
           <span>ou continue com e-mail</span>
         </div>
@@ -270,8 +270,11 @@ export default function LoginForm({ initialMode = 'login' }) {
           </div>
         </div>
 
-        {/* Senha (não exibe em magic) */}
-        {!isMagic && (
+        {/* Senha — não aparece em "recuperar senha", onde a pessoa
+            justamente não tem a senha. A condição aqui era `!isMagic`,
+            então o campo continuava visível na recuperação, pedindo
+            exatamente o que ela veio recuperar. */}
+        {!isRecovery && (
           <div className={styles.fieldGroup}>
             <div className={styles.labelRow}>
               <label htmlFor="password">Senha</label>
@@ -364,20 +367,12 @@ export default function LoginForm({ initialMode = 'login' }) {
             : <>
                 {isSignup    ? 'Criar minha conta'      :
                  isRecovery  ? 'Enviar recuperação'     :
-                 isMagic     ? 'Enviar link de acesso'  :
                                'Entrar na minha conta'}
                 {' '}<span aria-hidden="true">→</span>
               </>}
         </button>
 
-        {/* Link mágico / voltar */}
-        {mode === 'login' && (
-          <button type="button" className={styles.magicLinkButton}
-            onClick={() => changeMode('magic')}>
-            Prefiro entrar com um link mágico
-          </button>
-        )}
-        {(isRecovery || isMagic) && (
+        {isRecovery && (
           <button type="button" className={styles.backButton}
             onClick={() => changeMode('login')}>
             ← Voltar para o login
