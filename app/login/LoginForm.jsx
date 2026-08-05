@@ -86,10 +86,19 @@ export default function LoginForm({ initialMode = 'login' }) {
         }
         setSuccess(true);
       } else if (isRecovery) {
-        const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: `${window.location.origin}/auth/reset-password`
+        const recoveryResponse = await fetch('/api/auth/recovery', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email.trim().toLowerCase() }),
         });
-        if (resetError) throw resetError;
+        if (!recoveryResponse.ok) {
+          const recoveryResult = await recoveryResponse.json().catch(() => ({}));
+          throw new Error(
+            recoveryResult.error === 'recuperacao_indisponivel'
+              ? 'A recuperação está temporariamente indisponível. Tente novamente.'
+              : 'Não foi possível solicitar a recuperação. Tente novamente.'
+          );
+        }
         setSuccess(true);
       } else {
         // Login com e-mail e senha
