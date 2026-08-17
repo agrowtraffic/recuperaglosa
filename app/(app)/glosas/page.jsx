@@ -8,7 +8,10 @@ import { MoneyRail } from "@/app/_components/kit/Signature";
 import { getContexto, getLotes, getGlosas, getRecursos, calcularResumo } from "@/lib/dados-clinica";
 import GlosasTabela from "./GlosasTabela";
 
-export const metadata = { title: 'Glosas' };
+export const metadata = {
+  title: 'Análise de Glosas — RecuperaGlosa',
+  description: 'Visualize todas as glosas identificadas, valores recuperáveis e motivos. Organize por lote ou valor para contestação.',
+};
 
 export const dynamic = "force-dynamic";
 

@@ -1,8 +1,10 @@
 import { redirect } from 'next/navigation';
 
-/* A tela de envio agora vive em /lotes, dentro do shell do app (com sidebar,
-   topbar e histórico). Esta rota fica só como redirect para não quebrar
-   links antigos. */
+export const metadata = {
+  title: 'Enviar Demonstrativo de Glosas — RecuperaGlosa',
+  description: 'Analise seu XML TISS, identifique glosas e gere recursos de contestação automaticamente.',
+};
+
 export default function UploadPage() {
   redirect('/lotes');
 }

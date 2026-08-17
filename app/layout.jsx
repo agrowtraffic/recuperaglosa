@@ -9,16 +9,22 @@ const manrope = Manrope({ subsets: ['latin'], display: 'swap' });
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  /* Sem metadataBase o Next monta URL relativa em canonical e Open Graph,
-     e cada domínio que servisse o app se anunciava como original. Fixar
-     aqui faz todo link absoluto apontar para o domínio oficial, venha a
-     requisição de onde vier. */
   metadataBase: new URL('https://recuperaglosa.com.br'),
   title: {
-    default: 'RecuperaGlosa',
+    default: 'RecuperaGlosa — Auditoria e Recuperação de Glosas de Convênio',
     template: '%s · RecuperaGlosa',
   },
-  description: 'Auditoria de glosas de convênio para clínicas e consultórios.',
+  description: 'Auditoria de glosas de convênio para clínicas. Recupere valores glosados com recursos prontos para enviar. Análise automática de demonstrativo TISS.',
+  keywords: ['auditoria de glosas', 'recuperação de glosas', 'glosas de convênio', 'análise de glosas', 'recursos de glosa', 'clínicas'],
+  authors: [{ name: 'RecuperaGlosa' }],
+  openGraph: {
+    type: 'website',
+    locale: 'pt_BR',
+    url: 'https://recuperaglosa.com.br',
+    siteName: 'RecuperaGlosa',
+    title: 'RecuperaGlosa — Auditoria de Glosas de Convênio',
+    description: 'Recupere valores glosados com análise automática e recursos prontos para contestação.',
+  },
   alternates: { canonical: '/' },
 };
 

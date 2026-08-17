@@ -11,7 +11,10 @@ import { getContexto, getLotes, getGlosas, getRecursos, calcularResumo } from "@
 import { ehPago, PRECO_MENSAL } from "@/lib/plano";
 import BotaoAssinar from "@/app/_components/kit/BotaoAssinar";
 
-export const metadata = { title: 'Recursos' };
+export const metadata = {
+  title: 'Recursos de Contestação — RecuperaGlosa',
+  description: 'Recursos prontos para enviar às operadoras. Gere contestações automáticas com argumentação técnica para recuperar valores glosados.',
+};
 
 export const dynamic = "force-dynamic";
 
