@@ -1,8 +1,9 @@
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'Ajuda | RecuperaGlosa',
-  description: 'Central de ajuda do RecuperaGlosa.',
+  title: 'Central de ajuda',
+  description: 'Dúvidas sobre o RecuperaGlosa: qual XML TISS enviar, como a glosa é recalculada, segurança dos dados, cobrança e revisão do recurso de glosa.',
+  alternates: { canonical: '/ajuda' },
 };
 
 const FAQ = [
@@ -59,6 +60,12 @@ export default function AjudaPage(){
      <p style={{ marginTop:8, marginBottom:0, color:'#475569', fontSize:14 }}>{a}</p>
     </details>
    ))}
+
+   <h2 style={{ fontSize:19, color:'#0f172a', margin:'36px 0 12px' }}>Guias</h2>
+   <ul style={{ paddingLeft:20 }}>
+    <li><Link href="/recurso-de-glosa" style={{ color:'#16a34a' }}>Como fazer recurso de glosa: prazo e modelo</Link></li>
+    <li><Link href="/motivos-de-glosa" style={{ color:'#16a34a' }}>Códigos de glosa: Tabela 38 TISS completa</Link></li>
+   </ul>
 
    <p style={{ marginTop:32, fontSize:13, color:'#94a3b8' }}>
     Também temos <Link href="/termos" style={{ color:'#16a34a' }}>Termos de Uso</Link> e <Link href="/privacidade" style={{ color:'#16a34a' }}>Política de Privacidade</Link>.

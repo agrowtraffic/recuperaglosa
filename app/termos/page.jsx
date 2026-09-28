@@ -1,8 +1,9 @@
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'Termos de Uso | RecuperaGlosa',
-  description: 'Termos de Uso do RecuperaGlosa.',
+  title: 'Termos de Uso',
+  description: 'Termos de Uso do RecuperaGlosa, ferramenta de auditoria de glosas de convênio e geração de recurso de glosa.',
+  alternates: { canonical: '/termos' },
 };
 
 const VERSAO = '2026-07-24';

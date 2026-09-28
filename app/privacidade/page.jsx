@@ -1,8 +1,9 @@
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'Política de Privacidade | RecuperaGlosa',
-  description: 'Política de Privacidade do RecuperaGlosa.',
+  title: 'Política de Privacidade',
+  description: 'Como o RecuperaGlosa trata dados da clínica e dos beneficiários presentes nos demonstrativos TISS, conforme a LGPD.',
+  alternates: { canonical: '/privacidade' },
 };
 
 const VERSAO = '2026-07-24';

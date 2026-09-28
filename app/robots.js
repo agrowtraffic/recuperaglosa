@@ -31,6 +31,11 @@ export default function robots() {
         ],
       },
     ],
+    /* Rastreadores de IA (GPTBot, ClaudeBot, PerplexityBot, Google-Extended)
+       caem na regra `*` acima e podem ler a parte pública. É de propósito:
+       ser citado quando alguém pergunta "o que é a glosa 1801" ao ChatGPT
+       é canal de aquisição, não vazamento. */
+    sitemap: `${SITE}/sitemap.xml`,
     host: SITE,
   };
 }

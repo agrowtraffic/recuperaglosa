@@ -17,15 +17,22 @@ export const metadata = {
   description: 'Auditoria de glosas de convênio para clínicas. Recupere valores glosados com recursos prontos para enviar. Análise automática de demonstrativo TISS.',
   keywords: ['auditoria de glosas', 'recuperação de glosas', 'glosas de convênio', 'análise de glosas', 'recursos de glosa', 'clínicas'],
   authors: [{ name: 'RecuperaGlosa' }],
+  applicationName: 'RecuperaGlosa',
+  category: 'healthcare',
+  formatDetection: { telephone: false },
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
-    url: 'https://recuperaglosa.com.br',
     siteName: 'RecuperaGlosa',
     title: 'RecuperaGlosa — Auditoria de Glosas de Convênio',
     description: 'Recupere valores glosados com análise automática e recursos prontos para contestação.',
   },
-  alternates: { canonical: '/' },
+  twitter: { card: 'summary_large_image', images: ['/opengraph-image'] },
+  /* Sem `alternates.canonical` aqui de propósito. Metadata do layout é
+     herdada por toda página que não declara a própria: com canonical '/'
+     no layout, /ajuda, /termos e /privacidade diziam ao Google que eram
+     cópia da home, e nenhuma delas entrava no índice. Cada página pública
+     declara o seu canonical. */
 };
 
 export default function RootLayout({ children }) {

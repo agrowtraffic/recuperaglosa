@@ -7,6 +7,14 @@ import LoginForm from './LoginForm';
 import { Brand } from '@/app/_components/kit/Brand';
 import styles from './login.module.css';
 
+/* Tela de acesso não tem o que ranquear, e com ?modo=cadastro vira
+   duas URLs com o mesmo conteúdo. `follow` mantém os links (termos,
+   privacidade) rastreáveis. */
+export const metadata = {
+  title: 'Entrar ou criar conta',
+  robots: { index: false, follow: true },
+};
+
 /* Alturas das barras do gráfico decorativo (0–100) */
 const BARS = [22, 35, 28, 48, 38, 55, 45, 66, 58, 72, 68, 84];
 

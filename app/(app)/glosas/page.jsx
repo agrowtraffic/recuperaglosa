@@ -9,7 +9,7 @@ import { getContexto, getLotes, getGlosas, getRecursos, calcularResumo } from "@
 import GlosasTabela from "./GlosasTabela";
 
 export const metadata = {
-  title: 'Análise de Glosas — RecuperaGlosa',
+  title: 'Análise de Glosas',
   description: 'Visualize todas as glosas identificadas, valores recuperáveis e motivos. Organize por lote ou valor para contestação.',
 };
 

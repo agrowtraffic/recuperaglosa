@@ -12,7 +12,7 @@ import { ehPago, PRECO_MENSAL } from "@/lib/plano";
 import BotaoAssinar from "@/app/_components/kit/BotaoAssinar";
 
 export const metadata = {
-  title: 'Recursos de Contestação — RecuperaGlosa',
+  title: 'Recursos de Contestação',
   description: 'Recursos prontos para enviar às operadoras. Gere contestações automáticas com argumentação técnica para recuperar valores glosados.',
 };
 

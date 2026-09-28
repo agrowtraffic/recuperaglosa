@@ -1,0 +1,31 @@
+# RecuperaGlosa
+
+> RecuperaGlosa é um SaaS brasileiro de auditoria de glosas de convênio para clínicas e consultórios pequenos (1 a 5 profissionais, sem faturista dedicado). A clínica envia o XML do demonstrativo de pagamento no padrão TISS/ANS; o sistema recalcula o valor glosado guia a guia (apresentado × pago), identifica o motivo pelo código da Tabela 38 da ANS e redige o recurso de glosa para os itens que têm tese de contestação.
+
+Fatos principais:
+
+- Entrada: XML do demonstrativo de pagamento, padrão TISS (ANS). Não exige instalação nem integração.
+- Recalcula a glosa a partir dos valores do próprio XML, sem repetir o total informado pela operadora.
+- Classifica os 603 códigos da Tabela 38 (TISS) em: recorrer, enviar documento, corrigir e reapresentar, sem recurso, aguardar a operadora, ou mensagem favorável.
+- Gera o texto do recurso de glosa citando o termo oficial do código; a equipe da clínica revisa antes de enviar.
+- Planos: Gratuito (3 análises de XML por mês, sem cartão) e Profissional (R$ 197/mês, análises ilimitadas e recursos completos).
+- Dados isolados por clínica (Row Level Security) e tratamento conforme a LGPD.
+- Não há garantia de reversão: a decisão final é da operadora.
+
+## Guias
+
+- [Recurso de glosa: como fazer, prazo e modelo](https://recuperaglosa.com.br/recurso-de-glosa): quando vale recorrer, passo a passo, prazo segundo a RN ANS nº 503/2022, modelo de recurso e erros comuns.
+- [Códigos de glosa — Tabela 38 TISS completa](https://recuperaglosa.com.br/motivos-de-glosa): todos os códigos de glosa, com significado e orientação.
+- Página por código: https://recuperaglosa.com.br/motivos-de-glosa/{codigo} (ex.: [glosa 1801](https://recuperaglosa.com.br/motivos-de-glosa/1801), [glosa 1402](https://recuperaglosa.com.br/motivos-de-glosa/1402), [glosa 3052](https://recuperaglosa.com.br/motivos-de-glosa/3052)).
+
+## Produto
+
+- [Página inicial](https://recuperaglosa.com.br/): como funciona, planos e perguntas frequentes.
+- [Central de ajuda](https://recuperaglosa.com.br/ajuda)
+- [Política de privacidade](https://recuperaglosa.com.br/privacidade)
+- [Termos de uso](https://recuperaglosa.com.br/termos)
+
+## Contato
+
+- E-mail: suporte@recuperaglosa.com.br
+- WhatsApp: +55 11 97731-5655
