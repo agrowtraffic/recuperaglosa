@@ -64,7 +64,7 @@ export default function AjudaPage(){
    <h2 style={{ fontSize:19, color:'#0f172a', margin:'36px 0 12px' }}>Guias</h2>
    <ul style={{ paddingLeft:20 }}>
     <li><Link href="/recurso-de-glosa" style={{ color:'#16a34a' }}>Como fazer recurso de glosa: prazo e modelo</Link></li>
-    <li><Link href="/motivos-de-glosa" style={{ color:'#16a34a' }}>Códigos de glosa: Tabela 38 TISS completa</Link></li>
+    <li><Link href="/codigos-de-glosa" style={{ color:'#16a34a' }}>Códigos de glosa: Tabela 38 TISS completa</Link></li>
    </ul>
 
    <p style={{ marginTop:32, fontSize:13, color:'#94a3b8' }}>

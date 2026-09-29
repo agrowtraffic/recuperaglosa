@@ -49,7 +49,7 @@ const SCHEMA = {
       featureList: [
         'Leitura do demonstrativo de pagamento XML padrão TISS',
         'Recálculo da glosa por guia (apresentado × pago)',
-        'Classificação dos 603 códigos da Tabela 38 da ANS',
+        'Classificação dos 784 códigos da Tabela 38 da ANS (versão julho/2026)',
         'Geração automática de recurso de glosa',
         'Priorização por valor e prazo',
       ],

@@ -6,7 +6,7 @@ Fatos principais:
 
 - Entrada: XML do demonstrativo de pagamento, padrão TISS (ANS). Não exige instalação nem integração.
 - Recalcula a glosa a partir dos valores do próprio XML, sem repetir o total informado pela operadora.
-- Classifica os 603 códigos da Tabela 38 (TISS) em: recorrer, enviar documento, corrigir e reapresentar, sem recurso, aguardar a operadora, ou mensagem favorável.
+- Classifica os 784 códigos da Tabela 38 (TISS) — 470 vigentes na versão de julho/2026 e 314 encerrados em 30/06/2026 — em: recorrer, enviar documento, corrigir e reapresentar, sem recurso, aguardar a operadora, ou mensagem favorável.
 - Gera o texto do recurso de glosa citando o termo oficial do código; a equipe da clínica revisa antes de enviar.
 - Planos: Gratuito (3 análises de XML por mês, sem cartão) e Profissional (R$ 197/mês, análises ilimitadas e recursos completos).
 - Dados isolados por clínica (Row Level Security) e tratamento conforme a LGPD.
@@ -15,8 +15,8 @@ Fatos principais:
 ## Guias
 
 - [Recurso de glosa: como fazer, prazo e modelo](https://recuperaglosa.com.br/recurso-de-glosa): quando vale recorrer, passo a passo, prazo segundo a RN ANS nº 503/2022, modelo de recurso e erros comuns.
-- [Códigos de glosa — Tabela 38 TISS completa](https://recuperaglosa.com.br/motivos-de-glosa): todos os códigos de glosa, com significado e orientação.
-- Página por código: https://recuperaglosa.com.br/motivos-de-glosa/{codigo} (ex.: [glosa 1801](https://recuperaglosa.com.br/motivos-de-glosa/1801), [glosa 1402](https://recuperaglosa.com.br/motivos-de-glosa/1402), [glosa 3052](https://recuperaglosa.com.br/motivos-de-glosa/3052)).
+- [Códigos de glosa — Tabela 38 TISS completa](https://recuperaglosa.com.br/codigos-de-glosa): todos os códigos de glosa da versão de julho/2026 da ANS, com vigência, significado, orientação e o que mudou na revisão de 2025.
+- Página por código: https://recuperaglosa.com.br/codigos-de-glosa/{codigo} (ex.: [glosa 1801](https://recuperaglosa.com.br/codigos-de-glosa/1801), [glosa 3209](https://recuperaglosa.com.br/codigos-de-glosa/3209), [glosa 3230](https://recuperaglosa.com.br/codigos-de-glosa/3230)).
 
 ## Produto
 

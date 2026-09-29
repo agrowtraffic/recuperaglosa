@@ -64,7 +64,7 @@ export const HTML_LANDING = String.raw`<style>
     <div class="wrap nav-inner">
       <a href="#topo" aria-label="RecuperaGlosa — início"><img class="logo" src="/_next/image?url=%2Fmarca%2Fhorizontal.png&amp;w=384&amp;q=80" alt="RecuperaGlosa" width="170" height="50"></a>
       <div class="nav-links">
-        <a href="#como">Como funciona</a><a href="#planos">Planos</a><a href="/motivos-de-glosa">Códigos de glosa</a><a href="/recurso-de-glosa">Recurso de glosa</a><a class="nav-login" href="/login">Entrar</a>
+        <a href="#como">Como funciona</a><a href="#planos">Planos</a><a href="/codigos-de-glosa">Códigos de glosa</a><a href="/recurso-de-glosa">Recurso de glosa</a><a class="nav-login" href="/login">Entrar</a>
         <a class="button button-primary" href="/login?modo=cadastro">Analisar meu XML</a>
       </div>
     </div>
@@ -81,7 +81,7 @@ export const HTML_LANDING = String.raw`<style>
         </div>
         <p class="micro">3 análises grátis por mês • Sem cartão • Sem instalação</p>
         <div class="deadline-note"><strong>O PRAZO JÁ ESTÁ CORRENDO</strong><span>A janela para contestar começa quando o demonstrativo chega. Glosa não contestada a tempo vira prejuízo definitivo.</span></div>
-        <div class="trust"><span>✓ XML padrão TISS</span><span>✓ 603 códigos da Tabela 38</span><span>✓ Feito para quem não tem faturista</span></div>
+        <div class="trust"><span>✓ XML padrão TISS</span><span>✓ Tabela 38 da ANS atualizada (jul/2026)</span><span>✓ Feito para quem não tem faturista</span></div>
       </div>
       <div class="product-shell" aria-label="Demonstração do painel do RecuperaGlosa">
         <div class="browser-bar"><i></i><i></i><i></i></div>
@@ -125,9 +125,9 @@ export const HTML_LANDING = String.raw`<style>
 
   <section id="diferenciais"><div class="wrap"><div class="section-head center"><span class="eyebrow">Por que o RecuperaGlosa</span><h2>Não só lê o XML: diz o que fazer com cada glosa.</h2></div><div class="roles">
     <article class="card role"><small>Recalcula, não repete</small><h3>Não confia no total da operadora</h3><ul><li>Compara apresentado × pago item a item</li><li>Encontra glosas parciais de valor</li><li>Mostra quanto ainda está dentro do prazo</li></ul></article>
-    <article class="card role"><small>Diz quando não recorrer</small><h3>Uma decisão para cada código</h3><ul><li>603 códigos da Tabela 38 classificados</li><li>Recorrer, enviar documento, corrigir ou deixar passar</li><li>Sem recurso de carência nem de prazo prescrito</li></ul></article>
+    <article class="card role"><small>Diz quando não recorrer</small><h3>Uma decisão para cada código</h3><ul><li>Todos os 784 códigos da Tabela 38 classificados, incluindo os novos de 2025</li><li>Recorrer, enviar documento, corrigir ou deixar passar</li><li>Sem recurso de carência nem de prazo prescrito</li></ul></article>
     <article class="card role"><small>Recurso que se sustenta</small><h3>Cita o termo oficial da ANS</h3><ul><li>Argumento específico por código de glosa</li><li>Só os itens com tese entram no recurso</li><li>Sua equipe revisa e envia</li></ul></article>
-  </div><p style="text-align:center;margin-top:22px"><a href="/motivos-de-glosa">Consulte qualquer código de glosa na Tabela 38 →</a></p></div></section>
+  </div><p style="text-align:center;margin-top:22px"><a href="/codigos-de-glosa">Consulte qualquer código de glosa na Tabela 38 →</a></p></div></section>
 
   <section id="casos-de-uso"><div class="wrap"><div class="section-head"><span class="eyebrow">Casos de uso</span><h2>Quanto pode voltar? O número confiável está no seu próprio XML.</h2><p>Em vez de usar estimativas genéricas, o RecuperaGlosa analisa o demonstrativo da sua operação e mostra o valor identificado no seu cenário.</p></div><div class="use-grid">
     <article class="card use-card"><span class="profile">Consultório individual</span><h3>Encontre glosas sem montar uma estrutura de faturamento.</h3><p>Para profissionais que atendem convênios e precisam entender os demonstrativos sem depender de leitura técnica linha a linha.</p><div class="scenario">Comece com um XML e veja o valor real do seu período.</div></article>
@@ -156,7 +156,7 @@ export const HTML_LANDING = String.raw`<style>
   <section id="faq"><div class="wrap"><div class="section-head center"><span class="eyebrow">Perguntas frequentes</span><h2>Sem letras miúdas.</h2></div><div class="faq">
     <details><summary>O que é glosa?</summary><p>Glosa é o valor de um atendimento que a operadora não pagou, ou pagou apenas parcialmente, após analisar a cobrança enviada pela clínica. Ela pode ocorrer por divergências de dados, documentação, códigos, autorizações, prazos ou regras contratuais. Nem toda glosa é recuperável, mas identificar o motivo rapidamente ajuda a equipe a decidir se deve corrigir ou contestar.</p></details>
     <details><summary>Quanto tempo leva a análise?</summary><p>Segundos depois do upload do XML. Você vê o total glosado, a lista por guia e motivo e os recursos já redigidos na mesma tela.</p></details>
-    <details><summary>Quais códigos de glosa o sistema reconhece?</summary><p>Os 603 códigos da Tabela 38 do padrão TISS, cada um classificado em recorrer, enviar documento, corrigir e reapresentar ou deixar passar. Você pode consultar qualquer um na página <a href="/motivos-de-glosa">códigos de glosa</a>.</p></details>
+    <details><summary>Quais códigos de glosa o sistema reconhece?</summary><p>Todos os 784 códigos da Tabela 38 do padrão TISS: os 470 vigentes na versão de julho/2026, incluindo as mensagens criadas em dezembro/2025, e os encerrados em 30/06/2026 que ainda aparecem em demonstrativos antigos. Cada um é classificado em recorrer, enviar documento, corrigir e reapresentar ou deixar passar. Consulte qualquer um na página <a href="/codigos-de-glosa">códigos de glosa</a>.</p></details>
     <details><summary>Qual o prazo para recurso de glosa?</summary><p>A ANS não fixa um prazo único: pela RN nº 503/2022, ele está no contrato entre a clínica e a operadora e deve ser igual ao prazo de resposta da operadora. Veja o <a href="/recurso-de-glosa">guia completo de recurso de glosa</a>.</p></details>
     <details><summary>Qual arquivo eu preciso enviar?</summary><p>O XML do demonstrativo de pagamento no padrão TISS, disponibilizado pela operadora.</p></details>
     <details><summary>Funciona com qualquer operadora?</summary><p>Funciona com diferentes operadoras quando o arquivo segue o padrão TISS esperado pela plataforma.</p></details>
@@ -170,6 +170,6 @@ export const HTML_LANDING = String.raw`<style>
 
   <section class="final"><div class="wrap"><div class="final-box"><h2>O dinheiro já foi faturado. Descubra o que ainda pode voltar.</h2><p>Comece com um demonstrativo e transforme dados técnicos em uma lista clara de ações para sua equipe.</p><div class="actions"><a class="button button-primary" href="/login?modo=cadastro">Analisar meu XML grátis →</a><a class="button button-outline" target="_blank" rel="noreferrer" href="https://wa.me/5511977315655">Falar no WhatsApp</a></div></div></div></section>
 
-  <footer><div class="wrap footer-grid"><div><img class="footer-logo" src="/_next/image?url=%2Fmarca%2Fhorizontal.png&amp;w=384&amp;q=80" alt="RecuperaGlosa" width="170" height="50" loading="lazy" decoding="async"><p>Ferramenta independente para análise de demonstrativos TISS. As telas desta página utilizam dados fictícios. Os recursos são revisáveis e não há garantia de recuperação.</p></div><div class="footer-links"><a href="/recurso-de-glosa">Como fazer recurso de glosa</a><a href="/motivos-de-glosa">Tabela 38 — códigos de glosa</a><a href="/privacidade">Privacidade</a><a href="/termos">Termos</a><a href="/ajuda">Ajuda</a><a href="mailto:suporte@recuperaglosa.com.br">Contato</a></div></div></footer>
+  <footer><div class="wrap footer-grid"><div><img class="footer-logo" src="/_next/image?url=%2Fmarca%2Fhorizontal.png&amp;w=384&amp;q=80" alt="RecuperaGlosa" width="170" height="50" loading="lazy" decoding="async"><p>Ferramenta independente para análise de demonstrativos TISS. As telas desta página utilizam dados fictícios. Os recursos são revisáveis e não há garantia de recuperação.</p></div><div class="footer-links"><a href="/recurso-de-glosa">Como fazer recurso de glosa</a><a href="/codigos-de-glosa">Tabela 38 — códigos de glosa</a><a href="/privacidade">Privacidade</a><a href="/termos">Termos</a><a href="/ajuda">Ajuda</a><a href="mailto:suporte@recuperaglosa.com.br">Contato</a></div></div></footer>
   <div class="mobile-bar"><a class="button button-primary" href="/login?modo=cadastro">Analisar meu XML grátis →</a></div>
 </div>`;

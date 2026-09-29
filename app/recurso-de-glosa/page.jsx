@@ -153,7 +153,7 @@ export default function RecursoDeGlosaPage() {
         <p>
           Glosa é o valor cobrado pelo prestador que a operadora do plano de saúde não pagou, no todo ou em parte. O
           motivo vem no demonstrativo de pagamento como um código da{' '}
-          <Link href="/motivos-de-glosa">Tabela 38 do padrão TISS</Link>. Na prática, as glosas caem em três tipos — e parte dos códigos nem é glosa:
+          <Link href="/codigos-de-glosa">Tabela 38 do padrão TISS</Link>. Na prática, as glosas caem em três tipos — e parte dos códigos nem é glosa:
         </p>
         <div className={s.grid2}>
           <div className={s.card}>
@@ -177,18 +177,18 @@ export default function RecursoDeGlosaPage() {
         <h2 id="quando-recorrer">Antes de recorrer: nem toda glosa merece recurso</h2>
         <p>
           O erro mais caro não é deixar de recorrer — é recorrer de tudo. Recurso sem tese é negado, gasta horas da
-          equipe e ainda pode virar “recurso duplicado” (código <Link href="/motivos-de-glosa/2904">2904</Link>). Para
+          equipe e ainda pode virar “recurso duplicado” (código <Link href="/codigos-de-glosa/2904">2904</Link>). Para
           cada código de glosa, a decisão é uma destas:
         </p>
         <ul>
-          <li><strong>Recorrer</strong> — quando há argumento e prova. Ex.: procedimento autorizado glosado por falta de senha (<Link href="/motivos-de-glosa/1402">1402</Link>), duplicidade que não existe (<Link href="/motivos-de-glosa/1702">1702</Link>).</li>
-          <li><strong>Enviar documento</strong> — quando falta um anexo. Ex.: documentação incompleta (<Link href="/motivos-de-glosa/3052">3052</Link>), radiografia inicial (<Link href="/motivos-de-glosa/3081">3081</Link>).</li>
+          <li><strong>Recorrer</strong> — quando há argumento e prova. Ex.: senha de autorização válida recusada (<Link href="/codigos-de-glosa/3306">3306</Link>), duplicidade que não existe (<Link href="/codigos-de-glosa/3209">3209</Link>).</li>
+          <li><strong>Enviar documento</strong> — quando falta um anexo. Ex.: documentação incompleta (<Link href="/codigos-de-glosa/3230">3230</Link>), radiografia inicial (<Link href="/codigos-de-glosa/3081">3081</Link>).</li>
           <li><strong>Corrigir e reapresentar</strong> — quando o dado está errado na guia ou no arquivo XML.</li>
-          <li><strong>Deixar passar</strong> — carência (<Link href="/motivos-de-glosa/1007">1007</Link>), cobertura, prazo prescrito (<Link href="/motivos-de-glosa/2909">2909</Link>), glosa mantida (<Link href="/motivos-de-glosa/2902">2902</Link>). Aqui a ação é corrigir o processo interno.</li>
+          <li><strong>Deixar passar</strong> — carência (<Link href="/codigos-de-glosa/3171">3171</Link>), cobertura, prazo prescrito (<Link href="/codigos-de-glosa/2909">2909</Link>), glosa mantida (<Link href="/codigos-de-glosa/2902">2902</Link>). Aqui a ação é corrigir o processo interno.</li>
         </ul>
         <p>
-          Não sabe em qual caso está? <Link href="/motivos-de-glosa">Consulte o código na Tabela 38</Link> — cada um
-          dos 603 códigos tem página própria com a orientação.
+          Não sabe em qual caso está? <Link href="/codigos-de-glosa">Consulte o código na Tabela 38</Link> — cada um
+          dos 784 códigos (vigentes e encerrados) tem página própria com a orientação.
         </p>
 
         <h2 id="passo-a-passo">Como fazer recurso de glosa: passo a passo</h2>
@@ -198,7 +198,7 @@ export default function RecursoDeGlosaPage() {
           <li><strong>Classifique cada código.</strong> Separe recorrer, enviar documento, corrigir ou deixar passar, como acima. Priorize pelo valor e pelo prazo.</li>
           <li><strong>Reúna a prova.</strong> Guia assinada, comprovante de autorização/senha, prontuário, laudo, nota fiscal, tabela contratual — o que sustenta aquele item.</li>
           <li><strong>Redija citando o termo oficial.</strong> Use o código e o texto exatos da Tabela 38 que a operadora aplicou, e um argumento curto e objetivo por item.</li>
-          <li><strong>Envie no prazo e acompanhe.</strong> Protocole pelo canal da operadora, guarde o comprovante e confira no próximo demonstrativo se veio o pagamento ou uma nova mensagem (ex.: <Link href="/motivos-de-glosa/3095">3095 — recurso acatado</Link>).</li>
+          <li><strong>Envie no prazo e acompanhe.</strong> Protocole pelo canal da operadora, guarde o comprovante e confira no próximo demonstrativo se veio o pagamento ou uma nova mensagem (ex.: <Link href="/codigos-de-glosa/3095">3095 — recurso acatado</Link>).</li>
         </ol>
 
         <h2 id="prazo">Qual o prazo para recurso de glosa</h2>
@@ -214,7 +214,7 @@ export default function RecursoDeGlosaPage() {
         </ul>
         <p>
           Ou seja: o prazo está no seu contrato ou no manual do prestador. Perdido, a própria Tabela 38 tem código para
-          isso — <Link href="/motivos-de-glosa/2909">2909, prazo para recurso prescrito</Link> — e não há mais o que fazer
+          isso — <Link href="/codigos-de-glosa/2909">2909, prazo para recurso prescrito</Link> — e não há mais o que fazer
           na via administrativa. Por isso a análise precisa acontecer assim que o demonstrativo chega.
         </p>
 
@@ -222,7 +222,7 @@ export default function RecursoDeGlosaPage() {
         <p>
           Estrutura que funciona para a maioria das operadoras. Um bloco por item glosado; argumento curto; documento
           citado. Para o argumento específico de cada código, abra a página do código na{' '}
-          <Link href="/motivos-de-glosa">Tabela 38</Link>.
+          <Link href="/codigos-de-glosa">Tabela 38</Link>.
         </p>
         <div className={s.modelo}>{MODELO}</div>
         <CopiarModelo texto={MODELO} />

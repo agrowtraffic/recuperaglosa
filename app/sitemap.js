@@ -15,14 +15,14 @@ export default function sitemap() {
   const fixas = [
     { url: `${SITE}/`, changeFrequency: 'weekly', priority: 1 },
     { url: `${SITE}/recurso-de-glosa`, changeFrequency: 'monthly', priority: 0.9 },
-    { url: `${SITE}/motivos-de-glosa`, changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${SITE}/codigos-de-glosa`, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${SITE}/ajuda`, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${SITE}/privacidade`, changeFrequency: 'yearly', priority: 0.2 },
     { url: `${SITE}/termos`, changeFrequency: 'yearly', priority: 0.2 },
   ];
 
   const codigos = Object.keys(TABELA_38).map((codigo) => ({
-    url: `${SITE}/motivos-de-glosa/${codigo}`,
+    url: `${SITE}/codigos-de-glosa/${codigo}`,
     changeFrequency: 'yearly',
     priority: 0.6,
   }));

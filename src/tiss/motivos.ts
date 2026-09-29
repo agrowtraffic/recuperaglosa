@@ -28,12 +28,21 @@
    de prazo vencido ou de decisão já mantida em reanálise, recorrer gasta
    o tempo da clínica e queima credibilidade com a operadora.
 
-   Códigos sem regra específica herdam o padrão da faixa. Isso cobre os
-   603 sem fingir que cada um foi analisado individualmente — os que
-   receberam análise própria estão em ESPECIFICOS, abaixo.
+   Códigos sem regra específica herdam o padrão da faixa. Isso cobre a
+   tabela inteira sem fingir que cada um foi analisado individualmente —
+   os que receberam análise própria estão em ESPECIFICOS, abaixo.
+
+   ── Revisão de dezembro/2025 ──
+
+   A ANS criou 151 mensagens novas (3156 a 3312) numa lista única, em
+   ordem alfabética: carência, odontologia, reembolso e cobrança ficam
+   lado a lado. Ali o prefixo não diz nada sobre o assunto, então a
+   categoria desses códigos sai do termo (categoriaPorTermo) e não da
+   faixa. Em 30/06/2026 a ANS encerrou 314 códigos antigos; eles seguem
+   aqui porque ainda aparecem em demonstrativos.
    ============================================================ */
 
-import { TABELA_38 } from "./tabela38";
+import { TABELA_38, VIGENCIA_TABELA_38 } from "./tabela38";
 
 /** O que a clínica deve fazer diante da mensagem. */
 export type Acao =
@@ -74,6 +83,7 @@ export type Categoria =
   | "odontologico"
   | "regra_autorizacao"
   | "comunicacao"
+  | "reembolso"
   | "outro";
 
 export type Motivo = {
@@ -91,6 +101,10 @@ export type Motivo = {
   argumento: string;
   /** false quando o código não está na Tabela 38 (operadora fora do padrão). */
   oficial: boolean;
+  /** false quando a ANS encerrou o código (fim de vigência já passou). */
+  vigente: boolean;
+  /** Datas de vigência na Tabela 38 (ISO). Ausente fora da tabela. */
+  vigencia?: { inicio: string; fim?: string };
 };
 
 /* ── Categoria por faixa ─────────────────────────────────────
@@ -233,6 +247,11 @@ const PADRAO: Record<Categoria, { acao: Acao; argumento: string }> = {
     acao: "recorrer",
     argumento:
       "A solicitação atende aos critérios de cobertura e às diretrizes de utilização aplicáveis, conforme justificativa clínica registrada. Requer-se a revisão da negativa.",
+  },
+  reembolso: {
+    acao: "corrigir_reapresentar",
+    argumento:
+      "A mensagem trata do pedido de reembolso feito pelo beneficiário, não de cobrança do prestador. Regularizar o documento apontado (formulário, recibo, comprovante ou dados bancários) e reapresentar o pedido.",
   },
   comunicacao: {
     acao: "corrigir_reapresentar",
@@ -389,17 +408,99 @@ const ESPECIFICOS: Record<string, { acao?: Acao; argumento?: string }> = {
   "3048": { acao: "sem_recurso", argumento: "Procedimento cancelado por solicitação do beneficiário. Não há execução a cobrar." },
   "3049": { acao: "sem_recurso", argumento: "Procedimento cancelado por solicitação do prestador. Não há execução a cobrar." },
   "3009": { acao: "sem_recurso", argumento: "A operadora registra que o procedimento não foi executado. Conferir o prontuário: havendo execução documentada, o caso é de comprovação; não havendo, a glosa é devida." },
+  /* ---------- Revisão de dezembro/2025 (3156 em diante) ---------- */
+  "3161": { acao: "sem_recurso", argumento: "Envio fora do prazo contratual acordado entre as partes. Recurso por prazo raramente prospera — ajustar o fluxo interno para enviar dentro da janela do contrato." },
+  "3214": { acao: "sem_recurso", argumento: "Cobrança apresentada fora do prazo estipulado no contrato com o prestador. Ajustar o fluxo interno de faturamento." },
+  "3275": { acao: "sem_recurso", argumento: "Prazo para o beneficiário solicitar o reembolso prescrito. Não há via administrativa para reverter." },
+  "3171": { acao: "sem_recurso", argumento: "Atendimento realizado dentro do período de carência contratual. A carência é cláusula do plano do beneficiário e a glosa é devida. Conferir carência antes de executar procedimento eletivo." },
+  "3173": { acao: "sem_recurso", argumento: "Beneficiário em cobertura parcial temporária por doença ou lesão preexistente para este procedimento. Limite contratual — conferir a CPT antes de executar." },
+  "3287": { acao: "sem_recurso", argumento: "O procedimento ou item não tem cobertura no plano do beneficiário. Glosa contratual — verificar cobertura antes de executar." },
+  "3277": { acao: "sem_recurso", argumento: "O prestador está fora da abrangência geográfica do plano do beneficiário. Limite contratual do plano." },
+  "3303": { acao: "sem_recurso", argumento: "Procedimento com finalidade estética, fora da cobertura assistencial. Glosa contratual." },
+  "3283": { acao: "recorrer", argumento: "O procedimento integra o Rol de Procedimentos e Eventos em Saúde da ANS vigente na data do atendimento, ou tem cobertura assegurada pela legislação e pelo contrato, conforme justificativa clínica anexa. Requer-se a revisão da negativa." },
+  "3288": { acao: "recorrer", argumento: "O caso atende à Diretriz de Utilização (DUT) do procedimento no Rol da ANS, conforme critérios documentados no relatório clínico anexo. Requer-se a revisão da negativa e o reprocessamento." },
+  "3178": { acao: "sem_recurso", argumento: "Procedimento cancelado por solicitação do beneficiário. Não há execução a cobrar." },
+  "3179": { acao: "sem_recurso", argumento: "Procedimento cancelado por solicitação do prestador. Não há execução a cobrar." },
+  "3209": { acao: "recorrer", argumento: "Não há duplicidade. Os lançamentos correspondem a procedimentos ou itens distintos, executados em datas, elementos ou regiões diferentes, conforme discriminado na guia e registrado em prontuário. Requer-se o reprocessamento do item glosado." },
+  "3232": { acao: "recorrer", argumento: "Não há sobreposição de período. A conta parcial cobrada abrange datas distintas das já apresentadas, conforme discriminado nas guias e no prontuário. Requer-se o reprocessamento." },
+  "3306": { acao: "recorrer", argumento: "A senha ou guia de autorização informada é a mesma liberada pela operadora antes da execução, conforme comprovante de autorização anexo. Requer-se a conferência do registro e o reprocessamento." },
+  "3276": { acao: "recorrer", argumento: "O atendimento foi executado sob a autorização emitida pela operadora, pelo prestador credenciado para o procedimento, conforme guia e comprovante anexos. Requer-se o reprocessamento." },
+  "3289": { acao: "aguardar", argumento: "O procedimento ou item já está autorizado. Usar a autorização existente em vez de solicitar de novo." },
+  "3230": { acao: "enviar_documento", argumento: "Completar ou substituir a documentação apontada como incompleta, ilegível, incorreta ou ausente e reapresentar." },
+  "3231": { acao: "enviar_documento", argumento: "Enviar a documentação radiográfica completa exigida para o procedimento e reapresentar." },
+  "3172": { acao: "enviar_documento", argumento: "Enviar a radiografia periapical do tratamento endodôntico concluído e reapresentar o item." },
+  "3235": { acao: "enviar_documento", argumento: "Enviar o exame complementar solicitado pela operadora e reapresentar." },
+  "3255": { acao: "enviar_documento", argumento: "Anexar a nota fiscal do fornecedor do item e reapresentar." },
+  "3261": { acao: "enviar_documento", argumento: "Enviar a fotografia do tratamento solicitado." },
+  "3262": { acao: "enviar_documento", argumento: "Enviar as etiquetas do enxerto realizado." },
+  "3263": { acao: "enviar_documento", argumento: "Enviar as etiquetas do implante instalado." },
+  "3264": { acao: "enviar_documento", argumento: "Enviar nova radiografia final do tratamento e reapresentar o item." },
+  "3265": { acao: "enviar_documento", argumento: "Anexar o relatório de auditoria exigido pela operadora e reapresentar." },
+  "3213": { acao: "enviar_documento", argumento: "Anexar a prescrição médica correspondente ao procedimento ou item e reapresentar." },
+  "3169": { acao: "enviar_documento", argumento: "Anexar a guia com a assinatura do beneficiário titular ou responsável conferida e reapresentar." },
+  "3170": { acao: "enviar_documento", argumento: "Anexar a guia com assinatura e carimbo do profissional solicitante e reapresentar." },
+  "3168": { acao: "corrigir_reapresentar", argumento: "Reenviar o documento com assinatura digital válida." },
+  "3274": { acao: "favoravel", argumento: "Pagamento da equipe conforme relatório do profissional solicitante. Mensagem informativa; conferir se o valor corresponde à participação de cada profissional." },
+  "3312": { acao: "favoravel", argumento: "Valor liberado conforme fracionamento. Mensagem informativa; conferir se a soma das parcelas corresponde ao valor devido." },
+  "3208": { acao: "recorrer", argumento: "O quantitativo cobrado corresponde ao efetivamente utilizado, conforme registro em prontuário e discriminação na conta. Requer-se o pagamento do quantitativo integral." },
+  "3234": { acao: "recorrer", argumento: "A glosa por auditoria não indica o fundamento técnico específico. O procedimento foi executado conforme indicação clínica registrada em prontuário. Requer-se a apresentação do parecer de auditoria ou o reprocessamento." },
+  "3282": { acao: "recorrer", argumento: "O procedimento cobrado é o efetivamente executado, conforme descrição em prontuário e laudo anexos. Requer-se a revisão da análise e o reprocessamento." },
+  "3218": { acao: "corrigir_reapresentar", argumento: "O código do procedimento no documento não foi identificado. Conferir o código TUSS informado, corrigir e reapresentar." },
+  "3219": { acao: "corrigir_reapresentar", argumento: "Código do procedimento ou item preenchido incorretamente. Corrigir o código TUSS conforme a tabela do contrato e reapresentar." },
+  "3229": { acao: "corrigir_reapresentar", argumento: "Informar a descrição do procedimento ou item na guia e reapresentar." },
+  "3237": { acao: "corrigir_reapresentar", argumento: "Conferir o código correto para a documentação solicitada e as condições de repasse no manual da operadora, corrigir e reapresentar." },
+  "3285": { acao: "corrigir_reapresentar", argumento: "Discriminar na guia a equipe profissional que participou do procedimento e reapresentar." },
+  "3236": { acao: "corrigir_reapresentar", argumento: "Emitir a solicitação dos exames em receituário próprio do cirurgião-dentista e reapresentar." },
+  "3290": { acao: "corrigir_reapresentar", argumento: "Emitir a solicitação em receituário ou guia do próprio prestador solicitante e reapresentar." },
+  "3243": { acao: "corrigir_reapresentar", argumento: "Conferir os dados de identificação do beneficiário contra a carteira, completar ou corrigir e reapresentar." },
+  "3266": { acao: "corrigir_reapresentar", argumento: "O nome do beneficiário na guia difere do informado na solicitação. Corrigir a divergência e reapresentar." },
+  "3222": { acao: "corrigir_reapresentar", argumento: "Os dados do profissional solicitante estão divergentes do cadastro. Corrigir nome, conselho e número na guia e reapresentar." },
+  "3267": { acao: "corrigir_reapresentar", argumento: "Nome e número de conselho do prestador não conferem entre si. Corrigir o registro na guia e reapresentar." },
+  "3269": { acao: "corrigir_reapresentar", argumento: "Informar número de conselho e UF válidos e ativos do profissional e reapresentar." },
+  "3272": { acao: "corrigir_reapresentar", argumento: "Conferir o CRM informado junto ao conselho regional; corrigir o número ou a UF e reapresentar." },
+  "3174": { acao: "recorrer", argumento: "O procedimento cobrado é distinto do tratamento já em curso com o mesmo profissional, com indicação clínica própria registrada em prontuário. Requer-se a revisão e o reprocessamento." },
+  "3175": { acao: "recorrer", argumento: "Não há sobreposição de tratamento: o acompanhamento com outro profissional foi encerrado ou tem natureza distinta, conforme prontuário. Requer-se a revisão e o reprocessamento." },
+  "3176": { acao: "recorrer", argumento: "O beneficiário esteve presente no local do atendimento, conforme assinatura na guia e registro de presença. Requer-se o reprocessamento." },
+  "3223": { acao: "corrigir_reapresentar", argumento: "A data de atendimento informada é posterior ao envio do lote — erro de digitação na guia. Corrigir a data e reapresentar." },
   "3096": { acao: "recorrer", argumento: "O atendimento foi efetivamente realizado, conforme registro em prontuário e assinatura do beneficiário na guia. A ausência de confirmação pelo beneficiário não infirma a execução documentada. Requer-se o reprocessamento." },
 };
 
 /* ── Montagem ──────────────────────────────────────────────── */
 
-function categoriaDe(codigo: string): Categoria {
+/* Assunto dos códigos da revisão de 2025, pelo termo. A ordem importa:
+   a primeira regra que casa vence, então as mais específicas vêm antes
+   ("ITEM ASSISTENCIAL ... BENEFICIÁRIO INTERNADO" é cobrança, não
+   beneficiário). */
+const REGRAS_2025: [RegExp, Categoria][] = [
+  [/CARÊNCIA|COBERTURA PARCIAL|ABRANGÊNCIA/, "beneficiario"],
+  [/TOKEN|QR CODE|BIOMETRIA|TIME OUT|SEQUENCIAL|ASSINATURA DIGITAL|ARQUIVO|NÃO NECESSITA DE IMAGEM|LOTE|PROTOCOLO|GUIA NÃO PERTENCE/, "comunicacao"],
+  [/REEMBOLSO|DESEMBOLSO|DADOS BANCÁRIOS|RECIBO/, "reembolso"],
+  [/RADIOGRAF|DENTE|ENDOD|IMPLANTE|ENXERTO|CONDUTO|PRÓTESE|SULCO|FACES|RECEITUÁRIOS PRÓPRIO DO CD|FOTOGRAFIA|ESTÉTICA|PLANO DE TRATAMENTO/, "odontologico"],
+  [/ASSINATURA|CARIMBO|DOCUMENTAÇÃO|DESCRIÇÃO DO PROCEDIMENTO|PREENCHIDO INCORRETAMENTE|NÃO IDENTIFICADO|DISCRIMINAÇÃO DE EQUIPE|EXAME COMPLEMENTAR|RELATÓRIO DE AUDITORIA|FAVOR VERIFICAR/, "guia"],
+  [/DIRETRIZ DE UTILIZAÇÃO|ROL DE PROCEDIMENTOS|INCOERÊNCIA TÉCNICA|JÁ AUTORIZADO|SOLICITAD[OA]S? EM RECEITUÁRIO/, "regra_autorizacao"],
+  [/SENHA|AUTORIZAD|AUTORIZAÇÃO/, "autorizacao"],
+  [/ITEM ASSISTENCIAL|ITEM INCLUSO|ITEM CONTRATADO|ITEM NÃO JUSTIFICADO|NOTA FISCAL|VALOR|DUPLICIDADE|COBRANÇA|COBRADA|PRAZO|FRACIONAMENTO|AUDITORIA/, "cobranca"],
+  [/BENEFICIÁRIO/, "beneficiario"],
+  [/PRESTADOR|CRM|CONSELHO|PROFISSIONAL|ESPECIALIDADE|CBO|ESTABELECIMENTO|EQUIPE/, "credenciado"],
+  [/DATA|INTERNAÇÃO|CARÁTER|URGÊNCIA|LOCAL DE ATENDIMENTO|PERÍCIA/, "atendimento"],
+  [/PROCEDIMENTO|COBERTURA|EVENTO/, "procedimento"],
+];
+
+function categoriaPorTermo(descricao: string): Categoria {
+  const t = descricao.toUpperCase();
+  return REGRAS_2025.find(([re]) => re.test(t))?.[1] ?? "outro";
+}
+
+function categoriaDe(codigo: string, descricao: string): Categoria {
+  if (codigo >= "3156" && codigo < "5000") return categoriaPorTermo(descricao);
   return CATEGORIA_POR_FAIXA[codigo.slice(0, 2)] ?? "outro";
 }
 
+const HOJE = new Date().toISOString().slice(0, 10);
+
 function montar(codigo: string, descricao: string, oficial: boolean): Motivo {
-  const categoria = categoriaDe(codigo);
+  const categoria = categoriaDe(codigo, descricao);
+  const vigencia = oficial ? VIGENCIA_TABELA_38[codigo] : undefined;
   const padrao = PADRAO[categoria];
   const especifico = ESPECIFICOS[codigo];
 
@@ -413,6 +514,8 @@ function montar(codigo: string, descricao: string, oficial: boolean): Motivo {
     recorrivel: acao === "recorrer",
     argumento: especifico?.argumento ?? padrao.argumento,
     oficial,
+    vigente: !vigencia?.fim || vigencia.fim >= HOJE,
+    vigencia,
   };
 }
 
@@ -442,6 +545,7 @@ export function motivo(codigo?: string): Motivo {
       argumento:
         "A operadora não informou código de glosa. O padrão TISS exige que a glosa seja identificada e fundamentada, de modo a permitir contestação. Requer-se a informação do motivo ou o reprocessamento integral do valor glosado.",
       oficial: false,
+      vigente: false,
     };
   }
 

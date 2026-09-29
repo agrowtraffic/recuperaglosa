@@ -119,6 +119,32 @@
 .resposta p { margin: 0; }
 .resposta strong { color: var(--ink); }
 
+.alerta {
+  background: #fff5ef;
+  border: 1px solid #f6d3c4;
+  border-left: 5px solid var(--coral);
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin: 8px 0 20px;
+}
+.alerta p { margin: 0; color: #5d4035; }
+.alerta a { color: #b23c17; }
+
+.tagEncerrado {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: #eef0ee;
+  color: #6b7572;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  vertical-align: 1px;
+}
+
 .card {
   background: #fff;
   border: 1px solid var(--line);
@@ -129,6 +155,7 @@
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 18px 0; }
 
 .fatos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 24px 0; }
+.fatos4 { composes: fatos; grid-template-columns: repeat(4, 1fr); }
 .fato { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
 .fato small { display: block; font-size: 12px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
 .fato strong { display: block; color: var(--ink); font-size: 16px; margin-top: 4px; }
@@ -197,6 +224,9 @@
   margin: 8px 0 18px;
 }
 .busca:focus { outline: 2px solid var(--green); outline-offset: 1px; }
+
+.filtro { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: var(--text); cursor: pointer; margin: -6px 0 6px; }
+.filtro input { width: 18px; height: 18px; accent-color: var(--green); }
 
 .indice { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 8px; }
 .indice a {

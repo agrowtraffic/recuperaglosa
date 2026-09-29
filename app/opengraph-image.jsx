@@ -42,7 +42,7 @@ export default function OpengraphImage() {
           </div>
         </div>
         <div style={{ display: 'flex', gap: 28, fontSize: 24, color: 'rgba(255,255,255,.72)' }}>
-          {['Grátis para começar', '603 códigos da Tabela 38', 'recuperaglosa.com.br'].map((t) => (
+          {['Grátis para começar', 'Tabela 38 atualizada', 'recuperaglosa.com.br'].map((t) => (
             <div key={t} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <div style={{ width: 10, height: 10, borderRadius: 3, background: '#c9f66b' }} />
               {t}

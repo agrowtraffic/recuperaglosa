@@ -60,6 +60,12 @@ export default {
         destination: `${SITE_CANONICO}/:path*`,
         permanent: true,
       },
+      /* A Tabela 38 pública nasceu em /motivos-de-glosa e mudou no mesmo
+         dia para /codigos-de-glosa — o termo que as pessoas buscam. O
+         redirect preserva qualquer link ou rastreio que já tenha pego o
+         endereço antigo. */
+      { source: '/motivos-de-glosa', destination: '/codigos-de-glosa', permanent: true },
+      { source: '/motivos-de-glosa/:codigo', destination: '/codigos-de-glosa/:codigo', permanent: true },
     ];
   },
 };

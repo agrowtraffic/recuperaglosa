@@ -17,7 +17,7 @@ export default function PaginaPublica({ children }) {
           </Link>
           <div className={s.navLinks}>
             <Link href="/recurso-de-glosa">Recurso de glosa</Link>
-            <Link href="/motivos-de-glosa">Códigos de glosa</Link>
+            <Link href="/codigos-de-glosa">Códigos de glosa</Link>
             <Link href="/#planos">Planos</Link>
             <Link className={s.button} href={CADASTRO}>Analisar meu XML grátis</Link>
           </div>
@@ -37,7 +37,7 @@ export default function PaginaPublica({ children }) {
           <div className={s.footerLinks}>
             <Link href="/">Início</Link>
             <Link href="/recurso-de-glosa">Como fazer recurso de glosa</Link>
-            <Link href="/motivos-de-glosa">Tabela 38 — códigos de glosa</Link>
+            <Link href="/codigos-de-glosa">Tabela 38 — códigos de glosa</Link>
             <Link href="/ajuda">Ajuda</Link>
             <Link href="/privacidade">Privacidade</Link>
             <Link href="/termos">Termos</Link>

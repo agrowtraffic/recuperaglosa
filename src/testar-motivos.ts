@@ -7,12 +7,12 @@ function ok(cond: boolean, msg: string) {
 }
 
 console.log('\n=== Volume ===');
-ok(TOTAL_CODIGOS_OFICIAIS === 603, `603 códigos oficiais (achou ${TOTAL_CODIGOS_OFICIAIS})`);
+ok(TOTAL_CODIGOS_OFICIAIS === 784, `784 códigos oficiais, vigentes + encerrados (achou ${TOTAL_CODIGOS_OFICIAIS})`);
 
 console.log('\n=== Descrições oficiais (as que estavam erradas antes) ===');
 ok(MOTIVOS['1001'].descricao === 'NÚMERO DA CARTEIRA INVÁLIDO', '1001 = NÚMERO DA CARTEIRA INVÁLIDO');
 ok(MOTIVOS['1010'].descricao === 'ASSINATURA DO TITULAR / RESPONSÁVEL INEXISTENTE', '1010 = ASSINATURA DO TITULAR');
-ok(MOTIVOS['1301'].descricao === 'TIPO GUIA INVÁLIDO', '1301 = TIPO GUIA INVÁLIDO');
+ok(MOTIVOS['1301'].descricao === 'TIPO DE GUIA INVÁLIDO', '1301 = TIPO DE GUIA INVÁLIDO (redação 202607)');
 ok(MOTIVOS['1401'].descricao === 'ACOMODAÇÃO NÃO AUTORIZADA', '1401 = ACOMODAÇÃO NÃO AUTORIZADA');
 
 console.log('\n=== Não recorrer de uma vitória ===');
@@ -51,6 +51,24 @@ ok(MOTIVOS['3001'].categoria === 'odontologico', '30xx -> odontologico');
 ok(MOTIVOS['5001'].categoria === 'comunicacao', '50xx -> comunicacao');
 ok(!MOTIVOS['5001'].recorrivel, '50xx não gera recurso (erro de arquivo)');
 
+console.log('\n=== Vigência (versão 202607) ===');
+const vig = Object.values(MOTIVOS).filter((m) => m.vigente).length;
+ok(vig === 470, `470 vigentes (achou ${vig})`);
+ok(!MOTIVOS['1402'].vigente && MOTIVOS['1402'].vigencia?.fim === '2026-06-30', '1402 encerrado em 30/06/2026');
+ok(MOTIVOS['1801'].vigente, '1801 continua vigente');
+ok(MOTIVOS['3171'].vigencia?.inicio === '2025-12-01', '3171 criado em 01/12/2025');
+
+console.log('\n=== Revisão de 2025: assunto pelo termo, não pela faixa ===');
+ok(MOTIVOS['3171'].acao === 'sem_recurso', '3171 carência não gera recurso');
+ok(MOTIVOS['3173'].categoria === 'beneficiario' && MOTIVOS['3173'].acao === 'sem_recurso', '3173 CPT é beneficiário, sem recurso');
+ok(MOTIVOS['3209'].recorrivel, '3209 duplicidade gera recurso');
+ok(MOTIVOS['3306'].recorrivel, '3306 senha inválida gera recurso');
+ok(MOTIVOS['3230'].acao === 'enviar_documento', '3230 documentação pede documento');
+ok(MOTIVOS['3156'].categoria === 'comunicacao' && !MOTIVOS['3156'].recorrivel, '3156 token é comunicação');
+ok(MOTIVOS['3238'].categoria === 'reembolso', '3238 formulário de reembolso');
+ok(MOTIVOS['3294'].categoria === 'odontologico', '3294 radiografia de implante é odonto');
+ok(MOTIVOS['3312'].acao === 'favoravel', '3312 fracionamento é informativo');
+
 console.log('\n=== Código desconhecido ===');
 const inventado = motivo('9999');
 ok(inventado.oficial === false, '9999 volta oficial:false');
@@ -75,7 +93,7 @@ console.log('\n=== Distribuição de ações ===');
 const dist: Record<string, number> = {};
 for (const m of Object.values(MOTIVOS)) dist[m.acao] = (dist[m.acao] ?? 0) + 1;
 for (const [a, n] of Object.entries(dist).sort((x, y) => y[1] - x[1])) {
-  console.log(`  ${a.padEnd(22)} ${String(n).padStart(3)}  (${((n / 603) * 100).toFixed(1)}%)`);
+  console.log(`  ${a.padEnd(22)} ${String(n).padStart(3)}  (${((n / TOTAL_CODIGOS_OFICIAIS) * 100).toFixed(1)}%)`);
 }
 
 console.log('\n=== Rótulo legível ===');
