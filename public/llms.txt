@@ -18,6 +18,12 @@ Fatos principais:
 - [Códigos de glosa — Tabela 38 TISS completa](https://recuperaglosa.com.br/codigos-de-glosa): todos os códigos de glosa da versão de julho/2026 da ANS, com vigência, significado, orientação e o que mudou na revisão de 2025.
 - Página por código: https://recuperaglosa.com.br/codigos-de-glosa/{codigo} (ex.: [glosa 1801](https://recuperaglosa.com.br/codigos-de-glosa/1801), [glosa 3209](https://recuperaglosa.com.br/codigos-de-glosa/3209), [glosa 3230](https://recuperaglosa.com.br/codigos-de-glosa/3230)).
 
+## Blog (perguntas e respostas)
+
+- [O que é glosa? Significado, exemplos e o que fazer](https://recuperaglosa.com.br/blog/o-que-e-glosa)
+- [Quais são os tipos de glosa? Administrativa, técnica e linear](https://recuperaglosa.com.br/blog/tipos-de-glosa)
+- [O que mudou na Tabela 38 da ANS em 2026?](https://recuperaglosa.com.br/blog/tabela-38-o-que-mudou-2026): 151 códigos criados em 01/12/2025, 314 encerrados em 30/06/2026, 470 vigentes na versão de julho/2026, e equivalências entre códigos antigos e novos.
+
 ## Produto
 
 - [Página inicial](https://recuperaglosa.com.br/): como funciona, planos e perguntas frequentes.

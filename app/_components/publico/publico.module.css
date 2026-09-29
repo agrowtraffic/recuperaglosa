@@ -42,7 +42,7 @@
 }
 .logo { width: 150px; height: auto; display: block; }
 .navLinks { display: flex; gap: 22px; margin-left: auto; align-items: center; font-size: 14px; font-weight: 700; }
-.navLinks a { color: var(--text); text-decoration: none; }
+.navLinks a { color: var(--text); text-decoration: none; white-space: nowrap; }
 .navLinks a:hover { color: var(--green); }
 
 .button {
@@ -289,6 +289,22 @@
   display: grid;
   place-items: center;
 }
+
+/* ── Blog ── */
+.posts { list-style: none; padding: 0; margin: 24px 0; display: grid; gap: 12px; }
+.posts a {
+  display: block;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 20px 22px;
+  text-decoration: none;
+  color: var(--text);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.posts a:hover { border-color: var(--green); transform: translateY(-1px); }
+.posts strong { display: block; font-size: 19px; line-height: 1.3; color: var(--ink); margin-bottom: 6px; }
+.posts span { display: block; font-size: 15px; color: var(--muted); }
 
 /* ── Rodapé ── */
 .footer { border-top: 1px solid var(--line); padding: 36px 0 90px; font-size: 14px; color: var(--muted); }

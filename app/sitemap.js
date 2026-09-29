@@ -4,6 +4,7 @@
    exigem sessão e estão bloqueadas no robots.js; /login é noindex. */
 import { SITE } from '@/lib/seo';
 import { TABELA_38 } from '@/src/tiss/tabela38';
+import { POSTS } from './blog/_posts';
 
 /* Data fixa, atualizada à mão quando o conteúdo muda. `new Date()` faria
    o sitemap anunciar as 600 páginas como alteradas a cada leitura, e o
@@ -16,6 +17,7 @@ export default function sitemap() {
     { url: `${SITE}/`, changeFrequency: 'weekly', priority: 1 },
     { url: `${SITE}/recurso-de-glosa`, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${SITE}/codigos-de-glosa`, changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${SITE}/blog`, changeFrequency: 'weekly', priority: 0.8 },
     { url: `${SITE}/ajuda`, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${SITE}/privacidade`, changeFrequency: 'yearly', priority: 0.2 },
     { url: `${SITE}/termos`, changeFrequency: 'yearly', priority: 0.2 },
@@ -27,5 +29,15 @@ export default function sitemap() {
     priority: 0.6,
   }));
 
-  return [...fixas, ...codigos].map((e) => ({ ...e, lastModified: ATUALIZADO }));
+  const fixasECodigos = [...fixas, ...codigos].map((e) => ({ ...e, lastModified: ATUALIZADO }));
+
+  /* Artigo usa a própria data de atualização. */
+  const artigos = POSTS.map((p) => ({
+    url: `${SITE}/blog/${p.slug}`,
+    lastModified: new Date(p.atualizado),
+    changeFrequency: 'monthly',
+    priority: 0.8,
+  }));
+
+  return [...fixasECodigos, ...artigos];
 }
