@@ -127,7 +127,9 @@ create policy p_recurso on recurso for all
 -- ============================================================
 -- VIEW: o número que vende o produto
 -- ============================================================
-create view v_glosa_por_motivo as
+-- security_invoker: a view roda como o dono por padrão e ignora o RLS,
+-- o que deixava qualquer clínica (ou o anon) ler os dados de todas.
+create view v_glosa_por_motivo with (security_invoker = true) as
 select l.clinica_id,
        l.id                as lote_id,
        i.codigo_glosa,
