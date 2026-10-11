@@ -14,7 +14,8 @@ const TERMOS_VERSAO = '2026-07-24';
    - nome da clínica (obrigatório);
    - aceite dos termos (obrigatório; segue como caixa marcada pelo usuário);
    - nome do responsável só aparece se o Google não trouxe um;
-   CNPJ e telefone ficam para Configurações, onde já existem. */
+   O CNPJ fica para Configurações, onde já é editável. O telefone saiu
+   daqui e ainda NÃO tem outro lugar para ser informado. */
 export default function CompletarCadastroPage(){
  const router = useRouter();
  const [nomeClinica,setNomeClinica] = useState('');
