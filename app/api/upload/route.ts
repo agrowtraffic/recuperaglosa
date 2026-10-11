@@ -5,6 +5,8 @@ import { parseDemonstrativo } from '@/src/tiss/parser';
 import { salvarLote } from '@/src/db/persistir';
 import { enviarNotificacaoGlosa } from '@/lib/emails';
 import { computeFileHash } from '@/src/utils/fileHash';
+import { diagnosticarXml } from '@/src/tiss/diagnostico';
+import { OPERADORA_EXEMPLO } from '@/src/tiss/exemplo';
 
 /* Janela de silêncio entre notificações de glosa da mesma clínica.
    Quem sobe cinco demonstrativos seguidos não deve receber cinco
@@ -64,6 +66,8 @@ export async function POST(req: Request) {
       .from('lote')
       .select('*', { count: 'exact', head: true })
       .eq('clinica_id', usuario.clinica_id)
+      .neq('status', 'erro') // arquivo que falhou não gasta a análise grátis
+      .or(`operadora.is.null,operadora.neq.${OPERADORA_EXEMPLO}`) // nem o exemplo de demonstração
       .gte('criado_em', primeiroDiaDoMes.toISOString());
 
     if ((count ?? 0) >= 3) {
@@ -109,6 +113,16 @@ export async function POST(req: Request) {
       { error: 'xml_invalido', message: `Erro ao processar XML: ${e.message}` },
       { status: 422 }
     );
+  }
+
+  /* XML sem nenhuma guia não é demonstrativo: devolve 422 com a explicação
+     e NÃO grava lote, para não gastar a análise grátis nem poluir o
+     histórico. Tipos comuns: modelo de recurso de glosa e lote de guias
+     (os dois são XMLs que a clínica envia, não que recebe). */
+  if (lote.guias.length === 0) {
+    const { tipo, mensagem } = diagnosticarXml(xmlText);
+    console.warn('⚠️ [UPLOAD] XML sem guias, tipo:', tipo, 'arquivo:', file.name);
+    return NextResponse.json({ error: 'sem_guias', tipo, message: mensagem }, { status: 422 });
   }
 
   // ✅ Verificar duplicação: mesma clínica + mesmo arquivo
@@ -183,7 +197,9 @@ export async function POST(req: Request) {
     );
     const guiasComGlosa = (guiasDoLote ?? []).filter((g) => Number(g.valor_glosado ?? 0) > 0).length;
 
-    if (totalGlosado <= 0) {
+    if (lote.operadora === OPERADORA_EXEMPLO) {
+      console.log('📭 [UPLOAD] Lote de exemplo — nenhum e-mail enviado.');
+    } else if (totalGlosado <= 0) {
       // Lote 100% pago: não existe "nada a reportar" que valha um e-mail.
       console.log('📭 [UPLOAD] Lote sem glosa — nenhum e-mail enviado.');
     } else {

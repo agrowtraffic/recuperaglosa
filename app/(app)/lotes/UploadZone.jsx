@@ -28,21 +28,39 @@ export default function UploadZone({ isGratuito, analisesRestantes }) {
     setArquivo(f);
   }
 
-  async function enviar() {
-    if (!arquivo || enviando) return;
+  /* Quem não tem um demonstrativo à mão tenta qualquer XML e trava. O
+     exemplo mostra o resultado em segundos, sem gastar análise grátis. */
+  async function analisarExemplo() {
+    if (enviando) return;
+    try {
+      const res = await fetch('/exemplos/demonstrativo-exemplo.xml');
+      const blob = await res.blob();
+      await enviar(new File([blob], 'demonstrativo-exemplo.xml', { type: 'text/xml' }), true);
+    } catch (e) {
+      console.error('Erro ao carregar o exemplo:', e);
+      setErro('Não foi possível carregar o exemplo. Tente novamente.');
+    }
+  }
+
+  async function enviar(arquivoEnvio = arquivo, ehExemplo = false) {
+    if (!arquivoEnvio || enviando) return;
     setEnviando(true);
     setErro('');
     setSucesso('');
 
     try {
       const formData = new FormData();
-      formData.append('arquivo', arquivo);
+      formData.append('arquivo', arquivoEnvio);
 
       const res = await fetch('/api/upload', { method: 'POST', body: formData });
       const json = await res.json();
 
       if (!res.ok) {
-        setErro(json.message || 'Não foi possível processar o arquivo.');
+        if (ehExemplo && res.status === 409) {
+          setErro('O exemplo já foi analisado. Veja o resultado no histórico abaixo.');
+        } else {
+          setErro(json.message || 'Não foi possível processar o arquivo.');
+        }
         return;
       }
 
@@ -106,11 +124,28 @@ export default function UploadZone({ isGratuito, analisesRestantes }) {
             type="button"
             className="rg-btn rg-btn-primary rg-btn-lg"
             disabled={!arquivo || enviando}
-            onClick={enviar}
+            onClick={() => enviar()}
           >
             {enviando ? 'Analisando…' : 'Analisar demonstrativo'}
           </button>
         </div>
+
+        <p className="rg-caption" style={{ marginTop: 4 }}>
+          Sem um demonstrativo à mão?{' '}
+          <button
+            type="button"
+            onClick={analisarExemplo}
+            disabled={enviando}
+            style={{ background: 'none', border: 0, padding: 0, color: 'var(--rg-brand, #128437)', fontWeight: 600, textDecoration: 'underline', cursor: 'pointer' }}
+          >
+            Analisar um exemplo
+          </button>
+          {' '}(não gasta sua análise gratuita).
+        </p>
+        <p className="rg-caption">
+          O arquivo certo é o demonstrativo de pagamento ou de análise de conta que a operadora devolve. Modelos de
+          recurso ou lotes de guias enviados por você não funcionam.
+        </p>
 
         {erro && (
           <p role="alert" className="rg-caption" style={{ color: '#991b1b', marginTop: 4 }}>

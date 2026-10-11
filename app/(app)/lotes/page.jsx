@@ -7,6 +7,7 @@ import { DataList } from "@/app/_components/kit/Data";
 import { UploadCloud } from "lucide-react";
 import { getContexto, getLotes } from "@/lib/dados-clinica";
 import UploadZone from "./UploadZone";
+import { OPERADORA_EXEMPLO } from "@/src/tiss/exemplo";
 
 export const metadata = { title: 'Lotes' };
 
@@ -17,7 +18,9 @@ export default async function Lotes() {
   const lotes = await getLotes(supabase, clinicaId);
 
   const inicioMes = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+  // Mesma regra de /api/upload: lote com erro e o exemplo não gastam análise.
   const lotesDoMes = lotes.filter((l) => {
+    if (l.status === "erro" || l.operadora === OPERADORA_EXEMPLO) return false;
     const [dia, mes, ano] = l.data.split("/");
     return new Date(`${ano}-${mes}-${dia}`) >= inicioMes;
   }).length;
