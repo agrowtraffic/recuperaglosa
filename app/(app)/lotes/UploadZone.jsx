@@ -3,6 +3,12 @@
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { UploadCloud } from 'lucide-react';
+import AjudaUpload from './AjudaUpload';
+
+/* Falhas em que o problema é o arquivo ou o processamento, e portanto
+   vale oferecer ajuda. Ficam de fora o 402 (limite do plano) e o 409
+   (arquivo repetido), que a própria mensagem já resolve. */
+const STATUS_COM_AJUDA = [400, 422, 500];
 
 /* Zona de upload do /lotes. Usa a mesma rota /api/upload que já valida
    plano, limite mensal, parseia o TISS e persiste com RLS. */
@@ -14,6 +20,7 @@ export default function UploadZone({ isGratuito, analisesRestantes }) {
   const [erro, setErro] = useState('');
   const [sucesso, setSucesso] = useState('');
   const [arrastando, setArrastando] = useState(false);
+  const [ajuda, setAjuda] = useState(null); // { motivo, arquivo } do último envio que falhou
 
   const limiteAtingido = isGratuito && analisesRestantes <= 0;
 
@@ -21,10 +28,13 @@ export default function UploadZone({ isGratuito, analisesRestantes }) {
     if (!f) return;
     if (!f.name.toLowerCase().endsWith('.xml')) {
       setErro('Apenas arquivos .xml são aceitos.');
+      // Quem só tem o demonstrativo em PDF trava aqui: também vale oferecer ajuda.
+      setAjuda({ motivo: 'nao_e_xml', arquivo: f.name });
       return;
     }
     setErro('');
     setSucesso('');
+    setAjuda(null);
     setArquivo(f);
   }
 
@@ -47,6 +57,7 @@ export default function UploadZone({ isGratuito, analisesRestantes }) {
     setEnviando(true);
     setErro('');
     setSucesso('');
+    setAjuda(null);
 
     try {
       const formData = new FormData();
@@ -60,6 +71,9 @@ export default function UploadZone({ isGratuito, analisesRestantes }) {
           setErro('O exemplo já foi analisado. Veja o resultado no histórico abaixo.');
         } else {
           setErro(json.message || 'Não foi possível processar o arquivo.');
+          if (STATUS_COM_AJUDA.includes(res.status)) {
+            setAjuda({ motivo: json.error || `http_${res.status}`, arquivo: arquivoEnvio.name });
+          }
         }
         return;
       }
@@ -152,6 +166,7 @@ export default function UploadZone({ isGratuito, analisesRestantes }) {
             ⚠ {erro}
           </p>
         )}
+        {ajuda && <AjudaUpload motivo={ajuda.motivo} arquivo={ajuda.arquivo} />}
         {sucesso && (
           <p role="status" className="rg-caption" style={{ color: '#166534', marginTop: 4 }}>
             ✓ {sucesso}
