@@ -11,7 +11,7 @@ const OZAI = 'https://www.ozai.com.br/reforma-tributaria-medicos-clinicas-consul
 export const post = {
   slug: 'reforma-tributaria-2026-clinicas-glosa',
   titulo: 'Reforma tributária 2026: o que muda para clínicas e como a glosa entra na conta?',
-  tituloSeo: 'Reforma tributária para clínicas: CBS, IBS e o impacto da glosa na receita',
+  tituloSeo: 'Reforma tributária para clínicas: CBS, IBS e glosa',
   descricao:
     'A LC 214/2025 reduz em 60% as alíquotas de IBS e CBS para serviços de saúde. Entenda o calendário, o que ainda depende de regulamentação e as perguntas que a clínica deve levar ao contador sobre glosa.',
   publicado: '2026-10-10',

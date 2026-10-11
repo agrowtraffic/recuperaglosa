@@ -13,7 +13,7 @@ const TSE = 'https://divulgacandcontas.tse.jus.br/';
 export const post = {
   slug: 'eleicoes-2026-planos-de-saude-clinicas',
   titulo: 'Eleições 2026: o que o debate sobre saúde diz sobre planos de saúde e clínicas?',
-  tituloSeo: 'Eleições 2026 e planos de saúde: o que muda para clínicas e consultórios',
+  tituloSeo: 'Eleições 2026 e planos de saúde: o que muda para clínicas',
   descricao:
     'Levantamento informativo e sem posicionamento: o que as propostas de saúde das eleições 2026 abordam, o que não abordam sobre planos de saúde e glosa, e onde conferir os programas de governo.',
   publicado: '2026-10-10',

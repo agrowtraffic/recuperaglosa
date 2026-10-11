@@ -11,7 +11,7 @@ const FONTE_PL = 'https://futurodasaude.com.br/planos-de-saude-congresso-2026/';
 export const post = {
   slug: 'agenda-saude-suplementar-2027',
   titulo: 'Agenda da saúde suplementar para 2027: o que acompanhar?',
-  tituloSeo: 'Saúde suplementar 2027: agenda da ANS, Congresso e o que clínicas devem acompanhar',
+  tituloSeo: 'Saúde suplementar 2027: agenda da ANS e do Congresso',
   descricao:
     'Quatro frentes que influenciam clínicas e consultórios a partir de 2027: agenda regulatória da ANS 2026-2028, PL dos planos de saúde, fiscalização e reforma tributária, com fontes e status.',
   publicado: '2026-10-10',

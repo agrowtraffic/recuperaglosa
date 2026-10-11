@@ -14,7 +14,7 @@ const CONJUR = 'https://www.conjur.com.br/2025-set-24/glosa-e-jabuticaba-para-co
 export const post = {
   slug: 'existe-lei-contra-glosa-abusiva',
   titulo: 'Existe lei contra glosa abusiva? O que a norma diz em 2026',
-  tituloSeo: 'Existe lei contra glosa abusiva? O que a ANS e o Congresso preveem em 2026',
+  tituloSeo: 'Existe lei contra glosa abusiva? O que diz a norma (2026)',
   descricao:
     'Não há, nas fontes consultadas, lei federal específica sobre glosa abusiva. Veja o que a RN 503/2022 da ANS garante ao prestador, a proposta da ANS de vedar glosa de procedimento autorizado e o que fazer hoje.',
   publicado: '2026-10-10',

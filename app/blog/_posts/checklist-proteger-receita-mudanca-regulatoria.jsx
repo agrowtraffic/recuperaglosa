@@ -9,7 +9,7 @@ const RN503 = 'https://www.legisweb.com.br/legislacao/?id=429858';
 export const post = {
   slug: 'checklist-proteger-receita-mudanca-regulatoria',
   titulo: 'Checklist: como proteger a receita da clínica em ano de mudança regulatória',
-  tituloSeo: 'Checklist de 10 passos para proteger a receita da clínica contra glosa em 2026 e 2027',
+  tituloSeo: 'Checklist: 10 passos para proteger a receita da clínica',
   descricao:
     'Dez passos práticos para clínicas e consultórios: contrato, prazos de recurso, Tabela 38, reajuste, TISS e organização de dados, para não perder receita com glosa em ano de mudanças.',
   publicado: '2026-10-10',

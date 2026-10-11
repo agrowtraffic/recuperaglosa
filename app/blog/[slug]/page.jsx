@@ -22,7 +22,9 @@ export function generateMetadata({ params }) {
   const p = postPorSlug(params.slug);
   if (!p) return {};
   return {
-    title: { absolute: `${p.tituloSeo} · RecuperaGlosa` },
+    /* A marca só entra se o título couber (~60 caracteres antes de o
+       Google cortar); título cortado perde a pergunta, que é o que atrai o clique. */
+    title: { absolute: `${p.tituloSeo} · RecuperaGlosa`.length <= 62 ? `${p.tituloSeo} · RecuperaGlosa` : p.tituloSeo },
     description: p.descricao,
     alternates: { canonical: `/blog/${p.slug}` },
     openGraph: {

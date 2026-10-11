@@ -40,8 +40,10 @@ export function generateMetadata({ params }) {
   const d = dadosDe(params.codigo);
   if (!d) return {};
   const nome = legivel(d.m.descricao);
-  const curto = nome.length > 55 ? `${nome.slice(0, 52).trimEnd()}…` : nome;
-  const titulo = `Glosa ${params.codigo}: ${curto}`;
+  /* Título curto e com a pergunta que a pessoa digita ("glosa 3209
+     significado"); o termo oficial da Tabela 38 fica no H1 e na descrição,
+     onde não é cortado no meio da palavra. */
+  const titulo = `Glosa ${params.codigo}: significado e o que fazer`;
   const status = d.m.vigente ? '' : ` Código encerrado pela ANS em ${dataBr(d.m.vigencia.fim)}.`;
   const descricao =
     `O que significa o código de glosa ${params.codigo} da Tabela 38 TISS (“${nome}”), ` +
