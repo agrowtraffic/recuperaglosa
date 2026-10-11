@@ -64,7 +64,8 @@ export default function UploadZone({ isGratuito, analisesRestantes }) {
       formData.append('arquivo', arquivoEnvio);
 
       const res = await fetch('/api/upload', { method: 'POST', body: formData });
-      const json = await res.json();
+      // Falha do servidor pode vir sem JSON; aí vale a mensagem padrão e a oferta de ajuda.
+      const json = await res.json().catch(() => ({}));
 
       if (!res.ok) {
         if (ehExemplo && res.status === 409) {
