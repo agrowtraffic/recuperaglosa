@@ -9,13 +9,16 @@ import { getContexto, getLotes } from "@/lib/dados-clinica";
 import Link from "next/link";
 import UploadZone from "./UploadZone";
 import { OPERADORA_EXEMPLO } from "@/src/tiss/exemplo";
+import { nomeClinicaPadrao } from "@/lib/nome-clinica";
 
 export const metadata = { title: 'Lotes' };
 
 export const dynamic = "force-dynamic";
 
 export default async function Lotes() {
-  const { supabase, clinicaId, clinica } = await getContexto();
+  const { supabase, clinicaId, clinica, nomeUsuario } = await getContexto();
+  // Nome provisório de quem pulou o campo no cadastro (ver lib/nome-clinica).
+  const nomeProvisorio = clinica?.nome === nomeClinicaPadrao(nomeUsuario) || clinica?.nome === "Minha clínica";
   const lotes = await getLotes(supabase, clinicaId);
 
   const inicioMes = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
@@ -34,11 +37,11 @@ export default async function Lotes() {
       <PageHeader eyebrow="Lotes" titulo="O começo de toda recuperação"
         descricao="Cada XML da operadora vira uma leitura clara do que foi pago, glosado e recuperável." />
 
-      {clinica?.nome === "Minha clínica" && (
+      {nomeProvisorio && (
         <p role="note" className="rg-caption" style={{ background: "#fffbeb", border: "1px solid #fde68a", color: "#92400e", padding: "10px 14px", borderRadius: 10, margin: 0 }}>
-          O nome da clínica ainda está como “Minha clínica” e aparece nos recursos gerados.{" "}
-          <Link href="/configuracoes" style={{ fontWeight: 600, textDecoration: "underline" }}>Complete em Configurações</Link>{" "}
-          antes de enviar um recurso.
+          Sua clínica está como “{clinica.nome}”, e esse nome aparece nos recursos gerados.{" "}
+          <Link href="/configuracoes" style={{ fontWeight: 600, textDecoration: "underline" }}>Ajuste em Configurações</Link>{" "}
+          se não for o nome oficial.
         </p>
       )}
 
