@@ -1,0 +1,100 @@
+/* Agenda a acompanhar na saúde suplementar a partir de 2027. Escrito
+   antes do 2º turno: não assume resultado. Revisar em 26/10/2026. */
+import Link from 'next/link';
+import s from '@/app/_components/publico/publico.module.css';
+
+const FONTE_AGENDA = 'https://futurodasaude.com.br/?p=42493';
+const FONTE_REGULATORIA = 'https://legismap.com.br/conteudos/artigos-e-noticias/ans-divulga-agenda-regulatoria-para-o-periodo-2026-2028';
+const FONTE_PL = 'https://futurodasaude.com.br/?p=43605';
+const FONTE_FISCALIZACAO = 'https://futurodasaude.com.br/novo-modelo-fiscalizacao-ans/';
+
+export const post = {
+  slug: 'agenda-saude-suplementar-2027',
+  titulo: 'Agenda da saúde suplementar para 2027: o que acompanhar?',
+  tituloSeo: 'Saúde suplementar 2027: agenda da ANS, Congresso e o que clínicas devem acompanhar',
+  descricao:
+    'Quatro frentes que influenciam clínicas e consultórios a partir de 2027: agenda regulatória da ANS 2026-2028, PL dos planos de saúde, fiscalização e reforma tributária, com fontes e status.',
+  publicado: '2026-10-10',
+  atualizado: '2026-10-10',
+  resposta: (
+    <>
+      <strong>Quatro frentes concentram a agenda que afeta clínicas e consultórios em 2027:</strong> a agenda regulatória da
+      ANS para 2026–2028, a possível volta do PL dos planos de saúde ao Congresso, o novo modelo de fiscalização da agência
+      e a transição da reforma tributária. Nenhuma depende do resultado da eleição para existir; o que a eleição define é a
+      composição do governo e do Congresso que vão conduzi-las.
+    </>
+  ),
+  perguntas: [
+    {
+      q: 'O que é a agenda regulatória da ANS?',
+      a: 'É o documento em que a agência lista os temas que pretende regulamentar em um período. A versão 2026–2028 foi divulgada e, segundo a cobertura especializada, inclui reajustes coletivos, cartões de desconto e avaliação do pacto intergeracional. Itens da agenda ainda passam por consulta pública antes de virar norma.',
+    },
+    {
+      q: 'Quando uma mudança na ANS passa a valer para a clínica?',
+      a: 'Quando a resolução é publicada e entra em vigor, e, para a relação com a operadora, quando o contrato é adequado. Muitas normas preveem prazo de adaptação. Acompanhe o Diário Oficial e os comunicados da ANS.',
+    },
+    {
+      q: 'O PL dos planos de saúde já foi aprovado?',
+      a: 'Segundo a cobertura consultada, a pauta pode voltar ao Congresso em 2026. Não foi encontrada aprovação definitiva. Acompanhe a tramitação nos sites da Câmara e do Senado.',
+    },
+    {
+      q: 'Este conteúdo será atualizado depois do 2º turno?',
+      a: 'Sim. Está programado para ser revisado em 26/10/2026, com data de atualização visível no topo.',
+    },
+  ],
+};
+
+export default function Conteudo() {
+  return (
+    <>
+      <h2 id="quatro-frentes">As quatro frentes</h2>
+      <h3>1. Agenda regulatória da ANS 2026–2028</h3>
+      <p>
+        A <a href={FONTE_REGULATORIA} target="_blank" rel="noopener noreferrer">agenda regulatória 2026–2028</a> é o mapa dos temas
+        que a agência quer normatizar. A cobertura do <a href={FONTE_AGENDA} target="_blank" rel="noopener noreferrer">Futuro da
+        Saúde</a> aponta que a política de preços e reajustes deve voltar à pauta. Para a clínica, o que importa são as normas
+        sobre contratualização com prestadores, que é onde estão as regras de glosa: veja a{' '}
+        <Link href="/blog/existe-lei-contra-glosa-abusiva">RN nº 503/2022</Link>.
+      </p>
+
+      <h3>2. PL dos planos de saúde no Congresso</h3>
+      <p>
+        O Futuro da Saúde registra que os <a href={FONTE_PL} target="_blank" rel="noopener noreferrer">planos de saúde podem voltar à
+        mira do Congresso em 2026</a>. A configuração do Congresso eleito, a partir de fevereiro de 2027, influencia a
+        tramitação. Até uma lei ser sancionada, valem a legislação e as normas da ANS atuais.
+      </p>
+
+      <h3>3. Novo modelo de fiscalização</h3>
+      <p>
+        A cobertura especializada destaca o <a href={FONTE_FISCALIZACAO} target="_blank" rel="noopener noreferrer">novo modelo de
+        fiscalização da ANS</a> como foco dos planos em 2026. Para o prestador, a fiscalização é o caminho de denúncia quando
+        há descumprimento de regras de contrato.
+      </p>
+
+      <h3>4. Reforma tributária</h3>
+      <p>
+        A transição de CBS e IBS segue calendário próprio até 2033, independentemente da eleição. Detalhes e perguntas para o
+        contador em <Link href="/blog/reforma-tributaria-2026-clinicas-glosa">reforma tributária e glosa</Link>.
+      </p>
+
+      <h2 id="linha-do-tempo">Linha do tempo para acompanhar</h2>
+      <ol className={s.passos}>
+        <li><strong>25/10/2026:</strong> 2º turno da eleição presidencial.</li>
+        <li><strong>Novembro e dezembro de 2026:</strong> transição de governo; possíveis sinalizações sobre ministro da Saúde e ANS.</li>
+        <li><strong>Janeiro de 2027:</strong> posse do governo eleito e início do ano da CBS plena.</li>
+        <li><strong>Fevereiro de 2027:</strong> início da nova legislatura no Congresso.</li>
+      </ol>
+
+      <h2 id="o-que-fazer">O que a clínica pode fazer sem esperar</h2>
+      <ul>
+        <li>Revisar contratos e manuais do prestador de cada operadora, com atenção aos prazos de recurso e hipóteses de glosa.</li>
+        <li>Atualizar o sistema de faturamento para a <Link href="/blog/tabela-38-o-que-mudou-2026">Tabela 38 vigente</Link>.</li>
+        <li>Manter histórico de glosa por operadora e motivo, para negociar e para fins tributários.</li>
+        <li>Seguir o <Link href="/blog/checklist-proteger-receita-mudanca-regulatoria">checklist de proteção da receita</Link>.</li>
+      </ul>
+      <p className={s.aviso}>
+        Conteúdo informativo e apartidário. Não representa previsão sobre resultado eleitoral nem avaliação de candidatos.
+      </p>
+    </>
+  );
+}
