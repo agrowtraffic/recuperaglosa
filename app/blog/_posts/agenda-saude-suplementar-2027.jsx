@@ -4,9 +4,9 @@ import Link from 'next/link';
 import s from '@/app/_components/publico/publico.module.css';
 
 const FONTE_AGENDA = 'https://futurodasaude.com.br/?p=42493';
-const FONTE_REGULATORIA = 'https://legismap.com.br/conteudos/artigos-e-noticias/ans-divulga-agenda-regulatoria-para-o-periodo-2026-2028';
-const FONTE_PL = 'https://futurodasaude.com.br/?p=43605';
-const FONTE_FISCALIZACAO = 'https://futurodasaude.com.br/novo-modelo-fiscalizacao-ans/';
+const FONTE_REGULATORIA = 'https://futurodasaude.com.br/agenda-regulatoria-da-ans-2026-2028-aprovada/';
+const FONTE_CONTRATOS = 'https://futurodasaude.com.br/ans-revisao-norma-contratos-glosas/';
+const FONTE_PL = 'https://futurodasaude.com.br/planos-de-saude-congresso-2026/';
 
 export const post = {
   slug: 'agenda-saude-suplementar-2027',
@@ -19,15 +19,15 @@ export const post = {
   resposta: (
     <>
       <strong>Quatro frentes concentram a agenda que afeta clínicas e consultórios em 2027:</strong> a agenda regulatória da
-      ANS para 2026–2028, a possível volta do PL dos planos de saúde ao Congresso, o novo modelo de fiscalização da agência
-      e a transição da reforma tributária. Nenhuma depende do resultado da eleição para existir; o que a eleição define é a
+      ANS para 2026–2028 (aprovada em 17/07/2026, com 14 temas), a revisão da norma de contratos com prestadores, o
+      Congresso (onde o setor vê baixa expectativa para o PL dos planos) e a transição da reforma tributária. Nenhuma depende do resultado da eleição para existir; o que a eleição define é a
       composição do governo e do Congresso que vão conduzi-las.
     </>
   ),
   perguntas: [
     {
       q: 'O que é a agenda regulatória da ANS?',
-      a: 'É o documento em que a agência lista os temas que pretende regulamentar em um período. A versão 2026–2028 foi divulgada e, segundo a cobertura especializada, inclui reajustes coletivos, cartões de desconto e avaliação do pacto intergeracional. Itens da agenda ainda passam por consulta pública antes de virar norma.',
+      a: 'É o documento em que a agência lista os temas que pretende regulamentar em um período. A de 2026–2028 foi aprovada em 17/07/2026 e define 14 temas em três eixos: proteção dos beneficiários; qualidade do cuidado e transformação assistencial; e sustentabilidade, dados e governança da informação. Itens da agenda ainda passam por consulta pública antes de virar norma.',
     },
     {
       q: 'Quando uma mudança na ANS passa a valer para a clínica?',
@@ -35,7 +35,7 @@ export const post = {
     },
     {
       q: 'O PL dos planos de saúde já foi aprovado?',
-      a: 'Segundo a cobertura consultada, a pauta pode voltar ao Congresso em 2026. Não foi encontrada aprovação definitiva. Acompanhe a tramitação nos sites da Câmara e do Senado.',
+      a: 'Não. Reportagem de 22/04/2026 do Futuro da Saúde registra que a avaliação do setor é de que o PL dos planos de saúde não deve ganhar grande destaque em 2026, embora outros projetos possam ser protocolados ou acelerados em resposta a denúncias. Acompanhe a tramitação nos sites da Câmara e do Senado.',
     },
     {
       q: 'Este conteúdo será atualizado depois do 2º turno?',
@@ -50,25 +50,33 @@ export default function Conteudo() {
       <h2 id="quatro-frentes">As quatro frentes</h2>
       <h3>1. Agenda regulatória da ANS 2026–2028</h3>
       <p>
-        A <a href={FONTE_REGULATORIA} target="_blank" rel="noopener noreferrer">agenda regulatória 2026–2028</a> é o mapa dos temas
-        que a agência quer normatizar. A cobertura do <a href={FONTE_AGENDA} target="_blank" rel="noopener noreferrer">Futuro da
-        Saúde</a> aponta que a política de preços e reajustes deve voltar à pauta. Para a clínica, o que importa são as normas
-        sobre contratualização com prestadores, que é onde estão as regras de glosa: veja a{' '}
-        <Link href="/blog/existe-lei-contra-glosa-abusiva">RN nº 503/2022</Link>.
+        A <a href={FONTE_REGULATORIA} target="_blank" rel="noopener noreferrer">agenda regulatória 2026–2028</a>, aprovada pela ANS
+        em 17/07/2026, define 14 temas, entre eles reajustes coletivos, portabilidade, reembolsos, franquia e coparticipação,
+        política de preços e reajuste e indução a novos modelos de remuneração. Há ainda estudos preliminares sobre
+        judicialização e sobre o registro de reclamações na ANS. Para a clínica, o que mais pesa é a{' '}
+        <a href={FONTE_CONTRATOS} target="_blank" rel="noopener noreferrer">revisão da norma de contratualização</a>, onde estão as
+        regras de glosa: veja a <Link href="/blog/existe-lei-contra-glosa-abusiva">RN nº 503/2022</Link> e a proposta em
+        discussão. Para o balanço geral do ano, veja também a <a href={FONTE_AGENDA} target="_blank" rel="noopener noreferrer">agenda da saúde em
+        ano eleitoral</a>.
       </p>
 
       <h3>2. PL dos planos de saúde no Congresso</h3>
       <p>
-        O Futuro da Saúde registra que os <a href={FONTE_PL} target="_blank" rel="noopener noreferrer">planos de saúde podem voltar à
-        mira do Congresso em 2026</a>. A configuração do Congresso eleito, a partir de fevereiro de 2027, influencia a
-        tramitação. Até uma lei ser sancionada, valem a legislação e as normas da ANS atuais.
+        Segundo o <a href={FONTE_PL} target="_blank" rel="noopener noreferrer">Futuro da Saúde (22/04/2026)</a>, a avaliação do setor é
+        de que o PL dos planos de saúde não deve ganhar grande destaque em 2026, mas outros projetos podem ser protocolados ou
+        acelerados. A reportagem cita, entre os já mapeados, o PL 667/2021 (acordos de compartilhamento de risco), e registra a
+        criação, no fim de 2025, da Frente Parlamentar em Defesa da Ética na Saúde Suplementar. A saúde suplementar tem 53,2
+        milhões de beneficiários, segundo a ANS. Até uma lei ser sancionada, valem a legislação e as normas atuais.
       </p>
 
-      <h3>3. Novo modelo de fiscalização</h3>
+      <h3>3. Revisão da norma de contratos com prestadores</h3>
       <p>
-        A cobertura especializada destaca o <a href={FONTE_FISCALIZACAO} target="_blank" rel="noopener noreferrer">novo modelo de
-        fiscalização da ANS</a> como foco dos planos em 2026. Para o prestador, a fiscalização é o caminho de denúncia quando
-        há descumprimento de regras de contrato.
+        A minuta da nova norma, que unifica duas resoluções anteriores, ficou em consulta pública até 16/05/2026. Segundo a{' '}
+        <a href={FONTE_CONTRATOS} target="_blank" rel="noopener noreferrer">reportagem do Futuro da Saúde</a>, prevê contratos
+        digitais, modelos alternativos de remuneração, canal para solução consensual de conflitos, aplicação do IPCA quando
+        não houver acordo de reajuste e a vedação de glosa de procedimento autorizado sem divergência técnica. A própria ANS
+        informa que não regula prestadores, mas induz o setor, e que mantém canal para receber reclamações sobre glosas e
+        inadimplência. Confira se a norma final já foi publicada.
       </p>
 
       <h3>4. Reforma tributária</h3>

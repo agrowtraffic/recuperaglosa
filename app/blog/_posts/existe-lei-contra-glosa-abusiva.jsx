@@ -8,7 +8,7 @@ import Codigo from './Codigo';
 
 const RN503 = 'https://www.legisweb.com.br/legislacao/?id=429858';
 const PL1653 = 'https://www.camara.leg.br/propostas-legislativas/2613918';
-const REVISAO = 'https://futurodasaude.com.br/?p=45965';
+const REVISAO = 'https://futurodasaude.com.br/ans-revisao-norma-contratos-glosas/';
 const CONJUR = 'https://www.conjur.com.br/2025-set-24/glosa-e-jabuticaba-para-consumidor-e-jaca-na-cabeca-de-fornecedor-de-produto-para-saude//?print=1';
 
 export const post = {
@@ -16,7 +16,7 @@ export const post = {
   titulo: 'Existe lei contra glosa abusiva? O que a norma diz em 2026',
   tituloSeo: 'Existe lei contra glosa abusiva? O que a ANS e o Congresso preveem em 2026',
   descricao:
-    'Não há, nas fontes consultadas, lei federal específica sobre glosa abusiva. Veja o que a RN 503/2022 da ANS garante ao prestador, o que está em revisão e o que a clínica pode fazer hoje.',
+    'Não há, nas fontes consultadas, lei federal específica sobre glosa abusiva. Veja o que a RN 503/2022 da ANS garante ao prestador, a proposta da ANS de vedar glosa de procedimento autorizado e o que fazer hoje.',
   publicado: '2026-10-10',
   atualizado: '2026-10-10',
   resposta: (
@@ -30,7 +30,7 @@ export const post = {
   perguntas: [
     {
       q: 'A operadora pode glosar procedimento que ela mesma autorizou?',
-      a: 'A RN nº 503/2022, no texto lido, não traz vedação expressa de glosa de procedimento previamente autorizado. Uma proposta nesse sentido foi noticiada na revisão da norma de contratualização; confira na ANS se foi aprovada e a partir de quando vale. Enquanto isso, a autorização prévia é um argumento de recurso, e a senha deve constar na guia.',
+      a: 'A RN nº 503/2022, no texto lido, não traz vedação expressa. A minuta da nova norma de contratualização, que esteve em consulta pública até 16/05/2026, propõe que procedimentos autorizados previamente não possam ser glosados, desde que não haja divergência técnica apontada por auditoria. Até a norma final ser publicada, a autorização prévia é argumento de recurso, e a senha deve constar na guia.',
     },
     {
       q: 'O prestador tem direito de saber por que foi glosado?',
@@ -79,16 +79,29 @@ export default function Conteudo() {
       <h2 id="em-revisao">O que está em revisão ou tramitação</h2>
       <ul>
         <li>
-          <strong>Revisão da norma de contratualização.</strong> O Futuro da Saúde noticiou que, na revisão da norma sobre
-          contratos, a ANS <a href={REVISAO} target="_blank" rel="noopener noreferrer">propõe que procedimentos autorizados não possam
-          ser glosados</a>. É uma proposta em processo regulatório, não uma regra vigente. Confira o status no portal da ANS antes
-          de citá-la em um recurso.
+          <strong>Revisão da norma de contratualização.</strong> Segundo reportagem do Futuro da Saúde de 06/05/2026, a ANS
+          iniciou a revisão das resoluções sobre contratos entre operadoras e prestadores, e a minuta ficou em consulta
+          pública até 16 de maio. A proposta prevê, entre outros pontos, que{' '}
+          <a href={REVISAO} target="_blank" rel="noopener noreferrer">procedimentos autorizados previamente por operadoras não poderão
+          ser glosados</a>, desde que não tenham divergências técnicas apontadas por auditoria, além de contratos digitais, canal de
+          solução consensual de conflitos e transparência sobre reajustes. É uma proposta em processo regulatório, não uma regra
+          vigente: confira no portal da ANS se a norma final foi publicada antes de citá-la em um recurso.
         </li>
         <li>
           <strong>PL 1653/2026.</strong> Propõe atrelar parte do reajuste anual dos planos a indicadores de reclamações. Não
           trata de glosa, mas mostra a direção do debate: <a href={PL1653} target="_blank" rel="noopener noreferrer">ficha de tramitação na Câmara</a>.
         </li>
       </ul>
+
+      <h2 id="numeros">Os números da glosa no setor</h2>
+      <p>
+        Segundo a mesma reportagem, o Painel de Indicadores de Glosa da ANS, com dados consolidados até o 1º semestre de 2025,
+        mostra prazo médio de pagamento de <strong>33,61 dias</strong>, glosa inicial de <strong>7,31%</strong> e glosa final de{' '}
+        <strong>7,14%</strong>. Já o Observatório Anahp (9ª edição), com hospitais associados, aponta para 2025 glosa inicial de
+        cerca de <strong>15,93%</strong>, glosa final em torno de <strong>1,72%</strong> e prazo médio de recebimento de{' '}
+        <strong>77,35 dias</strong>. As bases são diferentes (setor inteiro × hospitais privados associados) e não devem ser
+        comparadas diretamente.
+      </p>
 
       <h2 id="hoje">O que a clínica pode fazer hoje</h2>
       <ol className={s.passos}>

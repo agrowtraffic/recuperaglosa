@@ -74,8 +74,9 @@ export default function Conteudo() {
       </p>
       <p>
         Já o balanço da <a href={FONTE_AGENDA} target="_blank" rel="noopener noreferrer">agenda da saúde em ano eleitoral</a>, do
-        Futuro da Saúde, indica que o projeto de lei dos planos de saúde pode voltar ao debate no Legislativo, que a política de
-        preços e reajustes deve voltar à pauta da ANS e que a agência trabalha com uma agenda regulatória para 2026–2028.
+        Futuro da Saúde, indica que a política de preços e reajustes deve voltar à pauta da ANS. A agência aprovou em 17/07/2026
+        a agenda regulatória 2026–2028, com 14 temas. Sobre o Legislativo, reportagem de 22/04/2026 registra que o setor avalia
+        que o PL dos planos de saúde não deve ganhar grande destaque em 2026.
       </p>
 
       <h2 id="lacuna">O que não foi encontrado</h2>
