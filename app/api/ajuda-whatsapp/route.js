@@ -2,9 +2,11 @@
    POST /api/ajuda-whatsapp
    O upload falhou e o cliente pediu ajuda deixando o WhatsApp.
 
-   Grava o número em `usuario.telefone` (a RLS deixa o usuário alterar
-   a própria linha) e avisa o suporte por e-mail. O aviso é a parte que
-   importa: sem ele o número ficaria no banco sem ninguém saber.
+   Faz três coisas, nesta ordem:
+   1. grava o número em `usuario.telefone` (a RLS deixa o usuário alterar
+      a própria linha);
+   2. registra o pedido em `pedido_ajuda`, a fila que o suporte consulta;
+   3. avisa o suporte por e-mail, para ninguém depender de olhar o banco.
 
    O e-mail nunca derruba a resposta: o número já foi salvo, e dizer
    "deu erro" faria a pessoa achar que o pedido se perdeu.
@@ -52,6 +54,22 @@ export async function POST(req) {
     );
   }
 
+  const motivo = texto(body?.motivo, 60);
+  const arquivo = texto(body?.arquivo, 120);
+
+  /* Fila de pedidos (tabela pedido_ajuda). É o registro que não se perde:
+     o telefone acima é sobrescrito no próximo pedido e o e-mail abaixo
+     depende de a caixa do suporte existir e ser lida. Falha aqui é
+     logada e não interrompe: o número já está salvo. */
+  const { error: erroPedido } = await supabase.from('pedido_ajuda').insert({
+    usuario_id: user.id,
+    clinica_id: atualizado[0].clinica_id,
+    telefone,
+    motivo: motivo || null,
+    arquivo: arquivo || null,
+  });
+  if (erroPedido) console.error('⚠️ [AJUDA] Não registrou em pedido_ajuda:', erroPedido.message);
+
   try {
     const { data: clinica } = await supabase
       .from('clinica')
@@ -64,8 +82,8 @@ export async function POST(req) {
       email: user.email,
       clinica: clinica?.nome,
       telefone,
-      motivo: texto(body?.motivo, 60),
-      arquivo: texto(body?.arquivo, 120),
+      motivo,
+      arquivo,
     });
     if (!envio.enviado) console.warn('⚠️ [AJUDA] Alerta não enviado:', envio.motivo);
   } catch (e) {

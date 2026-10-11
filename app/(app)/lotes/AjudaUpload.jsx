@@ -11,7 +11,9 @@ import { useState } from 'react';
    - abrir a conversa por conta própria (mensagem pronta, sem dado pessoal
      na URL: o cliente decide o que contar).
 
-   O prazo de resposta é o mesmo prometido em /ajuda. */
+   O prazo prometido aqui (10 minutos) foi definido pelo dono do produto e
+   é mais curto que o de /ajuda (1 dia útil): vale para quem acabou de
+   travar no envio. */
 const WHATSAPP_SUPORTE =
   'https://wa.me/5511977315655?text=' +
   encodeURIComponent('Olá! Tentei enviar um arquivo no RecuperaGlosa e ele não foi processado. Podem me ajudar?');
@@ -55,7 +57,7 @@ export default function AjudaUpload({ motivo, arquivo }) {
   if (estado === 'enviado') {
     return (
       <p role="status" className="rg-caption" style={{ color: '#166534', marginTop: 8 }}>
-        ✓ Recebemos seu número. Vamos te chamar no WhatsApp em até 1 dia útil.
+        ✓ Recebemos seu número. Vamos te chamar no WhatsApp em até 10 minutos.
       </p>
     );
   }
