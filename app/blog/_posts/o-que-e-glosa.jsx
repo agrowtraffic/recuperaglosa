@@ -36,6 +36,10 @@ export const post = {
       a: 'A ANS não fixa um prazo único. Pela RN nº 503/2022, o contrato entre operadora e prestador deve prever o prazo de contestação, igual ao prazo de resposta da operadora. Confira o seu contrato ou o manual do prestador.',
     },
     {
+      q: 'O que significa valor glosado, glosado ou glosada?',
+      a: 'Valor glosado é a parte da cobrança que a operadora deixou de pagar. Glosado (ou glosada) descreve o item, a guia ou o valor que sofreu glosa. Glosar é o verbo: recusar o pagamento, total ou parcialmente.',
+    },
+    {
       q: 'Onde vejo o motivo da glosa?',
       a: 'No demonstrativo de pagamento (ou de análise de conta) que a operadora disponibiliza para cada lote. Ao lado de cada item glosado vem o código da Tabela 38; no arquivo XML do padrão TISS, ele fica no campo codigoGlosa.',
     },
@@ -59,6 +63,14 @@ export default function Conteudo() {
       <p>
         A glosa parcial é a que mais passa despercebida: o dinheiro entra, só que menos, e ninguém confere item a item.
       </p>
+
+      <h2 id="palavras">Glosa, glosar, glosado e glosada: o que cada palavra significa</h2>
+      <ul>
+        <li><strong>Glosa</strong> (substantivo): a recusa de pagamento, total ou parcial, de um valor cobrado.</li>
+        <li><strong>Glosar</strong> (verbo): recusar o pagamento. “A operadora glosou a guia” quer dizer que ela deixou de pagar.</li>
+        <li><strong>Glosado ou glosada</strong> (adjetivo): o valor, o item ou a guia que sofreu glosa. “Valor glosado” é o quanto a operadora deixou de pagar.</li>
+        <li><strong>Glosa inicial e glosa final:</strong> a inicial é a recusa registrada na primeira análise; a final é o que permanece depois dos recursos.</li>
+      </ul>
 
       <h2 id="exemplo">Exemplo de glosa na prática</h2>
       <p>Imagine uma clínica que envia um lote com três atendimentos (valores ilustrativos):</p>
