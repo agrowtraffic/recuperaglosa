@@ -6,6 +6,7 @@ import { PageHeader, EmptyState, StatusBadge, Money } from "@/app/_components/ki
 import { DataList } from "@/app/_components/kit/Data";
 import { UploadCloud } from "lucide-react";
 import { getContexto, getLotes } from "@/lib/dados-clinica";
+import Link from "next/link";
 import UploadZone from "./UploadZone";
 import { OPERADORA_EXEMPLO } from "@/src/tiss/exemplo";
 
@@ -32,6 +33,14 @@ export default async function Lotes() {
     <main className="rg-shell-content rg-stack">
       <PageHeader eyebrow="Lotes" titulo="O começo de toda recuperação"
         descricao="Cada XML da operadora vira uma leitura clara do que foi pago, glosado e recuperável." />
+
+      {clinica?.nome === "Minha clínica" && (
+        <p role="note" className="rg-caption" style={{ background: "#fffbeb", border: "1px solid #fde68a", color: "#92400e", padding: "10px 14px", borderRadius: 10, margin: 0 }}>
+          O nome da clínica ainda está como “Minha clínica” e aparece nos recursos gerados.{" "}
+          <Link href="/configuracoes" style={{ fontWeight: 600, textDecoration: "underline" }}>Complete em Configurações</Link>{" "}
+          antes de enviar um recurso.
+        </p>
+      )}
 
       <UploadZone isGratuito={isGratuito} analisesRestantes={analisesRestantes} />
 

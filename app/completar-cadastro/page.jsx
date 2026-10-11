@@ -33,11 +33,15 @@ export default function CompletarCadastroPage(){
   return ()=>{ ativo = false; };
  },[]);
 
+ /* "Pular" não elimina a clínica: todas as tabelas dependem de clinica_id e
+    o middleware manda quem não tem `usuario` de volta para cá. Pular só
+    adia o NOME, que entra como "Minha clínica" e é editável em
+    Configurações. O aceite dos termos continua obrigatório. */
  async function handleSubmit(event){
   event.preventDefault();
   setError('');
 
-  if(nomeClinica.trim().length < 2){ setError('Informe o nome da clínica.'); return; }
+  const nomeFinal = nomeClinica.trim().length >= 2 ? nomeClinica.trim() : 'Minha clínica';
   if(nomeCompleto.trim().length < 3){ setError('Informe seu nome completo.'); return; }
   if(!aceitouTermos){ setError('É necessário aceitar os Termos de Uso e a Política de Privacidade.'); return; }
 
@@ -45,7 +49,7 @@ export default function CompletarCadastroPage(){
   try{
    const supabase = createClient();
    const { data: clinicaId, error: rpcError } = await supabase.rpc('completar_cadastro', {
-     p_nome_clinica: nomeClinica.trim(),
+     p_nome_clinica: nomeFinal,
      p_cnpj: '',
      p_nome_completo: nomeCompleto.trim(),
      p_telefone: '',
@@ -73,13 +77,13 @@ export default function CompletarCadastroPage(){
     <img src="/marca/horizontal.png" alt="RecuperaGlosa" width={150} height={44} style={{ height:44, width:'auto', marginBottom:20 }}/>
     <h1 style={{ marginTop:0, marginBottom:8, fontSize:24, fontWeight:'bold', color:'#0f172a' }}>Falta só um passo</h1>
     <p style={{ color:'#64748b', marginTop:0, marginBottom:24, fontSize:14, lineHeight:1.5 }}>
-     Dê um nome à sua clínica e você já pode enviar o demonstrativo do convênio e ver quanto foi glosado.
+     Aceite os termos e você já pode enviar o demonstrativo do convênio e ver quanto foi glosado. O nome da clínica pode ficar para depois.
     </p>
 
     <form onSubmit={handleSubmit} style={{ display:'flex', flexDirection:'column', gap:16 }}>
      <label style={{ display:'flex', flexDirection:'column', gap:6 }}>
-      <span style={{ fontWeight:500, color:'#334155', fontSize:14 }}>Nome da clínica</span>
-      <input value={nomeClinica} onChange={e=>setNomeClinica(e.target.value)} placeholder="Clínica Sorriso" required autoFocus
+      <span style={{ fontWeight:500, color:'#334155', fontSize:14 }}>Nome da clínica <small style={{color:'#94a3b8'}}>(pode alterar depois)</small></span>
+      <input value={nomeClinica} onChange={e=>setNomeClinica(e.target.value)} placeholder="Clínica Sorriso" autoFocus
        style={campo}/>
      </label>
 
@@ -105,6 +109,13 @@ export default function CompletarCadastroPage(){
      <button type="submit" disabled={loading}
       style={{ padding:'14px 16px', background: loading ? '#cbd5e1' : '#16a34a', color:'#fff', border:'none', borderRadius:8, fontWeight:600, cursor: loading ? 'not-allowed':'pointer', fontSize:15 }}>
       {loading ? 'Salvando...' : 'Começar a analisar'}
+     </button>
+
+     {/* Pular: mesmo envio, sem o nome. Os termos continuam exigidos. */}
+     <button type="button" disabled={loading}
+      onClick={()=>handleSubmit({ preventDefault(){} })}
+      style={{ background:'none', border:0, padding:0, color:'#64748b', fontSize:13, textDecoration:'underline', cursor: loading ? 'not-allowed':'pointer' }}>
+      Pular por enquanto
      </button>
 
      <p style={{ margin:0, fontSize:12, color:'#94a3b8', textAlign:'center' }}>
