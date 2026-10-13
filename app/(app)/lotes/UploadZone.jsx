@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { UploadCloud } from 'lucide-react';
+import { track } from '@/lib/analytics';
 import AjudaUpload from './AjudaUpload';
 
 /* Falhas em que o problema é o arquivo ou o processamento, e portanto
@@ -72,6 +73,7 @@ export default function UploadZone({ isGratuito, analisesRestantes }) {
           setErro('O exemplo já foi analisado. Veja o resultado no histórico abaixo.');
         } else {
           setErro(json.message || 'Não foi possível processar o arquivo.');
+          track('upload_erro', { motivo: json.error || `http_${res.status}` });
           if (STATUS_COM_AJUDA.includes(res.status)) {
             setAjuda({ motivo: json.error || `http_${res.status}`, arquivo: arquivoEnvio.name });
           }
@@ -79,6 +81,9 @@ export default function UploadZone({ isGratuito, analisesRestantes }) {
         return;
       }
 
+      /* O exemplo não conta como conversão: não mostra que a pessoa tem um
+         demonstrativo real, e inflaria o sinal que a Meta otimiza. */
+      track(ehExemplo ? 'upload_exemplo' : 'upload_sucesso');
       setSucesso(json.message || 'Demonstrativo processado.');
       setArquivo(null);
       if (inputRef.current) inputRef.current.value = '';

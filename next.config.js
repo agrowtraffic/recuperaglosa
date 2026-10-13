@@ -1,10 +1,10 @@
 const csp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://connect.facebook.net",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "img-src 'self' data:",
+  "img-src 'self' data: https://www.facebook.com",
   "font-src 'self' https://fonts.gstatic.com",
-  "connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://region1.analytics.google.com",
+  "connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://region1.analytics.google.com https://www.facebook.com https://connect.facebook.net",
   "frame-ancestors 'none'",
   "form-action 'self'",
   "base-uri 'self'",

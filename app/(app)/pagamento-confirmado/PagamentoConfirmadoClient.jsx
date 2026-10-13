@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { trackOnce } from '@/lib/analytics';
 
 /* O webhook do Stripe grava plano='ativo' na clinica. Aceita 'profissional'
    também para tolerar renomeação futura do valor. */
@@ -37,6 +38,12 @@ export default function PagamentoConfirmadoClient() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionId, router]);
+
+  /* Uma vez por sessão do Stripe: recarregar esta página não pode contar
+     a mesma compra de novo. */
+  function registrarCompra() {
+    trackOnce(`purchase_${sessionId}`, 'purchase');
+  }
 
   async function verificarPagamento(tentativa) {
     if (!vivoRef.current) return;
@@ -82,7 +89,8 @@ export default function PagamentoConfirmadoClient() {
 
       if (PLANOS_PAGOS.has(clinica?.plano)) {
         // Pagamento confirmado e plano já atualizado no banco
-        setStatus('sucesso');
+        registrarCompra();
+      setStatus('sucesso');
         return;
       }
 
@@ -94,6 +102,7 @@ export default function PagamentoConfirmadoClient() {
       }
 
       // Stripe confirmou o pagamento; o webhook atualiza o banco em seguida
+      registrarCompra();
       setStatus('sucesso');
     } catch (error) {
       console.error('Erro ao verificar pagamento:', error);

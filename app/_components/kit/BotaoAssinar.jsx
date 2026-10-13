@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { CTA_ASSINAR } from '@/lib/plano';
+import { track } from '@/lib/analytics';
 
 /* Botão de assinar, único em todo o app.
 
@@ -21,6 +22,7 @@ export default function BotaoAssinar({ variante = 'primary', tamanho = '', bloco
       const dados = await res.json();
 
       if (dados.checkoutUrl) {
+        track('begin_checkout');
         window.location.href = dados.checkoutUrl;
         return;
       }

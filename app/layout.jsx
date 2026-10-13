@@ -1,6 +1,7 @@
 import './globals.css';
 import { Manrope } from 'next/font/google';
 import Script from 'next/script';
+import MetaPixel from './_components/MetaPixel';
 
 /* Manrope é fonte variável — não se declara peso, o range vem inteiro.
    (A chave `weights` que estava aqui nem existe na API do next/font.) */
@@ -52,6 +53,7 @@ export default function RootLayout({ children }) {
             gtag('config', 'G-FEN2YGL8QN');
           `}
         </Script>
+        <MetaPixel />
       </head>
       <body className={`rg ${manrope.className}`}>{children}</body>
     </html>

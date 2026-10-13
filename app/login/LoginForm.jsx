@@ -8,6 +8,7 @@ import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
+import { track } from '@/lib/analytics';
 import styles from './login.module.css';
 
 /* Força da senha — 0..4 */
@@ -84,6 +85,7 @@ export default function LoginForm({ initialMode = 'login' }) {
           };
           throw new Error(messages[signupResult.error] || 'Não foi possível criar sua conta. Tente novamente.');
         }
+        track('sign_up', { method: 'email' });
         setSuccess(true);
       } else if (isRecovery) {
         const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {

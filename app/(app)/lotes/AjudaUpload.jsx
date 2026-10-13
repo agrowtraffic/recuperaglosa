@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { track } from '@/lib/analytics';
 
 /* Aparece só quando um upload falha. É o momento em que a pessoa mais
    precisa de ajuda e em que o suporte menos fica sabendo: antes, quem
@@ -46,6 +47,7 @@ export default function AjudaUpload({ motivo, arquivo }) {
         setEstado('inicial');
         return;
       }
+      track('upload_ajuda_pedida', { motivo });
       setEstado('enviado');
     } catch (err) {
       console.error('Erro ao pedir ajuda:', err);
