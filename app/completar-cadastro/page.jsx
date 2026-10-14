@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { nomeClinicaPadrao } from '@/lib/nome-clinica';
 
-const TERMOS_VERSAO = '2026-07-24';
+const TERMOS_VERSAO = '2026-10-14';
 
 /* Último passo depois do login. Antes pedia 5 campos (clínica, CNPJ, nome,
    telefone, termos), e 2 de 3 logins com Google em outubro pararam aqui.

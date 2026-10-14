@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import PreferenciasCookies from '@/app/_components/PreferenciasCookies';
 
 export const metadata = {
   title: 'Política de Privacidade',
@@ -6,7 +7,7 @@ export const metadata = {
   alternates: { canonical: '/privacidade' },
 };
 
-const VERSAO = '2026-07-24';
+const VERSAO = '2026-10-14';
 
 export default function PrivacidadePage(){
  return (
@@ -24,6 +25,7 @@ export default function PrivacidadePage(){
     <p><strong>Dos demonstrativos que você envia:</strong> os arquivos XML de demonstrativo de pagamento (padrão TISS/ANS) podem conter dados de beneficiários do convênio (nome, número de carteira, dados do atendimento) — dados de terceiros que não são seus funcionários. Para esses dados, sua clínica é a controladora e o RecuperaGlosa atua como operador, tratando-os apenas para processar a auditoria e gerar os recursos que você solicitou.</p>
     <p><strong>Dados de pagamento:</strong> processados diretamente pelo Stripe. Não armazenamos número completo de cartão de crédito nos nossos servidores.</p>
     <p><strong>Dados técnicos:</strong> endereço IP e informações de sessão, coletados automaticamente para autenticação e segurança.</p>
+    <p><strong>Dados de medição de uso:</strong> se você aceitar os cookies de medição, o Google Analytics e o pixel da Meta registram como o site é usado e quais ações são realizadas (veja a seção 6).</p>
    </Section>
 
    <Section title="3. Para que usamos esses dados">
@@ -38,30 +40,40 @@ export default function PrivacidadePage(){
    </Section>
 
    <Section title="4. Base legal">
-    <p>Tratamos seus dados com base na execução do contrato de uso do serviço (LGPD, art. 7º, V) e, quando aplicável, no seu consentimento explícito no cadastro. Os dados de beneficiários presentes nos demonstrativos são tratados sob a base legal e responsabilidade da sua clínica, que é quem detém a relação com o paciente.</p>
+    <p>Tratamos seus dados com base na execução do contrato de uso do serviço (LGPD, art. 7º, V) e, quando aplicável, no seu consentimento explícito no cadastro. Os cookies de medição e publicidade (seção 6) dependem exclusivamente do seu consentimento (LGPD, art. 7º, I), que você pode recusar ou revogar a qualquer momento. Os dados de beneficiários presentes nos demonstrativos são tratados sob a base legal e responsabilidade da sua clínica, que é quem detém a relação com o paciente.</p>
    </Section>
 
    <Section title="5. Com quem compartilhamos">
-    <p>Compartilhamos dados apenas com os prestadores necessários para operar o serviço: <strong>Supabase</strong> (banco de dados e autenticação) e <strong>Stripe</strong> (processamento de pagamento). Não vendemos dados a terceiros.</p>
+    <p>Compartilhamos dados apenas com os prestadores necessários para operar o serviço: <strong>Supabase</strong> (banco de dados e autenticação) e <strong>Stripe</strong> (processamento de pagamento). Se você aceitar os cookies de medição, também o <strong>Google</strong> (Analytics) e a <strong>Meta</strong> (pixel), conforme a seção 6. Não vendemos dados a terceiros.</p>
    </Section>
 
-   <Section title="6. Retenção">
+   <Section title="6. Cookies e ferramentas de medição">
+    <p>O site usa cookies essenciais, para manter seu login e a segurança da sessão, que funcionam sempre. Além deles, há duas ferramentas de medição e publicidade que <strong>só são ativadas se você aceitar</strong> o aviso de cookies:</p>
+    <ul style={{ paddingLeft:20 }}>
+     <li><strong>Google Analytics 4</strong> (Google): mede visitas e uso das páginas, para entendermos o que funciona no site.</li>
+     <li><strong>Pixel da Meta</strong> (Meta Platforms): mede ações no site, como cadastro, envio de arquivo e assinatura, e permite medir e otimizar nossos anúncios.</li>
+    </ul>
+    <p>Os eventos que enviamos a essas ferramentas são rótulos de ação, como “cadastro concluído”. Não enviamos e-mail, nome, telefone, nome de arquivo nem o conteúdo dos demonstrativos. Ainda assim, ao carregar, Google e Meta recebem dados técnicos do seu navegador, como endereço IP e identificadores em cookies, e os tratam segundo as próprias políticas: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" style={{ color:'#16a34a' }}>Google</a> e <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener noreferrer" style={{ color:'#16a34a' }}>Meta</a>.</p>
+    <p><strong>Sua escolha:</strong> é guardada no seu navegador, em um cookie próprio chamado <code>rg_consent</code> e no armazenamento local, por 6 meses. Se você recusar, nenhuma dessas ferramentas é carregada e o site funciona normalmente. Para mudar de ideia a qualquer momento: <PreferenciasCookies style={{ color:'#16a34a', textDecoration:'underline', fontWeight:600 }}>abrir preferências de cookies</PreferenciasCookies>.</p>
+   </Section>
+
+   <Section title="7. Retenção">
     <p>Mantemos os dados da sua conta e dos demonstrativos enquanto sua conta estiver ativa. Se você encerrar a conta, os dados são apagados ou anonimizados em até 90 dias, salvo obrigação legal de retenção por prazo maior.</p>
    </Section>
 
-   <Section title="7. Segurança">
+   <Section title="8. Segurança">
     <p>Os dados trafegam por conexão HTTPS. O banco de dados usa políticas de Row Level Security (RLS) do Postgres, que restringem cada clínica ao acesso exclusivo dos próprios dados. O acesso à aplicação exige autenticação.</p>
    </Section>
 
-   <Section title="8. Seus direitos">
+   <Section title="9. Seus direitos">
     <p>Você pode solicitar acesso, correção, exclusão ou portabilidade dos seus dados pessoais, ou revogar consentimento, a qualquer momento pelo canal de contato abaixo. Responderemos em até 15 dias.</p>
    </Section>
 
-   <Section title="9. Alterações desta política">
+   <Section title="10. Alterações desta política">
     <p>Podemos atualizar esta política. Mudanças relevantes serão comunicadas por e-mail ou aviso no produto.</p>
    </Section>
 
-   <Section title="10. Contato">
+   <Section title="11. Contato">
     <p>Para exercer seus direitos ou tirar dúvidas sobre privacidade: <a href="mailto:admin@recuperaglosa.com.br" style={{ color:'#16a34a' }}>admin@recuperaglosa.com.br</a> ou <a href="mailto:suporte@recuperaglosa.com.br" style={{ color:'#16a34a' }}>suporte@recuperaglosa.com.br</a>.</p>
    </Section>
 

@@ -4,6 +4,7 @@
    conversão no celular. */
 import Link from 'next/link';
 import s from './publico.module.css';
+import PreferenciasCookies from '../PreferenciasCookies';
 
 export const CADASTRO = '/login?modo=cadastro';
 
@@ -42,6 +43,7 @@ export default function PaginaPublica({ children }) {
             <Link href="/blog">Blog</Link>
             <Link href="/ajuda">Ajuda</Link>
             <Link href="/privacidade">Privacidade</Link>
+            <PreferenciasCookies style={{ color: 'var(--muted)' }} />
             <Link href="/termos">Termos</Link>
           </div>
         </div>

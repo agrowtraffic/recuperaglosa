@@ -6,7 +6,7 @@ export const metadata = {
   alternates: { canonical: '/termos' },
 };
 
-const VERSAO = '2026-07-24';
+const VERSAO = '2026-10-14';
 
 export default function TermosPage(){
  return (

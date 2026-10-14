@@ -1,7 +1,6 @@
 import './globals.css';
 import { Manrope } from 'next/font/google';
-import Script from 'next/script';
-import MetaPixel from './_components/MetaPixel';
+import ConsentGate from './_components/ConsentGate';
 
 /* Manrope é fonte variável — não se declara peso, o range vem inteiro.
    (A chave `weights` que estava aqui nem existe na API do next/font.) */
@@ -39,23 +38,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="pt-BR">
-      <head>
-        {/* Google Analytics */}
-        <Script
-          async
-          src="https://www.googletagmanager.com/gtag/js?id=G-FEN2YGL8QN"
-        />
-        <Script id="google-analytics">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-FEN2YGL8QN');
-          `}
-        </Script>
-        <MetaPixel />
-      </head>
-      <body className={`rg ${manrope.className}`}>{children}</body>
+      <body className={`rg ${manrope.className}`}>
+        {children}
+        {/* GA4 e pixel da Meta só carregam depois do aceite (LGPD):
+            ver app/_components/ConsentGate.jsx. */}
+        <ConsentGate />
+      </body>
     </html>
   );
 }
