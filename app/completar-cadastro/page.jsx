@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { nomeClinicaPadrao } from '@/lib/nome-clinica';
+import { track } from '@/lib/analytics';
 
 const TERMOS_VERSAO = '2026-10-14';
 
@@ -21,6 +22,11 @@ export default function CompletarCadastroPage(){
  const [nomeClinica,setNomeClinica] = useState('');
  const [nomeCompleto,setNomeCompleto] = useState('');
  const [nomeVeioDoGoogle,setNomeVeioDoGoogle] = useState(false);
+ /* O cadastro por e-mail já conta `sign_up` no formulário de login
+    (LoginForm). Quem entra com Google nunca passa por lá: o cadastro dele
+    só termina aqui. Por isso o evento sai desta tela, e só para o Google,
+    senão quem se cadastra por e-mail seria contado duas vezes. */
+ const [entrouComGoogle,setEntrouComGoogle] = useState(false);
  const [aceitouTermos,setAceitouTermos] = useState(false);
  const [loading,setLoading] = useState(false);
  const [error,setError] = useState('');
@@ -28,6 +34,7 @@ export default function CompletarCadastroPage(){
  useEffect(()=>{
   let ativo = true;
   createClient().auth.getUser().then(({ data })=>{
+   if(ativo && data?.user?.app_metadata?.provider === 'google') setEntrouComGoogle(true);
    const meta = data?.user?.user_metadata ?? {};
    const nome = String(meta.full_name || meta.name || '').trim();
    if(ativo && nome.length >= 3){ setNomeCompleto(nome); setNomeVeioDoGoogle(true); }
@@ -60,6 +67,8 @@ export default function CompletarCadastroPage(){
    });
    if(rpcError) throw rpcError;
    if(!clinicaId) throw new Error('RPC não retornou clinica_id');
+   // Cadastro concluído de fato (clínica criada e termos aceitos), não só o login.
+   if(entrouComGoogle) track('sign_up', { method: 'google' });
    // Direto para o upload: é onde o valor aparece (e onde está o exemplo).
    router.replace('/lotes');
    router.refresh();
