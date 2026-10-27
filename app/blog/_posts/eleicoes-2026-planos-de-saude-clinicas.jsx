@@ -1,7 +1,7 @@
 /* Artigo informativo e apartidário sobre o debate eleitoral de 2026 e a
    saúde suplementar. Regra editorial: não avalia, não compara e não
    recomenda candidato. Só entra o que tem fonte; o que não foi encontrado
-   é dito como "não encontrado". Revisar após o 2º turno (25/10/2026). */
+   é dito como "não encontrado". Revisado em 27/10/2026, após o 2º turno. */
 import Link from 'next/link';
 import s from '@/app/_components/publico/publico.module.css';
 
@@ -9,6 +9,7 @@ const FONTE_OUTRA_SAUDE = 'https://outraspalavras.net/outrasaude/eleicoes-outra-
 const FONTE_AGENDA = 'https://futurodasaude.com.br/?p=42493';
 const FONTE_PL1653 = 'https://www.camara.leg.br/propostas-legislativas/2613918';
 const TSE = 'https://divulgacandcontas.tse.jus.br/';
+const FONTE_TSE_2T = 'https://www.tse.jus.br/comunicacao/noticias/2026/Outubro/presidente-do-tse-anuncia-reeleicao-de-lula-e-faz-balanco-do-2o-turno-das-eleicoes-2026';
 
 export const post = {
   slug: 'eleicoes-2026-planos-de-saude-clinicas',
@@ -17,13 +18,13 @@ export const post = {
   descricao:
     'Levantamento informativo e sem posicionamento: o que as propostas de saúde das eleições 2026 abordam, o que não abordam sobre planos de saúde e glosa, e onde conferir os programas de governo.',
   publicado: '2026-10-10',
-  atualizado: '2026-10-10',
+  atualizado: '2026-10-27',
   resposta: (
     <>
       <strong>No debate eleitoral de 2026, a saúde aparece sobretudo como tema do SUS.</strong> Nos levantamentos
       consultados até 10/10/2026, não foram encontradas propostas específicas sobre glosa, sobre a relação entre operadoras
       e prestadores ou sobre o padrão TISS. O assunto de planos de saúde chega à clínica mais pela agenda regulatória da
-      ANS e do Congresso do que pelos programas de candidatos. O 2º turno da eleição presidencial é em 25/10/2026.
+      ANS e do Congresso do que pelos programas de candidatos. O 2º turno ocorreu em 25/10/2026, e o TSE anunciou o resultado.
     </>
   ),
   perguntas: [
@@ -41,7 +42,7 @@ export const post = {
     },
     {
       q: 'Quando saberemos o resultado e o que vem depois?',
-      a: 'O 2º turno é em 25/10/2026. Depois disso, a agenda de saúde depende da composição do governo e do Congresso eleitos, que assumem a partir de janeiro de 2027. Até lá, as normas da ANS e os contratos vigentes seguem valendo.',
+      a: 'O 2º turno ocorreu em 25/10/2026 e o TSE anunciou o resultado. A agenda de saúde depende da composição do governo e do Congresso eleitos, que assumem a partir de janeiro de 2027. Até lá, as normas da ANS e os contratos vigentes seguem valendo.',
     },
   ],
 };
@@ -52,17 +53,20 @@ const TD = { padding: '8px 10px', verticalAlign: 'top', borderBottom: '1px solid
 export default function Conteudo() {
   return (
     <>
-      <h2 id="situacao">Onde está a eleição</h2>
+      <h2 id="situacao">Resultado da eleição</h2>
       <div className={s.fatos4}>
         <div className={s.fato}><small>1º turno</small><strong>04/10/2026</strong></div>
         <div className={s.fato}><small>2º turno</small><strong>25/10/2026</strong></div>
-        <div className={s.fato}><small>Disputa (Presidência)</small><strong>Lula × Flávio Bolsonaro</strong></div>
-        <div className={s.fato}><small>Dados até</small><strong>10/10/2026</strong></div>
+        <div className={s.fato}><small>Presidente eleito</small><strong>Lula (PT), 51,79%</strong></div>
+        <div className={s.fato}><small>Dados até</small><strong>27/10/2026</strong></div>
       </div>
       <p>
-        Nenhum candidato atingiu a maioria dos votos válidos no 1º turno, e a Presidência será decidida entre Lula (PT) e Flávio
-        Bolsonaro (PL). Este artigo não compara as candidaturas: reúne o que foi publicado sobre saúde e mostra como a clínica
-        pode conferir cada programa na fonte.
+        No 2º turno, segundo o <a href={FONTE_TSE_2T} target="_blank" rel="noopener noreferrer">anúncio do presidente do TSE</a>,
+        Lula (PT) foi eleito com 51,79% dos votos válidos (64.256.232 votos), contra 48,21% de Flávio Bolsonaro (PL), com 59.826.041
+        votos. Os percentuais e totais foram conferidos em cobertura da imprensa que reproduz o anúncio; a página do TSE não pôde ser
+        aberta de forma automatizada na revisão, então confirme os números no portal de resultados do TSE. Este artigo não avalia
+        nem compara as candidaturas: reúne o que foi publicado sobre saúde e mostra como a clínica pode conferir cada programa
+        na fonte.
       </p>
 
       <h2 id="o-que-aparece">O que as análises de saúde destacam</h2>
@@ -114,7 +118,7 @@ export default function Conteudo() {
             <tr>
               <td style={TD}>Reajuste dos planos atrelado à qualidade</td>
               <td style={TD}><a href={FONTE_PL1653} target="_blank" rel="noopener noreferrer">PL 1653/2026</a> (Câmara)</td>
-              <td style={TD}>Apresentado em 07/04/2026; na Comissão de Saúde, aguardando relator na última consulta.</td>
+              <td style={TD}>Apresentado em 07/04/2026; na Comissão de Saúde, aguardando designação de relator (último andamento localizado: 19/05/2026). Confira a página da Câmara para o status atual.</td>
             </tr>
             <tr>
               <td style={TD}>Terminologia das glosas</td>
@@ -135,8 +139,8 @@ export default function Conteudo() {
         <Link href="/blog/agenda-saude-suplementar-2027">agenda da saúde suplementar para 2027</Link>.
       </p>
       <p>
-        Este artigo será revisado após o 2º turno. Se houver novidade verificável sobre saúde suplementar, ela entra com fonte
-        e data.
+        Revisão de 27/10/2026: desde 10/10/2026, não foi encontrada nas buscas realizadas nenhuma novidade verificável sobre
+        glosa ou contratos com prestadores nos planos de governo. Novidades futuras entram com fonte e data.
       </p>
     </>
   );
