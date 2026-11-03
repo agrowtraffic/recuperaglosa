@@ -1,6 +1,7 @@
 /* Registro dos artigos do blog. Artigo novo: criar o módulo nesta pasta
    (exportando `post` e o componente default) e incluí-lo aqui. A ordem
    da lista é a da página do blog — mais recente primeiro. */
+import PadraoTissSet2026, { post as padraoTissSet2026 } from './padrao-tiss-setembro-2026-o-que-mudou';
 import OQueEGlosa, { post as oQueEGlosa } from './o-que-e-glosa';
 import TiposDeGlosa, { post as tiposDeGlosa } from './tipos-de-glosa';
 import Tabela38Mudou, { post as tabela38Mudou } from './tabela-38-o-que-mudou-2026';
@@ -11,6 +12,7 @@ import Agenda2027, { post as agenda2027 } from './agenda-saude-suplementar-2027'
 import ChecklistReceita, { post as checklistReceita } from './checklist-proteger-receita-mudanca-regulatoria';
 
 export const POSTS = [
+  { ...padraoTissSet2026, Conteudo: PadraoTissSet2026 },
   { ...checklistReceita, Conteudo: ChecklistReceita },
   { ...agenda2027, Conteudo: Agenda2027 },
   { ...reformaTributaria, Conteudo: ReformaTributaria },

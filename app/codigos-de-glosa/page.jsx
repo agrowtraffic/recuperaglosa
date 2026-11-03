@@ -119,6 +119,11 @@ export default function CodigosPage() {
             {TOTAL_VIGENTES} vigentes e os {TOTAL_ENCERRADOS} encerrados em {dataBr(DATA_ENCERRAMENTO)}, e, para cada um,
             o significado, se vale recorrer e o modelo de recurso.
           </p>
+          <p>
+            <strong>Atualizado em 03/11/2026:</strong> a atualização de setembro/2026 do Padrão TISS (competência 202609)
+            não alterou a Tabela 38, então esta lista segue valendo.{' '}
+            <Link href="/blog/padrao-tiss-setembro-2026-o-que-mudou">Veja o que mudou nas outras tabelas</Link>.
+          </p>
         </div>
 
         <div className={s.fatos4}>

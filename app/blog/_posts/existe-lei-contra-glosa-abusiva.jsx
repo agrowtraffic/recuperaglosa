@@ -9,6 +9,7 @@ import Codigo from './Codigo';
 const RN503 = 'https://www.legisweb.com.br/legislacao/?id=429858';
 const PL1653 = 'https://www.camara.leg.br/propostas-legislativas/2613918';
 const REVISAO = 'https://futurodasaude.com.br/ans-revisao-norma-contratos-glosas/';
+const CP170 = 'https://proctracker.app/blog/ans-consulta-publica-170-contratualizacao-operadoras-prestadores-2026';
 const CONJUR = 'https://www.conjur.com.br/2025-set-24/glosa-e-jabuticaba-para-consumidor-e-jaca-na-cabeca-de-fornecedor-de-produto-para-saude//?print=1';
 
 export const post = {
@@ -18,7 +19,7 @@ export const post = {
   descricao:
     'Não há, nas fontes consultadas, lei federal específica sobre glosa abusiva. Veja o que a RN 503/2022 da ANS garante ao prestador, a proposta da ANS de vedar glosa de procedimento autorizado e o que fazer hoje.',
   publicado: '2026-10-10',
-  atualizado: '2026-10-10',
+  atualizado: '2026-11-03',
   resposta: (
     <>
       <strong>Nas fontes consultadas até 10/10/2026, não há lei federal específica que trate de “glosa abusiva”.</strong> O que
@@ -30,7 +31,7 @@ export const post = {
   perguntas: [
     {
       q: 'A operadora pode glosar procedimento que ela mesma autorizou?',
-      a: 'A RN nº 503/2022, no texto lido, não traz vedação expressa. A minuta da nova norma de contratualização, que esteve em consulta pública até 16/05/2026, propõe que procedimentos autorizados previamente não possam ser glosados, desde que não haja divergência técnica apontada por auditoria. Até a norma final ser publicada, a autorização prévia é argumento de recurso, e a senha deve constar na guia.',
+      a: 'A RN nº 503/2022, no texto lido, não traz vedação expressa. A minuta da nova norma de contratualização, em discussão na Consulta Pública nº 170 da ANS, propõe que procedimentos autorizados previamente não possam ser glosados, desde que não haja divergência técnica apontada por auditoria. Até 03/11/2026 não localizamos a resolução final publicada, então confira no portal da ANS. Enquanto isso, a autorização prévia é argumento de recurso, e a senha deve constar na guia.',
     },
     {
       q: 'O prestador tem direito de saber por que foi glosado?',
@@ -79,13 +80,17 @@ export default function Conteudo() {
       <h2 id="em-revisao">O que está em revisão ou tramitação</h2>
       <ul>
         <li>
-          <strong>Revisão da norma de contratualização.</strong> Segundo reportagem do Futuro da Saúde de 06/05/2026, a ANS
-          iniciou a revisão das resoluções sobre contratos entre operadoras e prestadores, e a minuta ficou em consulta
-          pública até 16 de maio. A proposta prevê, entre outros pontos, que{' '}
+          <strong>Revisão da norma de contratualização (Consulta Pública nº 170).</strong> A ANS abriu, no início de abril
+          de 2026, a consulta pública da minuta que consolida as regras de contratos entre operadoras e prestadores, incluindo
+          o tratamento das glosas. Segundo{' '}
+          <a href={CP170} target="_blank" rel="noopener noreferrer">análise de 24/06/2026</a>, a ANS prorrogou o prazo das
+          contribuições até as 18h de 3 de julho de 2026, e a minuta revoga disposições da RN nº 503/2022 e da RN nº 512/2022.
+          Reportagem do Futuro da Saúde de 06/05/2026 detalha a proposta. Ela prevê, entre outros pontos, que{' '}
           <a href={REVISAO} target="_blank" rel="noopener noreferrer">procedimentos autorizados previamente por operadoras não poderão
           ser glosados</a>, desde que não tenham divergências técnicas apontadas por auditoria, além de contratos digitais, canal de
           solução consensual de conflitos e transparência sobre reajustes. É uma proposta em processo regulatório, não uma regra
-          vigente: confira no portal da ANS se a norma final foi publicada antes de citá-la em um recurso.
+          vigente. Não localizamos resolução final publicada até 03/11/2026: confira no portal da ANS antes de citá-la em
+          um recurso. Enquanto não for publicada, a RN nº 503/2022 segue valendo.
         </li>
         <li>
           <strong>PL 1653/2026.</strong> Propõe atrelar parte do reajuste anual dos planos a indicadores de reclamações. Não
