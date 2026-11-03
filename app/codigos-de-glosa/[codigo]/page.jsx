@@ -45,10 +45,26 @@ export function generateMetadata({ params }) {
      onde não é cortado no meio da palavra. */
   const titulo = `Glosa ${params.codigo}: código, significado e o que fazer`;
   const status = d.m.vigente ? '' : ` Código encerrado pela ANS em ${dataBr(d.m.vigencia.fim)}.`;
-  const descricao =
+  const descricaoPadrao =
     `O que significa o código de glosa ${params.codigo} da Tabela 38 TISS (“${nome}”), ` +
     `se cabe recurso e o que fazer. ${d.acao.rotulo}` +
     (d.m.acao === 'recorrer' ? ', com modelo de recurso de glosa.' : '.') + status;
+
+  /* TESTE A/B de snippet (iniciado em 03/11/2026). No Search Console, em
+     28 dias até 01/11, estas 10 páginas tiveram 2.074 impressões e 15
+     cliques (CTR 0,72%), quase todas em posição 1 a 4: a descrição padrão
+     já responde a pergunta ("o que significa"), e quem só quer o
+     significado não precisa clicar. A variante promete o que só a página
+     entrega (por que acontece, como evitar, modelo). Só promete o modelo
+     quando a página tem um (ação "recorrer"), e não fala de prazo, que a
+     página não traz. As demais páginas ficam com a descrição padrão e
+     servem de controle. Comparar CTR por volta de 24/11/2026; se a
+     variante não vencer, apagar este bloco. */
+  const TESTE_SNIPPET = ['1426', '3210', '3306', '3202', '5050', '1016', '1612', '3203', '3207', '1406'];
+  const descricao = TESTE_SNIPPET.includes(params.codigo)
+    ? `Glosa ${params.codigo}: ${nome}. ${d.acao.rotulo}: por que acontece, como evitar` +
+      (d.m.acao === 'recorrer' ? ' e modelo de recurso pronto para copiar.' : ' e o que fazer em cada caso.') + status
+    : descricaoPadrao;
   return {
     title: titulo,
     description: descricao,
