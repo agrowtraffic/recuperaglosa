@@ -16,7 +16,7 @@ export const post = {
   descricao:
     'Quatro frentes que influenciam clínicas e consultórios a partir de 2027: agenda regulatória da ANS 2026-2028, PL dos planos de saúde, fiscalização e reforma tributária, com fontes e status.',
   publicado: '2026-10-10',
-  atualizado: '2026-10-27',
+  atualizado: '2026-11-03',
   resposta: (
     <>
       <strong>Quatro frentes concentram a agenda que afeta clínicas e consultórios em 2027:</strong> a agenda regulatória da
@@ -79,7 +79,7 @@ export default function Conteudo() {
         digitais, modelos alternativos de remuneração, canal para solução consensual de conflitos, aplicação do IPCA quando
         não houver acordo de reajuste e a vedação de glosa de procedimento autorizado sem divergência técnica. A própria ANS
         informa que não regula prestadores, mas induz o setor, e que mantém canal para receber reclamações sobre glosas e
-        inadimplência. Em buscas feitas em 27/10/2026, não foi encontrada a publicação da norma final; confira no Diário Oficial da União e no site da ANS.
+        inadimplência. Em buscas feitas em 03/11/2026, não foi encontrada a publicação da norma final; confira no Diário Oficial da União e no site da ANS.
       </p>
 
       <h3>4. Reforma tributária</h3>
@@ -100,6 +100,7 @@ export default function Conteudo() {
       <ul>
         <li>Revisar contratos e manuais do prestador de cada operadora, com atenção aos prazos de recurso e hipóteses de glosa.</li>
         <li>Atualizar o sistema de faturamento para a <Link href="/blog/tabela-38-o-que-mudou-2026">Tabela 38 vigente</Link>.</li>
+        <li>Conferir o que mudou no <Link href="/blog/padrao-tiss-setembro-2026-o-que-mudou">Padrão TISS de setembro/2026</Link> (a Tabela 38 não foi alterada).</li>
         <li>Manter histórico de glosa por operadora e motivo, para negociar e para fins tributários.</li>
         <li>Seguir o <Link href="/blog/checklist-proteger-receita-mudanca-regulatoria">checklist de proteção da receita</Link>.</li>
       </ul>
