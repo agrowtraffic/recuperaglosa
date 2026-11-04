@@ -1,12 +1,13 @@
 /* Agenda a acompanhar na saúde suplementar a partir de 2027. Escrito
-   antes do 2º turno: não assume resultado. Revisar em 26/10/2026. */
+   antes do 2º turno; revisado em 27/10/2026 com o resultado anunciado pelo TSE. */
 import Link from 'next/link';
 import s from '@/app/_components/publico/publico.module.css';
 
 const FONTE_AGENDA = 'https://futurodasaude.com.br/?p=42493';
 const FONTE_REGULATORIA = 'https://futurodasaude.com.br/agenda-regulatoria-da-ans-2026-2028-aprovada/';
 const FONTE_CONTRATOS = 'https://futurodasaude.com.br/ans-revisao-norma-contratos-glosas/';
-const FONTE_PL = 'https://futurodasaude.com.br/planos-de-saude-congresso-2026/';
+const FONTE_PRORROGACAO = 'https://atlaspublico.com.br/noticias/ans-prorroga-prazo-da-consulta-publica-170-para-03-07-2026-30633';
+const FONTE_PL ='https://futurodasaude.com.br/planos-de-saude-congresso-2026/';
 
 export const post = {
   slug: 'agenda-saude-suplementar-2027',
@@ -15,13 +16,13 @@ export const post = {
   descricao:
     'Quatro frentes que influenciam clínicas e consultórios a partir de 2027: agenda regulatória da ANS 2026-2028, PL dos planos de saúde, fiscalização e reforma tributária, com fontes e status.',
   publicado: '2026-10-10',
-  atualizado: '2026-10-10',
+  atualizado: '2026-10-27',
   resposta: (
     <>
       <strong>Quatro frentes concentram a agenda que afeta clínicas e consultórios em 2027:</strong> a agenda regulatória da
       ANS para 2026–2028 (aprovada em 17/07/2026, com 14 temas), a revisão da norma de contratos com prestadores, o
-      Congresso (onde o setor vê baixa expectativa para o PL dos planos) e a transição da reforma tributária. Nenhuma depende do resultado da eleição para existir; o que a eleição define é a
-      composição do governo e do Congresso que vão conduzi-las.
+      Congresso (onde o setor vê baixa expectativa para o PL dos planos) e a transição da reforma tributária. Nenhuma depende do resultado da eleição para existir. Após o 2º turno (25/10/2026), em que o TSE anunciou a reeleição de Lula,
+      o que falta conhecer é a composição da equipe de governo e do Congresso que vão conduzi-las.
     </>
   ),
   perguntas: [
@@ -38,8 +39,8 @@ export const post = {
       a: 'Não. Reportagem de 22/04/2026 do Futuro da Saúde registra que a avaliação do setor é de que o PL dos planos de saúde não deve ganhar grande destaque em 2026, embora outros projetos possam ser protocolados ou acelerados em resposta a denúncias. Acompanhe a tramitação nos sites da Câmara e do Senado.',
     },
     {
-      q: 'Este conteúdo será atualizado depois do 2º turno?',
-      a: 'Sim. Está programado para ser revisado em 26/10/2026, com data de atualização visível no topo.',
+      q: 'Este conteúdo foi atualizado depois do 2º turno?',
+      a: 'Sim. Foi revisado em 27/10/2026. Novidades verificáveis entram com fonte e data; a data de atualização fica visível no topo.',
     },
   ],
 };
@@ -71,12 +72,14 @@ export default function Conteudo() {
 
       <h3>3. Revisão da norma de contratos com prestadores</h3>
       <p>
-        A minuta da nova norma, que unifica duas resoluções anteriores, ficou em consulta pública até 16/05/2026. Segundo a{' '}
+        A minuta da nova norma (Consulta Pública nº 170/2026), que unifica duas resoluções anteriores, foi aberta em abril e tinha
+        prazo até 16/05/2026; a ANS prorrogou o prazo de contribuições até 03/07/2026, segundo{' '}
+        <a href={FONTE_PRORROGACAO} target="_blank" rel="noopener noreferrer">registro da Atlas Público</a>. Segundo a{' '}
         <a href={FONTE_CONTRATOS} target="_blank" rel="noopener noreferrer">reportagem do Futuro da Saúde</a>, prevê contratos
         digitais, modelos alternativos de remuneração, canal para solução consensual de conflitos, aplicação do IPCA quando
         não houver acordo de reajuste e a vedação de glosa de procedimento autorizado sem divergência técnica. A própria ANS
         informa que não regula prestadores, mas induz o setor, e que mantém canal para receber reclamações sobre glosas e
-        inadimplência. Confira se a norma final já foi publicada.
+        inadimplência. Em buscas feitas em 27/10/2026, não foi encontrada a publicação da norma final; confira no Diário Oficial da União e no site da ANS.
       </p>
 
       <h3>4. Reforma tributária</h3>
@@ -87,10 +90,10 @@ export default function Conteudo() {
 
       <h2 id="linha-do-tempo">Linha do tempo para acompanhar</h2>
       <ol className={s.passos}>
-        <li><strong>25/10/2026:</strong> 2º turno da eleição presidencial.</li>
-        <li><strong>Novembro e dezembro de 2026:</strong> transição de governo; possíveis sinalizações sobre ministro da Saúde e ANS.</li>
-        <li><strong>Janeiro de 2027:</strong> posse do governo eleito e início do ano da CBS plena.</li>
-        <li><strong>Fevereiro de 2027:</strong> início da nova legislatura no Congresso.</li>
+        <li><strong>25/10/2026:</strong> 2º turno da eleição presidencial; o TSE anunciou a reeleição de Lula (PT), com 51,79% dos votos válidos.</li>
+        <li><strong>Novembro e dezembro de 2026:</strong> período até a posse; ainda não foram encontradas, nas fontes consultadas, definições sobre ministro da Saúde ou direção da ANS.</li>
+        <li><strong>5 de janeiro de 2027:</strong> posse presidencial, data prevista no art. 82 da Constituição (redação da EC 111/2021); o ano de 2027 também é o da CBS plena.</li>
+        <li><strong>1º de fevereiro de 2027:</strong> início da nova legislatura no Congresso (art. 57 da Constituição).</li>
       </ol>
 
       <h2 id="o-que-fazer">O que a clínica pode fazer sem esperar</h2>
