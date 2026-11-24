@@ -29,9 +29,10 @@ export const metadata = {
   openGraph: { title: TITULO, description: DESCRICAO, url: '/codigos-de-glosa', type: 'article', images: [OG_IMAGE] },
 };
 
-/* Vigentes que pesam no dia a dia de consultório e clínica pequena:
-   duplicidade, senha, documentação, codificação, carência, prazo. */
-const DESTAQUES = ['3209', '3306', '3230', '3219', '1801', '2601', '3202', '3288', '3171', '3214', '2909', '3095'];
+/* Códigos mais pesquisados no Google (Search Console, out–nov/2026: consultas
+   "glosa <código>"), em ordem de demanda. Link direto do hub ajuda o
+   rastreio e a indexação dessas páginas. Reordenar ao reler o Search Console. */
+const DESTAQUES = ['3209', '3287', '3217', '3210', '3306', '3230', '3184', '1426', '5050', '3202', '3207', '1016', '1612', '3289'];
 
 const PERGUNTAS = [
   {
@@ -133,7 +134,7 @@ export default function CodigosPage() {
           <div className={s.fato}><small>Vigentes com tese de recurso</small><strong>{CONTAGEM.recorrer ?? 0}</strong></div>
         </div>
 
-        <h2>Códigos que merecem atenção</h2>
+        <h2>Códigos de glosa mais pesquisados</h2>
         <ul className={s.relacionados}>
           {DESTAQUES.map((c) => (
             <li key={c}>

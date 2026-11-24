@@ -10,6 +10,7 @@ const RN503 = 'https://www.legisweb.com.br/legislacao/?id=429858';
 const PL1653 = 'https://www.camara.leg.br/propostas-legislativas/2613918';
 const REVISAO = 'https://futurodasaude.com.br/ans-revisao-norma-contratos-glosas/';
 const CP170 = 'https://proctracker.app/blog/ans-consulta-publica-170-contratualizacao-operadoras-prestadores-2026';
+const PAUTA_DICOL = 'https://www.gov.br/ans/pt-br/arquivos/assuntos/noticias/Pauta_Dicol_646ANS24.11.2026.pdf';
 const CONJUR = 'https://www.conjur.com.br/2025-set-24/glosa-e-jabuticaba-para-consumidor-e-jaca-na-cabeca-de-fornecedor-de-produto-para-saude//?print=1';
 
 export const post = {
@@ -19,7 +20,7 @@ export const post = {
   descricao:
     'Não há, nas fontes consultadas, lei federal específica sobre glosa abusiva. Veja o que a RN 503/2022 da ANS garante ao prestador, a proposta da ANS de vedar glosa de procedimento autorizado e o que fazer hoje.',
   publicado: '2026-10-10',
-  atualizado: '2026-11-03',
+  atualizado: '2026-11-23',
   resposta: (
     <>
       <strong>Nas fontes consultadas até 10/10/2026, não há lei federal específica que trate de “glosa abusiva”.</strong> O que
@@ -31,7 +32,7 @@ export const post = {
   perguntas: [
     {
       q: 'A operadora pode glosar procedimento que ela mesma autorizou?',
-      a: 'A RN nº 503/2022, no texto lido, não traz vedação expressa. A minuta da nova norma de contratualização, em discussão na Consulta Pública nº 170 da ANS, propõe que procedimentos autorizados previamente não possam ser glosados, desde que não haja divergência técnica apontada por auditoria. Até 03/11/2026 não localizamos a resolução final publicada, então confira no portal da ANS. Enquanto isso, a autorização prévia é argumento de recurso, e a senha deve constar na guia.',
+      a: 'A RN nº 503/2022, no texto lido, não traz vedação expressa. A minuta da nova norma de contratualização, em discussão na Consulta Pública nº 170 da ANS, propõe que procedimentos autorizados previamente não possam ser glosados, desde que não haja divergência técnica apontada por auditoria. Até 23/11/2026 não localizamos a resolução final publicada, e a pauta da Diretoria da ANS de 24/11/2026 trata de uma audiência pública sobre a nova norma, então o texto ainda pode mudar. Confira no portal da ANS. Enquanto isso, a autorização prévia é argumento de recurso, e a senha deve constar na guia.',
     },
     {
       q: 'O prestador tem direito de saber por que foi glosado?',
@@ -89,7 +90,11 @@ export default function Conteudo() {
           <a href={REVISAO} target="_blank" rel="noopener noreferrer">procedimentos autorizados previamente por operadoras não poderão
           ser glosados</a>, desde que não tenham divergências técnicas apontadas por auditoria, além de contratos digitais, canal de
           solução consensual de conflitos e transparência sobre reajustes. É uma proposta em processo regulatório, não uma regra
-          vigente. Não localizamos resolução final publicada até 03/11/2026: confira no portal da ANS antes de citá-la em
+          vigente. Não localizamos resolução final publicada até 23/11/2026. A{' '}
+          <a href={PAUTA_DICOL} target="_blank" rel="noopener noreferrer">pauta da 646ª reunião da Diretoria Colegiada da ANS</a>,
+          marcada para 24/11/2026, traz como item extra-pauta a aprovação da proposta de abertura de audiência pública sobre a nova
+          resolução de contratualização entre operadoras e prestadores (processo nº 33910.000171/2025-91). Pauta é proposta: o
+          resultado só é conhecido depois da reunião. Confira no portal da ANS antes de citar a norma em
           um recurso. Enquanto não for publicada, a RN nº 503/2022 segue valendo.
         </li>
         <li>

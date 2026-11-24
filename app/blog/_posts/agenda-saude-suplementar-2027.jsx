@@ -16,7 +16,7 @@ export const post = {
   descricao:
     'Quatro frentes que influenciam clínicas e consultórios a partir de 2027: agenda regulatória da ANS 2026-2028, PL dos planos de saúde, fiscalização e reforma tributária, com fontes e status.',
   publicado: '2026-10-10',
-  atualizado: '2026-11-03',
+  atualizado: '2026-11-23',
   resposta: (
     <>
       <strong>Quatro frentes concentram a agenda que afeta clínicas e consultórios em 2027:</strong> a agenda regulatória da
@@ -79,7 +79,7 @@ export default function Conteudo() {
         digitais, modelos alternativos de remuneração, canal para solução consensual de conflitos, aplicação do IPCA quando
         não houver acordo de reajuste e a vedação de glosa de procedimento autorizado sem divergência técnica. A própria ANS
         informa que não regula prestadores, mas induz o setor, e que mantém canal para receber reclamações sobre glosas e
-        inadimplência. Em buscas feitas em 03/11/2026, não foi encontrada a publicação da norma final; confira no Diário Oficial da União e no site da ANS.
+        inadimplência. Em buscas feitas em 23/11/2026, não foi encontrada a publicação da norma final. A pauta da Diretoria Colegiada da ANS de 24/11/2026 inclui a proposta de abertura de audiência pública sobre a nova resolução de contratualização, o que indica nova etapa de participação antes da publicação (a pauta é proposta; confira o resultado no site da ANS).
       </p>
 
       <h3>4. Reforma tributária</h3>
