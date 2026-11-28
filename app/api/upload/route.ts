@@ -6,6 +6,7 @@ import { salvarLote } from '@/src/db/persistir';
 import { enviarNotificacaoGlosa } from '@/lib/emails';
 import { computeFileHash } from '@/src/utils/fileHash';
 import { diagnosticarXml } from '@/src/tiss/diagnostico';
+import { decodificarXml } from '@/src/tiss/codificacao';
 import { OPERADORA_EXEMPLO } from '@/src/tiss/exemplo';
 
 /* Janela de silêncio entre notificações de glosa da mesma clínica.
@@ -96,7 +97,7 @@ export async function POST(req: Request) {
   // ✅ Ler e fazer parse do XML
   let xmlText: string;
   try {
-    xmlText = await file.text();
+    xmlText = decodificarXml(await file.arrayBuffer());
   } catch (e: any) {
     return NextResponse.json({ error: 'leitura_falhou', message: 'Não foi possível ler o arquivo.' }, { status: 400 });
   }
@@ -110,18 +111,23 @@ export async function POST(req: Request) {
   } catch (e: any) {
     console.error('❌ [UPLOAD] Erro no parse:', e.message);
     return NextResponse.json(
-      { error: 'xml_invalido', message: `Erro ao processar XML: ${e.message}` },
+      {
+        error: 'xml_invalido',
+        message:
+          'Não conseguimos abrir este XML. Ele pode estar incompleto ou corrompido. ' +
+          'Sua análise gratuita não foi usada. Baixe o arquivo de novo ou deixe seu WhatsApp abaixo.',
+      },
       { status: 422 }
     );
   }
 
-  /* XML sem nenhuma guia não é demonstrativo: devolve 422 com a explicação
+  /* XML sem nenhum item legível não serve como demonstrativo: devolve 422 com a explicação
      e NÃO grava lote, para não gastar a análise grátis nem poluir o
      histórico. Tipos comuns: modelo de recurso de glosa e lote de guias
      (os dois são XMLs que a clínica envia, não que recebe). */
-  if (lote.guias.length === 0) {
+  if (lote.guias.every((g) => g.itens.length === 0)) {
     const { tipo, mensagem } = diagnosticarXml(xmlText);
-    console.warn('⚠️ [UPLOAD] XML sem guias, tipo:', tipo, 'arquivo:', file.name);
+    console.warn('⚠️ [UPLOAD] XML sem itens, tipo:', tipo, 'arquivo:', file.name);
     return NextResponse.json({ error: 'sem_guias', tipo, message: mensagem }, { status: 422 });
   }
 

@@ -4,7 +4,7 @@
   "description": "SaaS de auditoria de glosas de convênio para clínicas pequenas",
   "type": "module",
   "scripts": {
-    "test": "npx tsx src/testar.ts",
+    "test": "npx tsx src/testar-parser.ts && npx tsx src/testar.ts",
     "test:fixtures": "npx tsx src/fixtures.ts",
     "test:db": "npx tsx src/testar-db.ts",
     "dev": "next dev",

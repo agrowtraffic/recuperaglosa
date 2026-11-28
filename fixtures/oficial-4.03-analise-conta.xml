@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Dados 100% ficticios. Estrutura do demonstrativo de analise de conta do
+  Padrao TISS, esquema oficial 4.03.00 da ANS: sem nomeBeneficiario, glosa por item em
+  relacaoGlosa (valorGlosa + tipoGlosa).
+
+  Casos: item com duas glosas; item pago integralmente; item glosado sem
+  relacaoGlosa (herda motivoGlosaGuia); valores de glosa que nao fecham
+  com informado - liberado; guia sem detalhamento por item.
+-->
+<ans:mensagemTISS xmlns:ans="http://www.ans.gov.br/padroes/tiss/schemas">
+  <ans:cabecalho>
+    <ans:identificacaoTransacao>
+      <ans:tipoTransacao>DEMONSTRATIVO_ANALISE_CONTA</ans:tipoTransacao>
+      <ans:sequencialTransacao>1</ans:sequencialTransacao>
+      <ans:dataRegistroTransacao>2026-10-30</ans:dataRegistroTransacao>
+      <ans:horaRegistroTransacao>10:00:00</ans:horaRegistroTransacao>
+    </ans:identificacaoTransacao>
+    <ans:origem><ans:registroANS>999999</ans:registroANS></ans:origem>
+    <ans:destino><ans:identificacaoPrestador><ans:codigoPrestadorNaOperadora>123</ans:codigoPrestadorNaOperadora></ans:identificacaoPrestador></ans:destino>
+    <ans:Padrao>4.03.00</ans:Padrao>
+  </ans:cabecalho>
+  <ans:operadoraParaPrestador>
+    <ans:demonstrativosRetorno>
+      <ans:demonstrativoAnaliseConta>
+        <ans:cabecalhoDemonstrativo>
+          <ans:registroANS>999999</ans:registroANS>
+          <ans:numeroDemonstrativo>FIC-401</ans:numeroDemonstrativo>
+          <ans:nomeOperadora>OPERADORA FICTICIA</ans:nomeOperadora>
+          <ans:numeroCNPJ>00000000000000</ans:numeroCNPJ>
+          <ans:dataEmissao>2026-10-30</ans:dataEmissao>
+        </ans:cabecalhoDemonstrativo>
+        <ans:dadosPrestador>
+          <ans:dadosContratado><ans:codigoPrestadorNaOperadora>123</ans:codigoPrestadorNaOperadora></ans:dadosContratado>
+          <ans:CNES>9999999</ans:CNES>
+        </ans:dadosPrestador>
+        <ans:dadosConta>
+          <ans:dadosProtocolo>
+            <ans:numeroLotePrestador>1</ans:numeroLotePrestador>
+            <ans:numeroProtocolo>7001</ans:numeroProtocolo>
+            <ans:dataProtocolo>2026-10-02</ans:dataProtocolo>
+            <ans:situacaoProtocolo>6</ans:situacaoProtocolo>
+            <ans:relacaoGuias>
+              <ans:numeroGuiaPrestador>A-1</ans:numeroGuiaPrestador>
+              <ans:numeroGuiaOperadora>OP-1</ans:numeroGuiaOperadora>
+              <ans:numeroCarteira>000111</ans:numeroCarteira>
+              <ans:dataInicioFat>2026-09-10</ans:dataInicioFat>
+              <ans:situacaoGuia>6</ans:situacaoGuia>
+              <ans:detalhesGuia>
+                <ans:sequencialItem>1</ans:sequencialItem>
+                <ans:dataRealizacao>2026-09-10</ans:dataRealizacao>
+                <ans:procedimento>
+                  <ans:codigoTabela>22</ans:codigoTabela>
+                  <ans:codigoProcedimento>40000001</ans:codigoProcedimento>
+                  <ans:descricaoProcedimento>PROCEDIMENTO COM DUAS GLOSAS</ans:descricaoProcedimento>
+                </ans:procedimento>
+                <ans:valorInformado>500.00</ans:valorInformado>
+                <ans:qtdExecutada>2.0000</ans:qtdExecutada>
+                <ans:valorProcessado>500.00</ans:valorProcessado>
+                <ans:valorLiberado>200.00</ans:valorLiberado>
+                <ans:relacaoGlosa><ans:valorGlosa>220.00</ans:valorGlosa><ans:tipoGlosa>1402</ans:tipoGlosa></ans:relacaoGlosa>
+                <ans:relacaoGlosa><ans:valorGlosa>80.00</ans:valorGlosa><ans:tipoGlosa>1007</ans:tipoGlosa></ans:relacaoGlosa>
+                <ans:centroConsumo>1</ans:centroConsumo>
+              </ans:detalhesGuia>
+              <ans:detalhesGuia>
+                <ans:sequencialItem>2</ans:sequencialItem>
+                <ans:dataRealizacao>2026-09-10</ans:dataRealizacao>
+                <ans:procedimento>
+                  <ans:codigoTabela>22</ans:codigoTabela>
+                  <ans:codigoProcedimento>10101012</ans:codigoProcedimento>
+                  <ans:descricaoProcedimento>CONSULTA PAGA</ans:descricaoProcedimento>
+                </ans:procedimento>
+                <ans:valorInformado>100.00</ans:valorInformado>
+                <ans:qtdExecutada>1.0000</ans:qtdExecutada>
+                <ans:valorProcessado>100.00</ans:valorProcessado>
+                <ans:valorLiberado>100.00</ans:valorLiberado>
+              </ans:detalhesGuia>
+              <ans:valorInformadoGuia>600.00</ans:valorInformadoGuia>
+              <ans:valorProcessadoGuia>600.00</ans:valorProcessadoGuia>
+              <ans:valorLiberadoGuia>300.00</ans:valorLiberadoGuia>
+              <ans:valorGlosaGuia>300.00</ans:valorGlosaGuia>
+              <ans:observacao>OBSERVACAO FICTICIA DA GUIA</ans:observacao>
+            </ans:relacaoGuias>
+            <ans:relacaoGuias>
+              <ans:numeroGuiaPrestador>A-2</ans:numeroGuiaPrestador>
+              <ans:numeroCarteira>000222</ans:numeroCarteira>
+              <ans:dataInicioFat>2026-09-11</ans:dataInicioFat>
+              <ans:motivoGlosaGuia><ans:codigoGlosa>1010</ans:codigoGlosa></ans:motivoGlosaGuia>
+              <ans:situacaoGuia>6</ans:situacaoGuia>
+              <ans:detalhesGuia>
+                <ans:sequencialItem>1</ans:sequencialItem>
+                <ans:dataRealizacao>2026-09-11</ans:dataRealizacao>
+                <ans:procedimento>
+                  <ans:codigoTabela>22</ans:codigoTabela>
+                  <ans:codigoProcedimento>40000002</ans:codigoProcedimento>
+                  <ans:descricaoProcedimento>GLOSADO SEM RELACAO DE GLOSA</ans:descricaoProcedimento>
+                </ans:procedimento>
+                <ans:valorInformado>150.00</ans:valorInformado>
+                <ans:qtdExecutada>1.0000</ans:qtdExecutada>
+                <ans:valorProcessado>150.00</ans:valorProcessado>
+                <ans:valorLiberado>0.00</ans:valorLiberado>
+              </ans:detalhesGuia>
+              <ans:detalhesGuia>
+                <ans:sequencialItem>2</ans:sequencialItem>
+                <ans:dataRealizacao>2026-09-11</ans:dataRealizacao>
+                <ans:procedimento>
+                  <ans:codigoTabela>22</ans:codigoTabela>
+                  <ans:codigoProcedimento>40000003</ans:codigoProcedimento>
+                  <ans:descricaoProcedimento>GLOSA INFORMADA MENOR QUE A REAL</ans:descricaoProcedimento>
+                </ans:procedimento>
+                <ans:valorInformado>90.00</ans:valorInformado>
+                <ans:qtdExecutada>1.0000</ans:qtdExecutada>
+                <ans:valorProcessado>90.00</ans:valorProcessado>
+                <ans:valorLiberado>40.00</ans:valorLiberado>
+                <ans:relacaoGlosa><ans:valorGlosa>30.00</ans:valorGlosa><ans:tipoGlosa>2601</ans:tipoGlosa></ans:relacaoGlosa>
+                <ans:relacaoGlosa><ans:valorGlosa>5.00</ans:valorGlosa><ans:tipoGlosa>1701</ans:tipoGlosa></ans:relacaoGlosa>
+              </ans:detalhesGuia>
+              <ans:valorInformadoGuia>240.00</ans:valorInformadoGuia>
+              <ans:valorProcessadoGuia>240.00</ans:valorProcessadoGuia>
+              <ans:valorLiberadoGuia>40.00</ans:valorLiberadoGuia>
+              <ans:valorGlosaGuia>200.00</ans:valorGlosaGuia>
+            </ans:relacaoGuias>
+            <ans:relacaoGuias>
+              <ans:numeroGuiaPrestador>A-3</ans:numeroGuiaPrestador>
+              <ans:numeroCarteira>000333</ans:numeroCarteira>
+              <ans:dataInicioFat>2026-09-12</ans:dataInicioFat>
+              <ans:motivoGlosaGuia><ans:codigoGlosa>1402</ans:codigoGlosa></ans:motivoGlosaGuia>
+              <ans:situacaoGuia>7</ans:situacaoGuia>
+              <ans:valorInformadoGuia>70.00</ans:valorInformadoGuia>
+              <ans:valorProcessadoGuia>70.00</ans:valorProcessadoGuia>
+              <ans:valorLiberadoGuia>0.00</ans:valorLiberadoGuia>
+              <ans:valorGlosaGuia>70.00</ans:valorGlosaGuia>
+            </ans:relacaoGuias>
+            <ans:valorInformadoProtocolo>910.00</ans:valorInformadoProtocolo>
+            <ans:valorProcessadoProtocolo>910.00</ans:valorProcessadoProtocolo>
+            <ans:valorLiberadoProtocolo>340.00</ans:valorLiberadoProtocolo>
+            <ans:valorGlosaProtocolo>570.00</ans:valorGlosaProtocolo>
+          </ans:dadosProtocolo>
+        </ans:dadosConta>
+        <ans:valorInformadoGeral>910.00</ans:valorInformadoGeral>
+        <ans:valorProcessadoGeral>910.00</ans:valorProcessadoGeral>
+        <ans:valorLiberadoGeral>340.00</ans:valorLiberadoGeral>
+        <ans:valorGlosaGeral>570.00</ans:valorGlosaGeral>
+      </ans:demonstrativoAnaliseConta>
+    </ans:demonstrativosRetorno>
+  </ans:operadoraParaPrestador>
+  <ans:epilogo><ans:hash>00000000000000000000000000000000</ans:hash></ans:epilogo>
+</ans:mensagemTISS>

@@ -163,7 +163,7 @@ export default function UploadZone({ isGratuito, analisesRestantes }) {
           {' '}(não gasta sua análise gratuita).
         </p>
         <p className="rg-caption">
-          O arquivo certo é o demonstrativo de pagamento ou de análise de conta que a operadora devolve. Modelos de
+          O arquivo certo é o demonstrativo de análise de conta que a operadora devolve. Modelos de
           recurso ou lotes de guias enviados por você não funcionam.
         </p>
 

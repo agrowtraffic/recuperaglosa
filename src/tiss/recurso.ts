@@ -39,7 +39,7 @@ Operadora: ${lote.operadora ?? "—"}${lote.registroAns ? ` (ANS ${lote.registro
 Competência: ${lote.competencia ?? "—"}
 Demonstrativo: ${lote.numeroDemonstrativo ?? "—"}
 Guia do prestador: ${guia.numeroGuia}${guia.numeroGuiaOperadora ? ` | Guia operadora: ${guia.numeroGuiaOperadora}` : ""}
-Beneficiário: ${guia.beneficiario ?? "—"}${guia.carteira ? ` — Carteira ${guia.carteira}` : ""}
+Beneficiário: ${[guia.beneficiario, guia.carteira && `Carteira ${guia.carteira}`].filter(Boolean).join(" — ") || "—"}
 Data do atendimento: ${guia.dataAtendimento ?? "—"}
 
 Prezados,
