@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { nomeClinicaPadrao } from '@/lib/nome-clinica';
 import { track } from '@/lib/analytics';
+import { capturarOrigem, ehInterno, limparOrigem, registrar } from '@/lib/funil';
 
 const TERMOS_VERSAO = '2026-10-14';
 
@@ -69,6 +70,21 @@ export default function CompletarCadastroPage(){
    if(!clinicaId) throw new Error('RPC não retornou clinica_id');
    // Cadastro concluído de fato (clínica criada e termos aceitos), não só o login.
    if(entrouComGoogle) track('sign_up', { method: 'google' });
+   /* Origem do cadastro: a guardada junto da conta (cadastro por e-mail)
+      ou a da aba atual. Não espera resposta nem trava a tela. */
+   const comGoogle = entrouComGoogle;
+   (async ()=>{
+    const { data } = await supabase.auth.getUser();
+    const daConta = limparOrigem(data?.user?.user_metadata?.origem);
+    const origem = Object.keys(daConta).length ? daConta : capturarOrigem();
+    const provedor = comGoogle ? 'google' : 'email';
+    // Por e-mail, conta_criada já saiu da rota de cadastro.
+    if(comGoogle) registrar('conta_criada', { detalhe: provedor, origem });
+    await supabase.from('funil_evento').insert({
+     evento: 'cadastro_concluido', pagina: '/completar-cadastro', detalhe: provedor,
+     clinica_id: clinicaId, interno: ehInterno(), ...origem,
+    });
+   })().catch(()=>{});
    // Direto para o upload: é onde o valor aparece (e onde está o exemplo).
    router.replace('/lotes');
    router.refresh();

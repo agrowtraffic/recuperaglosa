@@ -15,6 +15,7 @@ export default function sitemap() {
 
   const fixas = [
     { url: `${SITE}/`, changeFrequency: 'weekly', priority: 1 },
+    { url: `${SITE}/demonstracao`, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${SITE}/recurso-de-glosa`, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${SITE}/codigos-de-glosa`, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${SITE}/blog`, changeFrequency: 'weekly', priority: 0.8 },

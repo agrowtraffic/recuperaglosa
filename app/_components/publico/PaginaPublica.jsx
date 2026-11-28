@@ -63,6 +63,7 @@ export function Cta({ titulo, texto }) {
       <p>{texto}</p>
       <div className={s.ctaAcoes}>
         <Link className={s.button} href={CADASTRO}>Analisar meu XML grátis →</Link>
+        <Link className={s.buttonGhost} href="/demonstracao">Ver exemplo sem cadastro</Link>
         <a className={s.buttonGhost} href="https://wa.me/5511977315655" target="_blank" rel="noopener noreferrer">Falar no WhatsApp</a>
       </div>
       <p className={s.ctaNota}>3 análises por mês no plano grátis · sem cartão de crédito</p>

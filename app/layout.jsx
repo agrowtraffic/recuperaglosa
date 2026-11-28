@@ -1,6 +1,7 @@
 import './globals.css';
 import { Manrope } from 'next/font/google';
 import ConsentGate from './_components/ConsentGate';
+import Funil from './_components/Funil';
 
 /* Manrope é fonte variável — não se declara peso, o range vem inteiro.
    (A chave `weights` que estava aqui nem existe na API do next/font.) */
@@ -43,6 +44,7 @@ export default function RootLayout({ children }) {
         {/* GA4 e pixel da Meta só carregam depois do aceite (LGPD):
             ver app/_components/ConsentGate.jsx. */}
         <ConsentGate />
+        <Funil />
       </body>
     </html>
   );

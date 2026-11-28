@@ -44,6 +44,10 @@ const SITE_CANONICO = 'https://recuperaglosa.com.br';
 export default {
   reactStrictMode: true,
   swcMinify: true,
+  experimental: {
+    // /demonstracao lê o XML de exemplo no servidor.
+    outputFileTracingIncludes: { '/demonstracao': ['./public/exemplos/**'] },
+  },
   async headers() {
     return [
       {

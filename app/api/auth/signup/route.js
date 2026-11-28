@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { enviarConfirmacaoConta } from '@/lib/emails';
+import { limparOrigem } from '@/lib/funil';
 
 export const runtime = 'nodejs';
 
@@ -46,6 +47,10 @@ export async function POST(request) {
   const firstName = String(body?.firstName || '').trim();
   const lastName = String(body?.lastName || '').trim();
 
+  /* Vai junto no cadastro porque o link de confirmação costuma abrir em
+     outra aba, onde a origem guardada no navegador não existe mais. */
+  const origemVisita = limparOrigem(body?.origem);
+
   if (!firstName || !lastName || !email || !/^\S+@\S+\.\S+$/.test(email)) {
     return NextResponse.json({ error: 'dados_invalidos' }, { status: 400 });
   }
@@ -69,7 +74,7 @@ export async function POST(request) {
     email,
     password,
     options: {
-      data: { firstName, lastName },
+      data: { firstName, lastName, origem: origemVisita },
       redirectTo: `${origem}/completar-cadastro`,
     },
   });
@@ -114,6 +119,17 @@ export async function POST(request) {
     });
     return NextResponse.json({ error: 'email_nao_enviado' }, { status: 502 });
   }
+
+  /* Só depois do e-mail enviado: cadastro desfeito não é conta criada.
+     Ainda sem clínica, então entra como evento anônimo. */
+  const { error: erroFunil } = await admin.from('funil_evento').insert({
+    evento: 'conta_criada',
+    pagina: '/login',
+    detalhe: 'email',
+    interno: body?.interno === true || process.env.VERCEL_ENV !== 'production',
+    ...origemVisita,
+  });
+  if (erroFunil) console.warn('[SIGNUP] Funil não registrado:', erroFunil.message);
 
   return NextResponse.json({ ok: true });
 }

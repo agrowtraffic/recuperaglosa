@@ -4,11 +4,12 @@
    Reprodução fiel do código original.
    Lógica de auth: ⬛ = onde plugar os handlers Supabase existentes.
    ============================================================ */
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { track } from '@/lib/analytics';
+import { capturarOrigem, ehInterno, registrar } from '@/lib/funil';
 import styles from './login.module.css';
 
 /* Força da senha — 0..4 */
@@ -47,6 +48,11 @@ export default function LoginForm({ initialMode = 'login' }) {
   const isRecovery = mode === 'recovery';
   const score      = passwordScore(password);
 
+  /* Conta tanto quem chega por ?modo=cadastro quanto quem troca de aba. */
+  useEffect(() => {
+    if (isSignup) registrar('cadastro_aberto');
+  }, [isSignup]);
+
   const changeMode = useCallback((next) => {
     setMode(next); setError(''); setSuccess(false);
   }, []);
@@ -74,6 +80,8 @@ export default function LoginForm({ initialMode = 'login' }) {
             password,
             firstName: firstName.trim(),
             lastName: lastName.trim(),
+            origem: capturarOrigem(),
+            interno: ehInterno(),
           }),
         });
         const signupResult = await signupResponse.json().catch(() => ({}));

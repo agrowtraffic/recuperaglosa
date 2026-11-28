@@ -13,7 +13,34 @@ import { OPERADORA_EXEMPLO } from '@/src/tiss/exemplo';
    e-mails. */
 const JANELA_ANTI_SPAM_MS = 5 * 60 * 1000;
 
+type Medicao = { supabase?: any; clinicaId?: string; exemplo?: boolean };
+
+/* Registra o desfecho do upload no funil. Fica por fora do processamento
+   para pegar todas as saídas sem repetir o código em cada return. */
 export async function POST(req: Request) {
+  const medicao: Medicao = {};
+  const res = await processar(req, medicao);
+
+  if (medicao.clinicaId) {
+    try {
+      const corpo = res.ok ? null : await res.clone().json();
+      const { error } = await medicao.supabase.from('funil_evento').insert({
+        evento: !res.ok ? 'upload_erro' : medicao.exemplo ? 'upload_exemplo' : 'upload_sucesso',
+        pagina: '/lotes',
+        detalhe: res.ok ? null : String(corpo?.error ?? res.status).slice(0, 60),
+        clinica_id: medicao.clinicaId,
+        interno: process.env.VERCEL_ENV !== 'production',
+      });
+      if (error) console.warn('[UPLOAD] Funil não registrado:', error.message);
+    } catch (e: any) {
+      console.warn('[UPLOAD] Funil não registrado:', e.message);
+    }
+  }
+
+  return res;
+}
+
+async function processar(req: Request, medicao: Medicao) {
   const cookieStore = await cookies();
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -48,6 +75,9 @@ export async function POST(req: Request) {
   if (!usuario) {
     return NextResponse.json({ error: 'clinica_nao_encontrada' }, { status: 404 });
   }
+
+  medicao.supabase = supabase;
+  medicao.clinicaId = usuario.clinica_id;
 
   // Buscar dados da clínica
   const { data: clinica } = await supabase
@@ -124,6 +154,8 @@ export async function POST(req: Request) {
     console.warn('⚠️ [UPLOAD] XML sem guias, tipo:', tipo, 'arquivo:', file.name);
     return NextResponse.json({ error: 'sem_guias', tipo, message: mensagem }, { status: 422 });
   }
+
+  medicao.exemplo = lote.operadora === OPERADORA_EXEMPLO;
 
   // ✅ Verificar duplicação: mesma clínica + mesmo arquivo
   const arquivoHash = computeFileHash(xmlText);

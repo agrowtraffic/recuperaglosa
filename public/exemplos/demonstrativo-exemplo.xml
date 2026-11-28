@@ -52,5 +52,22 @@
         <ans:codigoGlosa>1701</ans:codigoGlosa>
       </ans:procedimento>
     </ans:guiaDemonstrativo>
+    <ans:guiaDemonstrativo>
+      <ans:numeroGuiaPrestador>G-10233</ans:numeroGuiaPrestador>
+      <ans:numeroGuiaOperadora>OP-99873</ans:numeroGuiaOperadora>
+      <ans:nomeBeneficiario>PACIENTE TESTE TRES</ans:nomeBeneficiario>
+      <ans:numeroCarteira>0001234569</ans:numeroCarteira>
+      <ans:dataAtendimento>2026-06-11</ans:dataAtendimento>
+      <ans:procedimento>
+        <ans:codigoProcedimento>81000103</ans:codigoProcedimento>
+        <ans:descricaoProcedimento>Tratamento endodontico em dente birradicular</ans:descricaoProcedimento>
+        <ans:quantidadeExecutada>1</ans:quantidadeExecutada>
+        <ans:valorApresentado>680.00</ans:valorApresentado>
+        <ans:valorPago>0.00</ans:valorPago>
+        <ans:valorGlosa>680.00</ans:valorGlosa>
+        <ans:codigoGlosa>1402</ans:codigoGlosa>
+      </ans:procedimento>
+    </ans:guiaDemonstrativo>
+
   </ans:demonstrativoAnaliseConta>
 </ans:mensagemTISS>

@@ -78,8 +78,10 @@ export const HTML_LANDING = String.raw`<style>
         <p>Envie o XML do demonstrativo TISS. Em segundos o RecuperaGlosa recalcula cada guia, mostra o valor glosado por motivo e redige o recurso de glosa só do que vale contestar.</p>
         <div class="actions">
           <a class="button button-primary" href="/login?modo=cadastro">Analisar meu XML grátis <span>→</span></a>
+          <a class="button button-outline" href="/demonstracao">Ver exemplo sem cadastro</a>
         </div>
         <p class="micro">3 análises grátis por mês • Sem cartão • Sem instalação</p>
+        <p class="micro">Dúvidas antes de enviar o arquivo? <a href="https://wa.me/5511977315655" target="_blank" rel="noopener noreferrer">Fale no WhatsApp</a></p>
         <div class="deadline-note"><strong>O PRAZO JÁ ESTÁ CORRENDO</strong><span>A janela para contestar começa quando o demonstrativo chega. Glosa não contestada a tempo vira prejuízo definitivo.</span></div>
         <div class="trust"><span>✓ XML padrão TISS</span><span>✓ Tabela 38 da ANS atualizada (jul/2026)</span><span>✓ Feito para quem não tem faturista</span></div>
       </div>

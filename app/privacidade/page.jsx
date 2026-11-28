@@ -7,7 +7,7 @@ export const metadata = {
   alternates: { canonical: '/privacidade' },
 };
 
-const VERSAO = '2026-10-14';
+const VERSAO = '2026-11-27';
 
 export default function PrivacidadePage(){
  return (
@@ -26,6 +26,7 @@ export default function PrivacidadePage(){
     <p><strong>Dados de pagamento:</strong> processados diretamente pelo Stripe. Não armazenamos número completo de cartão de crédito nos nossos servidores.</p>
     <p><strong>Dados técnicos:</strong> endereço IP e informações de sessão, coletados automaticamente para autenticação e segurança.</p>
     <p><strong>Dados de medição de uso:</strong> se você aceitar os cookies de medição, o Google Analytics e o pixel da Meta registram como o site é usado e quais ações são realizadas (veja a seção 6).</p>
+    <p><strong>Medição própria do funil:</strong> registramos no nosso banco de dados acontecimentos como abertura da demonstração, clique em botão de cadastro, conta criada e resultado de um envio de arquivo, com data, página e origem da visita (veja a seção 6).</p>
    </Section>
 
    <Section title="3. Para que usamos esses dados">
@@ -40,7 +41,7 @@ export default function PrivacidadePage(){
    </Section>
 
    <Section title="4. Base legal">
-    <p>Tratamos seus dados com base na execução do contrato de uso do serviço (LGPD, art. 7º, V) e, quando aplicável, no seu consentimento explícito no cadastro. Os cookies de medição e publicidade (seção 6) dependem exclusivamente do seu consentimento (LGPD, art. 7º, I), que você pode recusar ou revogar a qualquer momento. Os dados de beneficiários presentes nos demonstrativos são tratados sob a base legal e responsabilidade da sua clínica, que é quem detém a relação com o paciente.</p>
+    <p>Tratamos seus dados com base na execução do contrato de uso do serviço (LGPD, art. 7º, V) e, quando aplicável, no seu consentimento explícito no cadastro. A medição própria do funil se baseia no nosso legítimo interesse em entender e melhorar o serviço (LGPD, art. 7º, IX). Os cookies de medição e publicidade (seção 6) dependem exclusivamente do seu consentimento (LGPD, art. 7º, I), que você pode recusar ou revogar a qualquer momento. Os dados de beneficiários presentes nos demonstrativos são tratados sob a base legal e responsabilidade da sua clínica, que é quem detém a relação com o paciente.</p>
    </Section>
 
    <Section title="5. Com quem compartilhamos">
@@ -54,6 +55,7 @@ export default function PrivacidadePage(){
      <li><strong>Pixel da Meta</strong> (Meta Platforms): mede ações no site, como cadastro, envio de arquivo e assinatura, e permite medir e otimizar nossos anúncios.</li>
     </ul>
     <p>Os eventos que enviamos a essas ferramentas são rótulos de ação, como “cadastro concluído”. Não enviamos e-mail, nome, telefone, nome de arquivo nem o conteúdo dos demonstrativos. Ainda assim, ao carregar, Google e Meta recebem dados técnicos do seu navegador, como endereço IP e identificadores em cookies, e os tratam segundo as próprias políticas: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" style={{ color:'#16a34a' }}>Google</a> e <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener noreferrer" style={{ color:'#16a34a' }}>Meta</a>.</p>
+    <p><strong>Medição própria, sem cookies:</strong> separada das ferramentas acima, funciona independentemente da sua escolha no aviso. Não usa cookie nem identificador de visitante, e não grava nome, e-mail, telefone, endereço IP, nome de arquivo ou conteúdo de demonstrativo. Guardamos o tipo de acontecimento, a data, a página, o domínio do site que indicou a visita e os parâmetros de campanha do endereço (UTM). No cadastro concluído e no envio de arquivos, o registro é ligado à conta da clínica. A origem da visita fica no armazenamento de sessão do navegador até a aba ser fechada e, no cadastro por e-mail, é guardada junto da conta. Os registros ficam no Supabase e não são compartilhados.</p>
     <p><strong>Sua escolha:</strong> é guardada no seu navegador, em um cookie próprio chamado <code>rg_consent</code> e no armazenamento local, por 6 meses. Se você recusar, nenhuma dessas ferramentas é carregada e o site funciona normalmente. Para mudar de ideia a qualquer momento: <PreferenciasCookies style={{ color:'#16a34a', textDecoration:'underline', fontWeight:600 }}>abrir preferências de cookies</PreferenciasCookies>.</p>
    </Section>
 
